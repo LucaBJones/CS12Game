@@ -21,11 +21,13 @@ public class Game extends Canvas {
 	
 	private ArrayList<Tile> tileMap = new ArrayList<Tile>(); // array or arrayList?
 	
-	static int[][] map = {
+	private static int[][] map = {
         	{3,3,3,3},
         	{1,1,1,4},
         	{2,2,2}
 		};
+	
+	private Player player;
 	
 	public static void main(String[] args) {
 		new Game();
@@ -72,9 +74,11 @@ public class Game extends Canvas {
 		// initiate tiles
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
-				tileMap.add(new Tile("images/tile" + map[i][j] + ".png", i, j, this));
+				tileMap.add(new Tile("images/tile" + map[i][j] + ".png", i, j));
 			} // for
 		} // for
+		
+		player = new Player("images/char_sw.png", 0, 0, 0, 0);
 		
 	} // initEntities
 	
@@ -88,7 +92,7 @@ public class Game extends Canvas {
 				tileMap.get(i).draw(g);
 			} // for
 			
-			
+			player.draw(g);
 			
 			// clear graphics and flip buffer
 			g.dispose();
