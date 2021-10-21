@@ -18,4 +18,22 @@ public class Movable extends Entity {
 		this.dy = dy;
 	} // Movable
 	
-}
+	public void move(long delta) {
+		x += dx * delta / 1000;
+		y += dy * delta / 1000;
+	} // move
+	
+	public void setXVelocity(int xSpeed) {
+		dx = xSpeed;
+	} // setXVelocity
+	
+	public void setYVelocity(int ySpeed) {
+		dy = ySpeed;
+	} // setYVelocity
+	
+	public void setSprite(Sprite a){
+		
+	} // setSprite
+	
+	
+} // Movable

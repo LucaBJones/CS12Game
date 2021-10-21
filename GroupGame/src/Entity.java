@@ -4,8 +4,8 @@ import java.awt.Point;
 public class Entity {
 	
 	protected static final int TILE_LENGTH = 60; // should this be static?
-	private static final int X_OFFSET = 200;
-	private static final int Y_OFFSET = 250;
+	protected static final int X_OFFSET = 200;
+	protected static final int Y_OFFSET = 250;
 	
 	// position
 	protected double x;
@@ -16,7 +16,7 @@ public class Entity {
 	public Entity() {
 		x = 0;
 		y = 0;
-//		sprite = null; // how should this be initialized?
+		sprite = null; // how should this be initialized?
 	}
 	
 	public Entity(String r, int xTile, int yTile) {

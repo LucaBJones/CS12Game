@@ -1,7 +1,7 @@
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class Tile extends Entity { // can change back to inheriting from Background if needed
+public class Tile extends Entity { 
 	
 	private boolean isOccupied;
 	private boolean isPassable;

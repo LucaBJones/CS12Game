@@ -1,4 +1,4 @@
 
-public class NPC extends Background {
+public class NPC extends Entity {
 
 }
