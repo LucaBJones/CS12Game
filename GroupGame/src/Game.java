@@ -2,7 +2,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
@@ -16,27 +15,20 @@ public class Game extends Canvas {
 	private final int WINDOW_WIDTH = 500;
 	private final int WINDOW_HEIGHT = 500;
 	
-	private int xOffset = 300;
-	private int yOffset = 50;
-	
 	private BufferStrategy strategy;
-	
-	private static Game game;
+
 	private boolean gameIsRunning = false;
 	
 	private ArrayList<Tile> tileMap = new ArrayList<Tile>(); // array or arrayList?
 	
 	static int[][] map = {
-        	{3,3,3},
+        	{3,3,3,3},
         	{1,1,1,4},
         	{2,2,2}
 		};
 	
-	private SpriteStore store = SpriteStore.get(); // should this be a class variable?
-	
-	
 	public static void main(String[] args) {
-		game = new Game();
+		new Game();
 	} // Game
 	
 	public Game() {
@@ -104,13 +96,7 @@ public class Game extends Canvas {
 			
 		} // while
 	} // gameLoop
-	
-	// returns the isometric coordinates for the cartesian coordinates passed in
-	public Point toIso(int x, int y) {
-		int isoX = x - y;
-		int isoY = (x + y) / 2;
-		return new Point(isoX, isoY);
-	} // toIso
+
 	
 	// handles keyboard input from the user
 	private class KeyInputHandler extends KeyAdapter {
