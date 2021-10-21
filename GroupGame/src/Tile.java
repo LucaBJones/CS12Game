@@ -6,8 +6,9 @@ public class Tile extends Entity { // can change back to inheriting from Backgro
 	private static final int TILE_HEIGHT = 60; // should this be static?
 	private static final int TILE_WIDTH = 60; // only use 1 var for height and width?
 	
-	private static final int X_OFFSET = 160;
-	private static final int Y_OFFSET = 50;
+	// these are in ismetric coordinates
+	private static final int X_OFFSET = 170; // this makes it so that the tiles fit nicely on the screen
+	private static final int Y_OFFSET = 50; // x = 60 * 2 = 120, but then we add 100 / 2 = 50 to x and y to shift everything down by 100 (catesian) to look nice
 	
 	private int xPixel;
 	private int yPixel;
