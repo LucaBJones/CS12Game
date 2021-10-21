@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
@@ -26,7 +28,7 @@ public class Game extends Canvas {
 	
 	static int[][] map = {
         	{3,3,3},
-        	{1,1,1},
+        	{1,1,1,4},
         	{2,2,2}
 		};
 	
@@ -54,6 +56,10 @@ public class Game extends Canvas {
 		frame.setResizable(false); // can change
 		frame.setVisible(true);
 		
+		// add key listener to this canvas
+		addKeyListener(new KeyInputHandler());
+		requestFocus();
+		
 		// create buffer strategy to take advantage of accelerated graphics
 		createBufferStrategy(2);
 		strategy = getBufferStrategy();
@@ -75,8 +81,7 @@ public class Game extends Canvas {
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
 				tileMap.add(new Tile("images/tile" + map[i][j] + ".png", i, j, this));
-				System.out.println("i: " + i + ", j: " + j + "| x: " + (i * 120) + ", y: " + (j * 60));
-			}
+			} // for
 		} // for
 		
 	} // initEntities
@@ -106,5 +111,55 @@ public class Game extends Canvas {
 		int isoY = (x + y) / 2;
 		return new Point(isoX, isoY);
 	} // toIso
+	
+	// handles keyboard input from the user
+	private class KeyInputHandler extends KeyAdapter {
+
+		public void keyPressed(KeyEvent e) {
+
+			if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
+				System.out.println("Pressed: w or up");
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
+				System.out.println("Pressed: a or left");
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
+				System.out.println("Pressed: s or down");
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				System.out.println("Pressed: d or right");
+			} // if
+
+		} // keyPressed
+
+		public void keyReleased(KeyEvent e) {
+
+			if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
+				System.out.println("Released: w or up");
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
+				System.out.println("Released: a or left");
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
+				System.out.println("Released: s or down");
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				System.out.println("Released: d or right");
+			} // if
+			
+		} // keyReleased
+
+		// do we need this?
+		public void keyTyped(KeyEvent e) {
+	
+		} // keyTyped
+
+	} // class KeyInputHandler
 	
 } // Game
