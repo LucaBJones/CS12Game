@@ -73,7 +73,7 @@ public class Game extends Canvas {
 	private void initEntities() {
 		// initiate tiles
 		for (int i = 0; i < map.length; i++) {
-			for (int j = 0; j < map[0].length; j++) {
+			for (int j = 0; j < map[i].length; j++) {
 				tileMap.add(new Tile("images/tile" + map[i][j] + ".png", i, j, this));
 				System.out.println("i: " + i + ", j: " + j + "| x: " + (i * 120) + ", y: " + (j * 60));
 			}
