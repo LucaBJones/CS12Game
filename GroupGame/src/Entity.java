@@ -32,6 +32,18 @@ public class Entity {
 		return new Point(isoX, isoY);
 	} // toIso
 	
+	// so is this finding the cartesian coordinates of the
+	// vertices of the rhombus?
+	
+	public Point[] getCorners() {
+		Point[] corners = new Point[4];
+		corners[0] = new Point((int) x + sprite.getWidth() / 2, (int) y + sprite.getHeight() - TILE_LENGTH); // top corner
+		corners[1] = new Point((int) x + sprite.getWidth() / 2, (int) y + sprite.getHeight()); // bottom corner
+		corners[2] = new Point((int) x, (int) y + sprite.getHeight() - TILE_LENGTH / 2); // left corner
+		corners[3] = new Point((int) x + sprite.getWidth(), (int) y + sprite.getHeight() - TILE_LENGTH / 2); // right corner
+		return corners;
+	} // getCorners
+	
 	// draws the sprite to the screen
 	public void draw(Graphics g) {
 		int xPos = (int) x;
@@ -40,4 +52,8 @@ public class Entity {
 		Point isoPoint = toIso(xPos, yPos);
 		sprite.draw(g, isoPoint.x + X_OFFSET, isoPoint.y + TILE_LENGTH - sprite.getHeight() + Y_OFFSET);
 	} // draw
+	
+	public void setSprite(String r) {
+		sprite = (SpriteStore.get()).getSprite(r);
+	} // setSprite
 }

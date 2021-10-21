@@ -1,3 +1,4 @@
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -5,17 +6,15 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
-import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 public class Game extends Canvas {
 	
 	private final int WINDOW_WIDTH = 500;
 	private final int WINDOW_HEIGHT = 500;
-	
-	private static JPanel statusPanel;
 	
 	private BufferStrategy strategy;
 
@@ -24,10 +23,11 @@ public class Game extends Canvas {
 	private static int[][] map = {
         	{1, 1, 1, 1},
         	{1, 1, 1, 1},
+        	{1, 1, 1, 1},
         	{1, 1, 1, 1}
 		};
 	
-	private Tile[][] tileMap = new Tile[map.length][map[0].length]; // array or arrayList?
+	private static Tile[][] tileMap = new Tile[map.length][map[0].length]; // array or arrayList?
 	
 	private Player player;
 	
@@ -36,17 +36,18 @@ public class Game extends Canvas {
 	private boolean sPressed = false;
 	private boolean dPressed = false;
 	
+	private static int speed = 100;
+	private static int xDiagonal = (int) (2 * (double) speed / (Math.pow(5, 0.5)));
+	private static int yDiagonal = (int) ((double) speed / (Math.pow(5, 0.5)));
+	
 	public static void main(String[] args) {
 		new Game();
+		
 	} // Game
 	
 	public Game() {
 		JFrame frame = new JFrame("Game");
 		JPanel panel = new JPanel();
-		statusPanel = new JPanel();
-		
-		statusPanel.setBackground(Color.red);
-		statusPanel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT)); // add to frame
 		
 		setBounds(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
@@ -56,7 +57,6 @@ public class Game extends Canvas {
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(panel);
-		//frame.add(statusPanel);
 		frame.pack();
 		frame.setResizable(false); // can change
 		frame.setVisible(true);
@@ -85,7 +85,8 @@ public class Game extends Canvas {
 		// initiate tiles
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
-				tileMap[i][j] = new Tile("images/tile" + map[i][j] + ".png", i, j);
+				boolean b = map[i][j] > 0;
+				tileMap[i][j] = new Tile("images/tile" + map[i][j] + ".png", i, j, b);
 			} // for
 		} // for
 		
@@ -119,33 +120,49 @@ public class Game extends Canvas {
 			g.dispose();
 			strategy.show();
 			
-			// game logic?
+			// movement
 			player.setXVelocity(0);
 			player.setYVelocity(0);
 			
+			// we need N, E, S, and W character sprites 
+			// some of the sprites are the wrong size.
+			// I'll fix that 
 			if (wPressed && !sPressed) {
-				player.setYVelocity(-50);
+				
 				if (aPressed && !dPressed) {
-					player.setXVelocity(-100);
+					player.setXVelocity(-1 * xDiagonal);
+					player.setYVelocity(-1 * yDiagonal);
+					player.setSprite("images/char_nw.png");
 				} else if (dPressed && !aPressed) {
-					player.setXVelocity(100);
+					player.setXVelocity(xDiagonal);
+					player.setYVelocity(-1 * yDiagonal);
+					player.setSprite("images/char_ne.png");
+				} else {
+					player.setYVelocity(-1 * speed);
 				}
+				
 			}
 			else if (aPressed && !dPressed) {
-				player.setXVelocity(-50);
+				
 				if (sPressed && !wPressed) {
-					player.setXVelocity(-100);
-					player.setYVelocity(50);
+					player.setXVelocity(-1 * xDiagonal);
+					player.setYVelocity(yDiagonal);
+					player.setSprite("images/char_sw.png");
+				} else {
+					player.setXVelocity(-1 * speed);
 				}
 			}
 			else if (sPressed && !wPressed) {
-				player.setYVelocity(50);
 				if (dPressed && !aPressed) {
-					player.setXVelocity(100);
+					player.setXVelocity(xDiagonal);
+					player.setYVelocity(yDiagonal);
+					player.setSprite("images/char_se.png");
+				} else {
+					player.setYVelocity(speed);
 				}
 			}
 			else if (dPressed && !aPressed) {
-				player.setXVelocity(50);
+				player.setXVelocity(speed);
 			}
 			
 			player.move(delta);
@@ -178,6 +195,10 @@ public class Game extends Canvas {
 				System.out.println("Pressed: d or right");
 				dPressed = true;
 			} // if
+			
+			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+				player.getHp().decrement(10);
+			}
 
 		} // keyPressed
 
@@ -212,8 +233,8 @@ public class Game extends Canvas {
 
 	} // class KeyInputHandler
 	
-	public static JPanel getStatusPanel() {
-		return statusPanel;
+	public static Tile[][] getTiles() {
+		return tileMap;
 	}
 	
 } // Game
