@@ -86,7 +86,7 @@ public class Game extends Canvas {
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
 				boolean b = (map[i][j] > 1);
-				tileMap[i][j] = new Tile("images/tile" + map[i][j] + ".png", i, j, b);
+				tileMap[i][j] = new Tile("images/tile" + map[i][j] + ".png", j, i, b);
 				System.out.println(tileMap[i][j].getIsPassable() ? "true" : "false");
 			} // for
 		} // for
