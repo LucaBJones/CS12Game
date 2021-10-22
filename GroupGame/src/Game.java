@@ -110,7 +110,7 @@ public class Game extends Canvas {
 			
 			// draw tiles
 			for (int i = 0; i < tileMap.length; i++) {
-				for (int j = 0; j < tileMap.length; j++) {
+				for (int j = 0; j < tileMap[i].length; j++) {
 					tileMap[i][j].draw(g);
 				} // for
 			} // for
