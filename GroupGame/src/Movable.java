@@ -23,42 +23,43 @@ public class Movable extends Entity {
 		x += dx * delta / 1000;
 		y += dy * delta / 1000;
 		
-		for (int i = 0; i < 4; i++) {
-			Point p = getCorners()[i];
+		Point[] p = getCorners();
 			
-			if (!isOutOfBounds(p)) {
-				x -= dx * delta / 1000;
-				y -= dy * delta / 1000;
-			}
-			
-		}
+		if (isOutOfBounds(p)) {
+			x -= dx * delta / 1000;
+			y -= dy * delta / 1000;
+		} // if
 		
 	} // move
 	
-	// needs to be fixed
-	public boolean isOutOfBounds(Point p) {
+	// returns true if any of the points are inside of an inPassable tile
+	// or they are outside of the map
+	public boolean isOutOfBounds(Point[] p) {
 		
-//		Tile[][] tiles = Game.getTiles();
-//		
-//		// check if the point is on any of the passable tiles
-//		for (int i = 0; i < tiles.length; i++) {
-//			for (int j = 0; j < tiles[i].length; j++) {
-//				Tile tile = tiles[i][j];
-//				
-//				if(tile.getIsPassable()) {
-//					Point[] tileCorners = tile.getCorners();
-//					if (p.getY() > tileCorners[0].getY() && p.getY() < tileCorners[1].getY() && p.getX() > tileCorners[2].getX() && p.getX() < tileCorners[3].getX()) {
-//						return true;
-//					}
-//				}
-//				
-//			}
-//		}
-//		
-//		return false;
+		Tile[][] tiles = Game.getTiles();
 		
-		return true;
-	}
+		for (int i = 0; i < p.length; i++) {
+			
+			// check if is outside of tile map
+			if (p[i].x < 0 || p[i].y < 0) {
+				return true;
+			} // if
+			
+			// check if is valid array index / tile coordinate
+			try {
+				
+				// check if tile is not passable
+				if (!tiles[(int) p[i].x / TILE_LENGTH][(int) p[i].y / TILE_LENGTH].getIsPassable()) {
+				return true;
+				} // if
+			} catch (ArrayIndexOutOfBoundsException e) {
+				return true;
+			} // catch
+			
+		} // for
+		
+		return false;
+	} // isOutOfBounds
 	
 	public void setXVelocity(int xSpeed) {
 		dx = xSpeed;

@@ -21,20 +21,20 @@ public class Game extends Canvas {
 	private boolean gameIsRunning = false;
 	
 	private static int[][] map = {
-        	{1, 1, 1, 1},
-        	{1, 1, 1, 1},
-        	{1, 1, 1, 1},
-        	{1, 1, 1, 1}
+        	{2, 2, 2, 2},
+        	{2, 2, 2, 2},
+        	{2, 1, 2, 2},
+        	{2, 2, 2, 2}
 		};
 	
 	private static Tile[][] tileMap = new Tile[map.length][map[0].length]; // array or arrayList?
 	
 	private Player player;
 	
-	private boolean wPressed = false;
-	private boolean aPressed = false;
-	private boolean sPressed = false;
-	private boolean dPressed = false;
+	private boolean upPressed = false;
+	private boolean leftPressed = false;
+	private boolean downPressed = false;
+	private boolean rightPressed = false;
 	
 	private static int speed = 100;
 	private static int xDiagonal = (int) (2 * (double) speed / (Math.pow(5, 0.5)));
@@ -85,12 +85,13 @@ public class Game extends Canvas {
 		// initiate tiles
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
-				boolean b = map[i][j] > 0;
+				boolean b = (map[i][j] > 1);
 				tileMap[i][j] = new Tile("images/tile" + map[i][j] + ".png", i, j, b);
+				System.out.println(tileMap[i][j].getIsPassable() ? "true" : "false");
 			} // for
 		} // for
 		
-		player = new Player("images/char_sw.png", 0, 0, 0, 0);
+		player = new Player("images/char_sw.png", 1, 1, 0, 0);
 		
 	} // initEntities
 	
@@ -124,45 +125,48 @@ public class Game extends Canvas {
 			player.setXVelocity(0);
 			player.setYVelocity(0);
 			
-			// we need N, E, S, and W character sprites 
-			// some of the sprites are the wrong size.
-			// I'll fix that 
-			if (wPressed && !sPressed) {
+			if (upPressed && !downPressed) {
 				
-				if (aPressed && !dPressed) {
-					player.setXVelocity(-1 * xDiagonal);
-					player.setYVelocity(-1 * yDiagonal);
+				if (leftPressed && !rightPressed) {
+					player.setXVelocity(-1 * speed);
 					player.setSprite("images/char_nw.png");
-				} else if (dPressed && !aPressed) {
-					player.setXVelocity(xDiagonal);
-					player.setYVelocity(-1 * yDiagonal);
+				} else if (rightPressed && !leftPressed) {
+					player.setYVelocity(-1 * speed);
 					player.setSprite("images/char_ne.png");
 				} else {
+					player.setXVelocity(-1 * speed);
 					player.setYVelocity(-1 * speed);
+					player.setSprite("images/char_n.png");
 				}
 				
 			}
-			else if (aPressed && !dPressed) {
+			else if (leftPressed && !rightPressed) {
 				
-				if (sPressed && !wPressed) {
-					player.setXVelocity(-1 * xDiagonal);
-					player.setYVelocity(yDiagonal);
+				if (downPressed && !upPressed) {
+					player.setYVelocity(speed);
 					player.setSprite("images/char_sw.png");
 				} else {
 					player.setXVelocity(-1 * speed);
+					player.setYVelocity(speed);
+					player.setSprite("images/char_w.png");
 				}
+				
 			}
-			else if (sPressed && !wPressed) {
-				if (dPressed && !aPressed) {
-					player.setXVelocity(xDiagonal);
-					player.setYVelocity(yDiagonal);
+			else if (downPressed && !upPressed) {
+				if (rightPressed && !leftPressed) {
+					player.setXVelocity(speed);
 					player.setSprite("images/char_se.png");
 				} else {
+					player.setXVelocity(speed);
 					player.setYVelocity(speed);
+					player.setSprite("images/char_s.png");
 				}
+				
 			}
-			else if (dPressed && !aPressed) {
+			else if (rightPressed && !leftPressed) {
 				player.setXVelocity(speed);
+				player.setYVelocity(-1 * speed);
+				player.setSprite("images/char_e.png");
 			}
 			
 			player.move(delta);
@@ -177,23 +181,23 @@ public class Game extends Canvas {
 		public void keyPressed(KeyEvent e) {
 
 			if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
-				System.out.println("Pressed: w or up");
-				wPressed = true;
+				//System.out.println("Pressed: w or up");
+				upPressed = true;
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
-				System.out.println("Pressed: a or left");
-				aPressed = true;
+				//System.out.println("Pressed: a or left");
+				leftPressed = true;
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
-				System.out.println("Pressed: s or down");
-				sPressed = true;
+				//System.out.println("Pressed: s or down");
+				downPressed = true;
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				System.out.println("Pressed: d or right");
-				dPressed = true;
+				//System.out.println("Pressed: d or right");
+				rightPressed = true;
 			} // if
 			
 			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -205,23 +209,23 @@ public class Game extends Canvas {
 		public void keyReleased(KeyEvent e) {
 
 			if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
-				System.out.println("Released: w or up");
-				wPressed = false;
+				//System.out.println("Released: w or up");
+				upPressed = false;
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
-				System.out.println("Released: a or left");
-				aPressed = false;
+				//System.out.println("Released: a or left");
+				leftPressed = false;
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
-				System.out.println("Released: s or down");
-				sPressed = false;
+				//System.out.println("Released: s or down");
+				downPressed = false;
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				System.out.println("Released: d or right");
-				dPressed = false;
+				//System.out.println("Released: d or right");
+				rightPressed = false;
 			} // if
 			
 		} // keyReleased
