@@ -49,7 +49,7 @@ public class Movable extends Entity {
 			try {
 				
 				// check if tile is not passable
-				if (!tiles[(int) p[i].x / TILE_LENGTH][(int) p[i].y / TILE_LENGTH].getIsPassable()) {
+				if (!tiles[(int) p[i].y / TILE_LENGTH][(int) p[i].x / TILE_LENGTH].getIsPassable()) {
 				return true;
 				} // if
 			} catch (ArrayIndexOutOfBoundsException e) {
