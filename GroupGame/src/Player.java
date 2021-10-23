@@ -23,8 +23,8 @@ public class Player extends Movable {
 	}
 	
 	@Override
-	public void draw(Graphics g) {
-		super.draw(g);
+	public void draw(Graphics g, Camera c) {
+		super.draw(g, c);
 		
 		hp.draw(g);
 		stamina.draw(g);

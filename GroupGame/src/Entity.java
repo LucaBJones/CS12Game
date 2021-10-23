@@ -43,6 +43,15 @@ public class Entity {
 	} // getCorners
 	
 	// draws the sprite to the screen
+	public void draw(Graphics g, Camera c) {
+		int xPos = (int) x;
+		int yPos = (int) y;
+		
+		Point isoPoint = toIso(xPos, yPos);
+		sprite.draw(g, isoPoint.x - c.getX(), isoPoint.y + TILE_LENGTH - sprite.getHeight() - c.getY());
+	} // draw
+	
+	// draws the sprite to the screen
 	public void draw(Graphics g) {
 		int xPos = (int) x;
 		int yPos = (int) y;
