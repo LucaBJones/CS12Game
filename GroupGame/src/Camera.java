@@ -39,8 +39,8 @@ public class Camera {
 	
 	public void center(Entity e) {
 		Point p = toIso((int)e.x, (int)e.y);
-		x = p.x + 60 - w / 2;
-		y = p.y + 30 - h / 2;
+		x = p.x + e.sprite.getWidth() / 2 - w / 2;
+		y = p.y + Entity.TILE_LENGTH - e.sprite.getHeight() / 2 - h / 2;
 	}
 	
 	// returns the isometric coordinates for the cartesian coordinates passed in
