@@ -49,7 +49,7 @@ public class Game extends Canvas {
 	private boolean leftPressed = false;
 	private boolean downPressed = false;
 	private boolean rightPressed = false;
-	private boolean spacePressed = false;
+	private boolean shotFired = false;
 	private boolean inventoryVisible = true;
 	
 	private int horizontalDirection = 0; 	// stores direction for projectiles
@@ -166,7 +166,7 @@ public class Game extends Canvas {
 			// movement
 			handlePlayerMovement(delta);
 			
-			if (spacePressed) {
+			if (shotFired) {
 				Projectile p = spawnProjectile();
 				if(p != null) {
 					projectiles.add(p);
@@ -291,8 +291,8 @@ public class Game extends Canvas {
 				} // else
 			} // if
 			
-			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				spacePressed = true;
+			if (e.getKeyCode() == KeyEvent.VK_X) {
+				shotFired = true;
 				//System.out.println("Pressed: space");
 			} // if
 			
@@ -328,8 +328,8 @@ public class Game extends Canvas {
 				rightPressed = false;
 			} // if
 			
-			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				spacePressed = false;
+			if (e.getKeyCode() == KeyEvent.VK_X) {
+				shotFired = false;
 				//System.out.println("Released: space");
 			}
 			
