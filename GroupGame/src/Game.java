@@ -282,15 +282,6 @@ public class Game extends Canvas {
 				rightPressed = true;
 			} // if
 			
-			if (e.getKeyCode() == KeyEvent.VK_I) {
-				System.out.println("Pressed: i " + inventoryVisible);
-				if(inventoryVisible) {
-					inventoryVisible = false;
-				} else {
-					inventoryVisible = true;
-				} // else
-			} // if
-			
 			if (e.getKeyCode() == KeyEvent.VK_X) {
 				shotFired = true;
 				//System.out.println("Pressed: space");
@@ -333,6 +324,11 @@ public class Game extends Canvas {
 				//System.out.println("Released: space");
 			}
 			
+			if (e.getKeyCode() == KeyEvent.VK_I) {
+				System.out.println("Pressed: i " + inventoryVisible);
+				inventoryVisible = !inventoryVisible;
+			} // if
+			
 		} // keyReleased
 
 		// do we need this?
@@ -350,6 +346,7 @@ public class Game extends Canvas {
 		public void mouseDragged(MouseEvent e) {
 			//System.out.println("MOUSE_DRAGGED: " + " (" + e.getX() + "," + e.getY() + ")" + " detected on " + e.getComponent().getClass().getName());
 
+			if (!inventoryVisible) { return; }
 			if (SwingUtilities.isLeftMouseButton(e)) {
 				//System.out.println("left button");
 				inv.handleDrag(e);
@@ -385,6 +382,7 @@ public class Game extends Canvas {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			//System.out.println("released");
+			if (!inventoryVisible) { return; }
 			inv.stopDrag(e);
 		}
 	} // MouseMotion
