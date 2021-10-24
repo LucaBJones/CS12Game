@@ -1,4 +1,3 @@
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -6,13 +5,15 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-import java.util.*;
+import javax.swing.SwingUtilities;
 
 public class Game extends Canvas {
 	
@@ -52,6 +53,7 @@ public class Game extends Canvas {
 	private static ArrayList<Entity> entityArray = new ArrayList<Entity>();
 	
 	private Player player;
+	private Inventory inv; // should this be in player?
 	
 	private boolean upPressed = false;
 	private boolean leftPressed = false;
@@ -80,10 +82,16 @@ public class Game extends Canvas {
 		frame.pack();
 		frame.setResizable(false); // can change
 		frame.setVisible(true);
+		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
 		
 		// add key listener to this canvas
 		addKeyListener(new KeyInputHandler());
 		requestFocus();
+		
+		// add mouse listeners
+		MouseMotion mouseMotion = new MouseMotion();
+		addMouseMotionListener(mouseMotion);
+		addMouseListener(mouseMotion);
 		
 		// create buffer strategy to take advantage of accelerated graphics
 		createBufferStrategy(2);
@@ -112,6 +120,8 @@ public class Game extends Canvas {
 		} // for
 		
 		player = new Player("images/char_sw.png", 10, 10, 0, 0);
+		inv = new Inventory(3); // size of inventory
+		
 		entityArray.add(player);
 		for (Point p : player.getCorners()) {
 			System.out.println(p);
@@ -137,7 +147,7 @@ public class Game extends Canvas {
 				e.draw(g, camera);
 			}
 			
-			
+			inv.draw(g); // add boolean for if inv is open
 			
 			// clear graphics and flip buffer
 			g.dispose();
@@ -165,10 +175,9 @@ public class Game extends Canvas {
 				player.setXVelocity(-1 * speed);
 				player.setYVelocity(-1 * speed);
 				player.setSprite("images/char_n.png");
-			}
+			} // else
 			
-		}
-		else if (leftPressed && !rightPressed) {
+		} else if (leftPressed && !rightPressed) {
 			
 			if (downPressed && !upPressed) {
 				player.setYVelocity(speed);
@@ -177,10 +186,9 @@ public class Game extends Canvas {
 				player.setXVelocity(-1 * speed);
 				player.setYVelocity(speed);
 				player.setSprite("images/char_w.png");
-			}
+			} // else
 			
-		}
-		else if (downPressed && !upPressed) {
+		} else if (downPressed && !upPressed) {
 			if (rightPressed && !leftPressed) {
 				player.setXVelocity(speed);
 				player.setSprite("images/char_se.png");
@@ -188,17 +196,16 @@ public class Game extends Canvas {
 				player.setXVelocity(speed);
 				player.setYVelocity(speed);
 				player.setSprite("images/char_s.png");
-			}
+			} // else
 			
-		}
-		else if (rightPressed && !leftPressed) {
+		} else if (rightPressed && !leftPressed) {
 			player.setXVelocity(speed);
 			player.setYVelocity(-1 * speed);
 			player.setSprite("images/char_e.png");
-		}
+		} // else if
 		
 		player.move(delta);
-	}
+	} // handlePlayerMovement
 	
 	// handles keyboard input from the user
 	private class KeyInputHandler extends KeyAdapter {
@@ -225,9 +232,9 @@ public class Game extends Canvas {
 				rightPressed = true;
 			} // if
 			
-			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-				player.getHp().decrement(10);
-			}
+//			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+//				player.getHp().decrement(10);
+//			}
 
 		} // keyPressed
 
@@ -261,6 +268,53 @@ public class Game extends Canvas {
 		} // keyTyped
 
 	} // class KeyInputHandler
+	
+	private class MouseMotion implements MouseMotionListener, MouseListener {
+
+		// may not need all of these...
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			//System.out.println("MOUSE_DRAGGED: " + " (" + e.getX() + "," + e.getY() + ")" + " detected on " + e.getComponent().getClass().getName());
+
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				//System.out.println("left button");
+				inv.handleDrag(e);
+			}
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			//System.out.println("MOUSE_MOVED: " + " (" + e.getX() + "," + e.getY() + ")" + " detected on "
+					//+ e.getComponent().getClass().getName());
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			//System.out.println("clicked");
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			//System.out.println("enter");
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			//System.out.println("exit");
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			//System.out.println("pressed");
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			//System.out.println("released");
+			inv.stopDrag(e);
+		}
+	} // MouseMotion
 	
 	public static Tile[][] getTiles() {
 		return tileMap;

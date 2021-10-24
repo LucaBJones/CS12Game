@@ -13,11 +13,13 @@ public class Entity {
 	
 	Sprite sprite; // may change later
 	
+	// constructors
+	
 	public Entity() {
 		x = 0;
 		y = 0;
 		sprite = null; // how should this be initialized?
-	}
+	} // default constructor
 	
 	public Entity(String r, int xTile, int yTile) {
 		x = xTile * TILE_LENGTH;
@@ -25,7 +27,7 @@ public class Entity {
 		sprite = (SpriteStore.get()).getSprite(r);
 	} // constructor
 	
-	// returns the isometric coordinates for the cartesian coordinates passed in
+	// convert cartesian to isometric
 	public Point toIso(int x, int y) {
 		int isoX = x - y;
 		int isoY = (x + y) / 2;
@@ -42,7 +44,7 @@ public class Entity {
 		return corners;
 	} // getCorners
 	
-	// draws the sprite to the screen
+	// draws the sprite to the screen relative to camera position
 	public void draw(Graphics g, Camera c) {
 		int xPos = (int) x;
 		int yPos = (int) y;
@@ -63,4 +65,5 @@ public class Entity {
 	public void setSprite(String r) {
 		sprite = (SpriteStore.get()).getSprite(r);
 	} // setSprite
-}
+	
+} // Entity
