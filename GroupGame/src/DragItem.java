@@ -65,8 +65,8 @@ public class DragItem extends Entity{
 	
 	// follow mouse position
 	public void move(MouseEvent e) {
-		x = e.getX(); // need to change (so not always dragging left corner of sprite)
-		y = e.getY(); 
+		x = e.getX() - (previousSlot.getWidth() / 2); // need to change (so not always dragging left corner of sprite)
+		y = e.getY() - (previousSlot.getHeight() / 2); 
 	} // move
 	
 	// draw sprite if there is one

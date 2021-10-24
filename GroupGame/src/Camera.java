@@ -14,8 +14,8 @@ public class Camera {
 	public Camera() {
 		x = 0;
 		y = 0;
-		w = 500;
-		h = 500;
+		w = 750;
+		h = 750;
 	} // default constructor
 
 	public Camera(int x, int y, int w, int h) {

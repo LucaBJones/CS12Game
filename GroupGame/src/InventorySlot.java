@@ -9,6 +9,7 @@ public class InventorySlot extends Entity {
 	private Sprite sprite;				// sprite of the item
 	
 	private int width;	// temp? slot side length
+	private int height;
 	
 	// constructor
 	public InventorySlot(int x, int y, int i) {
@@ -16,18 +17,21 @@ public class InventorySlot extends Entity {
 		item = new InventoryItem("images/sprite" + index + ".png", "sprite" + index); // temp
 		
 		// set screen position of slot
-		this.x = (i + 1) * x + 10; // can change
+		this.x = (i) * (x - 200) + 200 + 10; // 200 = inv x & 10 is important regardless of positioning
 		this.y = y + 10; // change
-		
-		width = 80; // temp
-		
 		updateSprite();
+		width = sprite.getWidth(); // temp
+		height = sprite.getHeight();
 	} // InventorySlot
 	
 	// return slot width/length
 	public int getWidth() {
 		return width;
 	} // getWidth
+	
+	public int getHeight(){
+		return height;
+	}
 	
 	// add item passed in into slot
 	public void addItem(InventoryItem item) {
@@ -66,11 +70,11 @@ public class InventorySlot extends Entity {
 		
 		// draw slot background
 		g.setColor(Color.cyan);
-		g.fillRect(xPos, yPos, 80, 80);
+		g.fillRect(xPos, yPos, 80, 80); // set dimensions looks nicer
 		
 		// display item if there is one
 		if (sprite != null) {
-			item.getSprite().draw(g, xPos, yPos); // needs to be changed so sprite is centered
+			item.getSprite().draw(g, xPos + ((80 - item.getSprite().getWidth()) / 2), yPos + (80 - item.getSprite().getHeight()) / 2); // needs to be changed so sprite is centered
 		} // if
 	} // draw
 	
@@ -78,4 +82,4 @@ public class InventorySlot extends Entity {
 	public int getIndex() {
 		return index;
 	} // getIndex
-}
+} // InventorySlot

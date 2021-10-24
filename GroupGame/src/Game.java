@@ -24,9 +24,16 @@ public class Game extends Canvas {
 	private boolean gameIsRunning = false;
 	
 	private static int[][] map = {
-        	{2, 2, 2},
-        	{2, 2, 2},
-        	{2, 2, 2}
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 1, 1, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 1, 1, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
 		};
 	
 	private static Tile[][] tileMap = new Tile[map.length][map[0].length]; // array or arrayList?
@@ -43,6 +50,14 @@ public class Game extends Canvas {
 	private boolean downPressed = false;
 	private boolean rightPressed = false;
 	private boolean spacePressed = false;
+	private boolean inventoryVisible = true;
+	
+	private int horizontalDirection = 0; 	// stores direction for projectiles
+	private int verticalDirection = 1;		// values: -1, 0, 1 
+	private int projectileSpeed = 200; 		// may want to change this later in the game as power up or something
+	
+	private long lastFire = 0; // time last shot fired
+    private long firingInterval = 300; // interval between shots (ms)
 	
 	private static int speed = 100;
 	
@@ -109,9 +124,11 @@ public class Game extends Canvas {
 		entityArray.add(player);
 		for (Point p : player.getCorners()) {
 			System.out.println(p);
-		}
+		} // for
 		
 		p = spawnProjectile();
+		projectiles.add(p);
+		entityArray.add(p);
 	} // initEntities/this
 	
 	private void gameLoop() {
@@ -133,12 +150,14 @@ public class Game extends Canvas {
 				e.draw(g, camera);
 			} // for
 			
-			// temp // class var for now and in initEntities
-			//Projectile p = spawnProjectile(); // where do you want this? ok
-			p.draw(g, camera);
-			p.move(delta);
-					
-			inv.draw(g); // add boolean for if inv is open
+			if (inventoryVisible) {
+				inv.draw(g);
+			} // if
+			
+			// moves projectiles 
+			for (Projectile p : projectiles) {
+				p.move(delta);
+			} // for
 			
 			// clear graphics and flip buffer
 			g.dispose();
@@ -147,10 +166,13 @@ public class Game extends Canvas {
 			// movement
 			handlePlayerMovement(delta);
 			
-			
-//			if(spacePressed) {
-//				entityArray.add(spawnProjectile());
-//			} // if
+			if (spacePressed) {
+				Projectile p = spawnProjectile();
+				if(p != null) {
+					projectiles.add(p);
+					entityArray.add(p);
+				} // if
+			} // if
 			
 		} // while
 	} // gameLoop
@@ -164,13 +186,19 @@ public class Game extends Canvas {
 			if (leftPressed && !rightPressed) {
 				player.setXVelocity(-1 * speed);
 				player.setSprite("images/char_nw.png");
+				horizontalDirection = -1;
+				verticalDirection = 0;
 			} else if (rightPressed && !leftPressed) {
 				player.setYVelocity(-1 * speed);
 				player.setSprite("images/char_ne.png");
+				horizontalDirection = 0;
+				verticalDirection = -1;
 			} else {
 				player.setXVelocity(-1 * speed);
 				player.setYVelocity(-1 * speed);
 				player.setSprite("images/char_n.png");
+				horizontalDirection = -1;
+				verticalDirection = -1;
 			} // else
 			
 		} else if (leftPressed && !rightPressed) {
@@ -178,26 +206,36 @@ public class Game extends Canvas {
 			if (downPressed && !upPressed) {
 				player.setYVelocity(speed);
 				player.setSprite("images/char_sw.png");
+				horizontalDirection = 0;
+				verticalDirection = 1;
 			} else {
 				player.setXVelocity(-1 * speed);
 				player.setYVelocity(speed);
 				player.setSprite("images/char_w.png");
+				horizontalDirection = -1;
+				verticalDirection = 1;
 			} // else
 			
 		} else if (downPressed && !upPressed) {
 			if (rightPressed && !leftPressed) {
 				player.setXVelocity(speed);
 				player.setSprite("images/char_se.png");
+				horizontalDirection = 1;
+				verticalDirection = 0;
 			} else {
 				player.setXVelocity(speed);
 				player.setYVelocity(speed);
 				player.setSprite("images/char_s.png");
+				horizontalDirection = 1;
+				verticalDirection = 1;
 			} // else
 			
 		} else if (rightPressed && !leftPressed) {
 			player.setXVelocity(speed);
 			player.setYVelocity(-1 * speed);
 			player.setSprite("images/char_e.png");
+			horizontalDirection = 1;
+			verticalDirection = -1;
 		} // else if
 		
 		player.move(delta);
@@ -205,8 +243,13 @@ public class Game extends Canvas {
 	
 	// 
 	private Projectile spawnProjectile() { 
-		return new Projectile("images/sprite1.png", 0 , 0, 10, 10);
-	
+		// check that we've waited long enough to fire
+        if ((System.currentTimeMillis() - lastFire) < firingInterval){
+          return null;
+        } // if
+        lastFire = System.currentTimeMillis();
+		System.out.println("spawn projectile");//
+		return new Projectile("images/sprite1.png", (int) player.getX(), (int) player.getY(), horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed);
 	} // spawnProjectile
 	
 	
@@ -239,12 +282,26 @@ public class Game extends Canvas {
 				rightPressed = true;
 			} // if
 			
-			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+			if (e.getKeyCode() == KeyEvent.VK_I) {
+				System.out.println("Pressed: i " + inventoryVisible);
+				if(inventoryVisible) {
+					inventoryVisible = false;
+				} else {
+					inventoryVisible = true;
+				} // else
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 				spacePressed = true;
-			}
+				//System.out.println("Pressed: space");
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				System.exit(0);
+			} // if
 			
 //			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-//				player.getHp().decrement(10);
+//				player.().decrement(10);
 //			}
 
 		} // keyPressed
@@ -271,8 +328,9 @@ public class Game extends Canvas {
 				rightPressed = false;
 			} // if
 			
-			if(e.getKeyCode() == KeyEvent.VK_D) {
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 				spacePressed = false;
+				//System.out.println("Released: space");
 			}
 			
 		} // keyReleased
@@ -334,5 +392,6 @@ public class Game extends Canvas {
 	public static Tile[][] getTiles() {
 		return tileMap;
 	}
+	
 	
 } // Game

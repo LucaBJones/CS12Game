@@ -22,7 +22,7 @@ public class Inventory extends Entity {
 		
 		// create new inventory slots
 		for (int i = 0; i < slots.length; i++) {
-			slots[i] = new InventorySlot(X_PADDING, 500 - Y_PADDING, i); // use vars
+			slots[i] = new InventorySlot(200 + X_PADDING, 120 - Y_PADDING, i); // use vars
 		} // for
 	} // Inventory
 	
@@ -45,7 +45,7 @@ public class Inventory extends Entity {
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(Color.white);
-		g.fillRect(100, 500 - Y_PADDING, 300, 100); // use vars
+		g.fillRect(200, 120 - Y_PADDING, 300, 100); // use vars
 
 		drawSlots(g);
 		
@@ -121,4 +121,4 @@ public class Inventory extends Entity {
 		dragItem.swap(slots[slotIndex]);
 	} // stopDrag
 	
-}
+} // Inventory
