@@ -24,41 +24,25 @@ public class Game extends Canvas {
 	private boolean gameIsRunning = false;
 	
 	private static int[][] map = {
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
+        	{2, 2, 2},
+        	{2, 2, 2},
+        	{2, 2, 2}
 		};
 	
 	private static Tile[][] tileMap = new Tile[map.length][map[0].length]; // array or arrayList?
 	private static ArrayList<Entity> entityArray = new ArrayList<Entity>();
+	private static ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	
 	private Player player;
 	private Inventory inv; // should this be in player?
+	
+	private Projectile p;
 	
 	private boolean upPressed = false;
 	private boolean leftPressed = false;
 	private boolean downPressed = false;
 	private boolean rightPressed = false;
+	private boolean spacePressed = false;
 	
 	private static int speed = 100;
 	
@@ -119,14 +103,16 @@ public class Game extends Canvas {
 			} // for
 		} // for
 		
-		player = new Player("images/char_sw.png", 10, 10, 0, 0);
+		player = new Player("images/char_sw.png", 0, 0, 0, 0);
 		inv = new Inventory(3); // size of inventory
 		
 		entityArray.add(player);
 		for (Point p : player.getCorners()) {
 			System.out.println(p);
 		}
-	} // initEntities
+		
+		p = spawnProjectile();
+	} // initEntities/this
 	
 	private void gameLoop() {
 		long lastLoopTime = System.currentTimeMillis();
@@ -145,8 +131,13 @@ public class Game extends Canvas {
 			
 			for (Entity e : entityArray) {
 				e.draw(g, camera);
-			}
+			} // for
 			
+			// temp // class var for now and in initEntities
+			//Projectile p = spawnProjectile(); // where do you want this? ok
+			p.draw(g, camera);
+			p.move(delta);
+					
 			inv.draw(g); // add boolean for if inv is open
 			
 			// clear graphics and flip buffer
@@ -155,6 +146,11 @@ public class Game extends Canvas {
 			
 			// movement
 			handlePlayerMovement(delta);
+			
+			
+//			if(spacePressed) {
+//				entityArray.add(spawnProjectile());
+//			} // if
 			
 		} // while
 	} // gameLoop
@@ -207,6 +203,17 @@ public class Game extends Canvas {
 		player.move(delta);
 	} // handlePlayerMovement
 	
+	// 
+	private Projectile spawnProjectile() { 
+		return new Projectile("images/sprite1.png", 0 , 0, 10, 10);
+	
+	} // spawnProjectile
+	
+	
+	public static void removeEntity(Entity e) {
+		entityArray.remove(e);
+	} // removeEntity
+	
 	// handles keyboard input from the user
 	private class KeyInputHandler extends KeyAdapter {
 
@@ -231,6 +238,10 @@ public class Game extends Canvas {
 				//System.out.println("Pressed: d or right");
 				rightPressed = true;
 			} // if
+			
+			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+				spacePressed = true;
+			}
 			
 //			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 //				player.getHp().decrement(10);
@@ -259,6 +270,10 @@ public class Game extends Canvas {
 				//System.out.println("Released: d or right");
 				rightPressed = false;
 			} // if
+			
+			if(e.getKeyCode() == KeyEvent.VK_D) {
+				spacePressed = false;
+			}
 			
 		} // keyReleased
 

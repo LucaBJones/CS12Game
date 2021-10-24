@@ -30,6 +30,22 @@ public class Player extends Movable {
 	public int getManaValue() {
 		return mana.getValue();
 	} // getManaValue
+	
+	public double getX() {
+		return x;
+	} // getX
+
+	public double getY() {
+		return y;
+	} // getY
+	
+	public double getXVelocity() {
+		return dx;
+	} // getXVelocity
+	
+	public double getYVelocity() {
+		return dy;
+	} // getYVelocity
 
 	// draw the player with its health, stamina, and mana bars
 	@Override
