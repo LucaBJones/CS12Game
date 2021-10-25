@@ -5,11 +5,14 @@ import java.awt.event.MouseEvent;
 // stores all the player's current items
 public class Inventory extends Entity {
 
-	private static final int X_PADDING = 100; // temp for placing inv on screen
+	private static final int X_PADDING = 100; 		// temp for placing inv on screen
 	private static final int Y_PADDING = 100; 
-
+	
 	private DragItem dragItem; 						// stores item being dragged
-	private static boolean isDragging = false; 		// whether player is dragging an item
+	private boolean isDragging = false; 			// whether player is dragging an item
+	private static int hoveringSlotIndex = -1; 		// index of the slot the player is hovering over
+														// -1 if not hovering over a slot
+														// rename?
 	
 	private int size;								// size of inventory
 	private InventorySlot[] slots;					// slots in the inventory
@@ -29,7 +32,7 @@ public class Inventory extends Entity {
 	// add item to inventory (not implemented yet..)
 	public void addItem(InventoryItem item) {
 		
-	}
+	} // addItem
 	
 	// draw the inventory slots
 	public void drawSlots(Graphics g) {
@@ -66,6 +69,9 @@ public class Inventory extends Entity {
 	// handle mouse drag
 	public void handleDrag(MouseEvent e) {
 		
+		// stop hovering if start dragging
+		hoveringSlotIndex = -1;
+		
 		// if is already dragging, make sprite follow mouse
 		if (isDragging) {
 			dragItem.move(e);
@@ -73,7 +79,7 @@ public class Inventory extends Entity {
 		} // if
 		
 		// get which slot the player is dragging from
-		int slotIndex = checkIfMouseOverSlot(e);
+		int slotIndex = checkIfMouseOverSlot(e); // should this be declared at top of method?
 		
 		// if not dragging from inv slot, return
 		if (slotIndex < 0) { return; }
@@ -84,7 +90,7 @@ public class Inventory extends Entity {
 		// create dragItem to store drag info
 		dragItem.startDrag(slots[slotIndex]);
 		isDragging = true;
-	}
+	} // handleDrag
 
 	// returns the index of the slot the mouse event occurred at
 	private int checkIfMouseOverSlot(MouseEvent e) { // rename!!
@@ -120,5 +126,22 @@ public class Inventory extends Entity {
 		// swap items with other slot
 		dragItem.swap(slots[slotIndex]);
 	} // stopDrag
+	
+	public void handleHover(MouseEvent e) {
+		int slotIndex = checkIfMouseOverSlot(e);
+		
+		// check if mouse is over a slot
+		if (slotIndex < 0) {
+			if (hoveringSlotIndex >= 0) {
+				hoveringSlotIndex = -1;
+			} // if
+			return; 
+		} // if
+		hoveringSlotIndex = slotIndex;
+	} // handleHover
+	
+	public static int getHoveringSlotIndex() {
+		return hoveringSlotIndex;
+	} // getHoveringSlotIndex
 	
 } // Inventory

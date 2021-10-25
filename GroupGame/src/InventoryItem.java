@@ -6,12 +6,17 @@ public class InventoryItem {
 	// stores all items in game (like spriteStore)
 	private static HashMap<String, InventoryItem> itemLookUp = new HashMap<String, InventoryItem>();
 	
-	// stores sprite and id of item
+	// stores sprite and id of item (too obvious?)
 	private Sprite sprite;
 	private String itemID;
 	
+	private String name;
+	private String description;
+	
+	private Tooltip tooltip;
+	
 	// constructor
-	public InventoryItem(String r, String id) {
+	public InventoryItem(String id, String r, String n, String d) {
 		itemID = id;
 		
 		// if item is already in itemLookUp, use it
@@ -20,8 +25,12 @@ public class InventoryItem {
 			return;
 		} // if
 		
-		// set sprite of item
+		// set sprite of item, name, and description of item
 		sprite = (SpriteStore.get()).getSprite(r);
+		name = n;
+		description = d;
+		
+		tooltip = new Tooltip(name, description, 0, 0);
 		
 		// add item to itemLookUp
 		itemLookUp.put(id, this);
@@ -41,5 +50,9 @@ public class InventoryItem {
 	public Sprite getSprite() {
 		return sprite;
 	} // getSprite
+	
+	public Tooltip getTooltip() {
+		return tooltip;
+	}
 	
 } // InventoryItem

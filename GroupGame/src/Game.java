@@ -24,16 +24,37 @@ public class Game extends Canvas {
 	private boolean gameIsRunning = false;
 	
 	private static int[][] map = {
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 1, 1, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 1, 1, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 		};
 	
 	private static Tile[][] tileMap = new Tile[map.length][map[0].length]; // array or arrayList?
@@ -42,15 +63,15 @@ public class Game extends Canvas {
 	
 	private Player player;
 	private Inventory inv; // should this be in player?
-	
-	private Projectile p;
+	private static Tooltip tooltip;
 	
 	private boolean upPressed = false;
 	private boolean leftPressed = false;
 	private boolean downPressed = false;
 	private boolean rightPressed = false;
 	private boolean shotFired = false;
-	private boolean inventoryVisible = true;
+	private boolean inventoryVisible = false; // false bc otherwise hovering over inv creates nullPointer exceptions... 
+												// (a fix would be to add mouselistener after everything is initialized)
 	
 	private int horizontalDirection = 0; 	// stores direction for projectiles
 	private int verticalDirection = 1;		// values: -1, 0, 1 
@@ -70,9 +91,9 @@ public class Game extends Canvas {
 		JFrame frame = new JFrame("Game");
 		JPanel panel = new JPanel();
 		
-		setBounds(0, 0, camera.getWidth(), camera.getHeight());
+		setBounds(0, 0, Camera.getWidth(), Camera.getHeight());
 		
-		panel.setPreferredSize(new Dimension(camera.getWidth(), camera.getHeight()));
+		panel.setPreferredSize(new Dimension(Camera.getWidth(), Camera.getHeight()));
 		panel.setLayout(null);
 		panel.add(this);
 		
@@ -118,18 +139,15 @@ public class Game extends Canvas {
 			} // for
 		} // for
 		
-		player = new Player("images/char_sw.png", 0, 0, 0, 0);
+		player = new Player("images/char_sw.png", 17, 12, 0, 0);
 		inv = new Inventory(3); // size of inventory
+		tooltip = new Tooltip();
 		
 		entityArray.add(player);
 		for (Point p : player.getCorners()) {
 			System.out.println(p);
 		} // for
-		
-		p = spawnProjectile();
-		projectiles.add(p);
-		entityArray.add(p);
-	} // initEntities/this
+	} // initEntities
 	
 	private void gameLoop() {
 		long lastLoopTime = System.currentTimeMillis();
@@ -142,7 +160,7 @@ public class Game extends Canvas {
 			// draw graphics
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.gray);
-			g.fillRect(0, 0, camera.getWidth(), camera.getHeight());
+			g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
 			
 			camera.center(player);
 			
@@ -325,8 +343,8 @@ public class Game extends Canvas {
 			}
 			
 			if (e.getKeyCode() == KeyEvent.VK_I) {
-				System.out.println("Pressed: i " + inventoryVisible);
 				inventoryVisible = !inventoryVisible;
+				System.out.println("inventoryVisible: " + inventoryVisible);
 			} // if
 			
 		} // keyReleased
@@ -357,7 +375,11 @@ public class Game extends Canvas {
 		public void mouseMoved(MouseEvent e) {
 			//System.out.println("MOUSE_MOVED: " + " (" + e.getX() + "," + e.getY() + ")" + " detected on "
 					//+ e.getComponent().getClass().getName());
-		}
+			
+			if (!inventoryVisible) { return; }
+			inv.handleHover(e);
+		
+		} // mouseMoved
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -391,5 +413,8 @@ public class Game extends Canvas {
 		return tileMap;
 	}
 	
+	public static Tooltip getTooltip() {
+		return tooltip;
+	}
 	
 } // Game

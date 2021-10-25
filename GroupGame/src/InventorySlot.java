@@ -14,14 +14,14 @@ public class InventorySlot extends Entity {
 	// constructor
 	public InventorySlot(int x, int y, int i) {
 		index = i;
-		item = new InventoryItem("images/sprite" + index + ".png", "sprite" + index); // temp
+		item = new InventoryItem("sprite" + index, "images/sprite" + index + ".png", "sprite" + index, "this is a description"); // temp
 		
 		// set screen position of slot
 		this.x = (i) * (x - 200) + 200 + 10; // 200 = inv x & 10 is important regardless of positioning
 		this.y = y + 10; // change
 		updateSprite();
-		width = sprite.getWidth(); // temp
-		height = sprite.getHeight();
+		width = 80; // temp
+		height = 80;
 	} // InventorySlot
 	
 	// return slot width/length
@@ -70,12 +70,18 @@ public class InventorySlot extends Entity {
 		
 		// draw slot background
 		g.setColor(Color.cyan);
-		g.fillRect(xPos, yPos, 80, 80); // set dimensions looks nicer
+		g.fillRect(xPos, yPos, width, height); // set dimensions looks nicer
 		
 		// display item if there is one
 		if (sprite != null) {
 			item.getSprite().draw(g, xPos + ((80 - item.getSprite().getWidth()) / 2), yPos + (80 - item.getSprite().getHeight()) / 2); // needs to be changed so sprite is centered
 		} // if
+		
+		if (Inventory.getHoveringSlotIndex() == index) {
+			item.getTooltip().position((int) x, (int) y, width, height);
+			item.getTooltip().draw(g);
+		} // if
+		
 	} // draw
 	
 	// returns slot index

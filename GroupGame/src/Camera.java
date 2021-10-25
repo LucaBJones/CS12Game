@@ -6,8 +6,8 @@ public class Camera {
 	private int x;
 	private int y;
 
-	private int w; // camera width
-	private int h; // camera height
+	private static int w; // camera width
+	private static int h; // camera height
 
 	// constructors
 
@@ -18,12 +18,12 @@ public class Camera {
 		h = 750;
 	} // default constructor
 
-	public Camera(int x, int y, int w, int h) {
-		this.x = x;
-		this.y = y;
-		this.w = w;
-		this.h = h;
-	} // constructor
+//	public Camera(int x, int y, int w, int h) { // do we need this?
+//		this.x = x;
+//		this.y = y;
+//		this.w = w;
+//		this.h = h;
+//	} // constructor
 
 	// get methods
 
@@ -35,11 +35,11 @@ public class Camera {
 		return y;
 	} // getY
 
-	public int getWidth() {
+	public static int getWidth() {
 		return w;
 	} // getWidth
 
-	public int getHeight() {
+	public static int getHeight() {
 		return h;
 	} // getHeight
 
