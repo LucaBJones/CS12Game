@@ -6,6 +6,8 @@ public class Bar extends Entity {
 
 	private final int BAR_WIDTH = 100;
 	private final int BAR_HEIGHT = 10;
+	
+	private int yOffset = 20; // final?
 
 	private int currentValue;   // how much the bar is currently filled
 	private int maxValue;       // how much the bar is filled when full
@@ -69,29 +71,17 @@ public class Bar extends Entity {
 	} // draw
 	
 	public void drawInIso(Graphics g, Character c) {
-		
 		double percent = (double) currentValue / maxValue;
 		
-		Point isoPoint = toIso((int) x, (int) y);
+		// do these need to be variables?
+		int barPosX = c.getScreenPosX() - (BAR_WIDTH - c.sprite.getWidth()) / 2;
+		int barPosY = c.getScreenPosY() - yOffset;
 		
 		g.setColor(bgColor);
-		g.fillRect(isoPoint.x - Camera.getX(), isoPoint.y + TILE_LENGTH - c.sprite.getHeight() - Camera.getY(), BAR_WIDTH, BAR_HEIGHT);
-		
+		g.fillRect(barPosX, barPosY, BAR_WIDTH, BAR_HEIGHT);
+
 		g.setColor(fgColor);
-		g.fillRect(isoPoint.x - Camera.getX(), isoPoint.y + TILE_LENGTH - c.sprite.getHeight() - Camera.getY(), BAR_WIDTH, BAR_HEIGHT);
-		
-		
-		
-//		// draw bar background
-//		g.setColor(bgColor);
-//		g.fillRect((int) isoPoint.getX() - Camera.getX(), (int) isoPoint.getY() - charHeight - Camera.getY(), BAR_WIDTH, BAR_HEIGHT);
-//	
-//		// draw bar foreground
-//		g.setColor(fgColor);
-//		g.fillRect((int) isoPoint.getX() - Camera.getX(), (int) isoPoint.getY() - charHeight - Camera.getY(), (int) (BAR_WIDTH * percent), BAR_HEIGHT);
-//		
-////		g.fillRect(0, 0, 100, 100);
-		System.out.println("bar, x: " + isoPoint.getX() + ", y: " + isoPoint.getY());
+		g.fillRect(barPosX, barPosY, (int) (BAR_WIDTH * percent), BAR_HEIGHT);
 	}
 	
 

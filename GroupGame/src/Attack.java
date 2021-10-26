@@ -1,4 +1,3 @@
-import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -22,7 +21,7 @@ public class Attack extends Movable {
 		maxDistance = range;
 	} // Projectile
 	
-//	// updates position of projectile
+	// updates position of projectile
 	public void move(long delta) {
 		x += dx * delta / 1000;
 		y += dy * delta / 1000;
@@ -41,11 +40,7 @@ public class Attack extends Movable {
 		
 		
 	} // move
-	
-	// temp
-	public void draw(Graphics g) {
-		super.draw(g);
-	} // draw
+
 	
 	// check if attack collides with a character
 	// decrements hp of character that was collided with

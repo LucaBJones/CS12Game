@@ -10,6 +10,9 @@ public class Entity {
 	protected double x;
 	protected double y;
 	
+	protected int screenPosX;
+	protected int screenPosY;
+	
 	Sprite sprite; // may change later
 	protected Rectangle hitBox;
 	
@@ -19,6 +22,9 @@ public class Entity {
 		x = 0;
 		y = 0;
 		sprite = null; // how should this be initialized?
+		
+		screenPosX = 0;
+		screenPosY = 0;
 		
 		hitBox = new Rectangle((int) x, (int) y, TILE_LENGTH, TILE_LENGTH);
 	} // default constructor
@@ -48,12 +54,13 @@ public class Entity {
 	} // getCorners
 	
 	// draws the sprite to the screen relative to camera position
-	public void draw(Graphics g) {
-		int xPos = (int) x;
-		int yPos = (int) y;
+	public void draw(Graphics g) {	
+		Point isoPoint = toIso((int) x, (int) y);
 		
-		Point isoPoint = toIso(xPos, yPos);
-		sprite.draw(g, isoPoint.x - Camera.getX(), isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY());
+		screenPosX = isoPoint.x - Camera.getX();
+		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
+		
+		sprite.draw(g, screenPosX, screenPosY);
 	} // draw
 	
 	public void setSprite(String r) {
@@ -63,5 +70,13 @@ public class Entity {
 	public Rectangle getHitBox() {
 		return hitBox;
 	} // getHitBox
+	
+	public int getScreenPosX() {
+		return screenPosX;
+	}
+	
+	public int getScreenPosY() {
+		return screenPosY;
+	}
 	
 } // Entity
