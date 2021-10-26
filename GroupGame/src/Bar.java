@@ -35,6 +35,7 @@ public class Bar extends Entity {
 	// decrement currentValue
 	public void decrement(int num) {
 		currentValue = Math.max(0, currentValue - num);
+		System.out.println("current value: " + currentValue);
 	} // decrement
 
 	// increment currentValue

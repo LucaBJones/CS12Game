@@ -59,9 +59,10 @@ public class Game extends Canvas {
 	
 	private static Tile[][] tileMap = new Tile[map.length][map[0].length]; // array or arrayList?
 	private static ArrayList<Entity> entityArray = new ArrayList<Entity>();
-	private static ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+	private static ArrayList<Attack> attacks = new ArrayList<Attack>();
+	private static ArrayList<Character> characters = new ArrayList<Character>();
 	
-	private Player player;
+	private Character player;
 	private Inventory inv; // should this be in player?
 	private static Tooltip tooltip;
 	
@@ -70,15 +71,19 @@ public class Game extends Canvas {
 	private boolean downPressed = false;
 	private boolean rightPressed = false;
 	private boolean shotFired = false;
-	private boolean inventoryVisible = false; // false bc otherwise hovering over inv creates nullPointer exceptions... 
+	private boolean inventoryVisible = false; 	// false bc otherwise hovering over inv creates nullPointer exceptions... 
 												// (a fix would be to add mouselistener after everything is initialized)
+	private boolean melee = false;
 	
 	private int horizontalDirection = 0; 	// stores direction for projectiles
 	private int verticalDirection = 1;		// values: -1, 0, 1 
-	private int projectileSpeed = 200; 		// may want to change this later in the game as power up or something
+	private int projectileSpeed = 1000; 	// may want to change this later in the game as power up or something
 	
 	private long lastFire = 0; // time last shot fired
     private long firingInterval = 300; // interval between shots (ms)
+    
+    private long lastRegen = 0; // time stamina was last regenerated
+    private long regenInterval = 500; // interval between stamina regen
 	
 	private static int speed = 100;
 	
@@ -139,11 +144,16 @@ public class Game extends Canvas {
 			} // for
 		} // for
 		
-		player = new Player("images/char_sw.png", 17, 12, 0, 0);
+		player = new Character("images/char_sw.png", 17, 12, 0, 0);
+		Character enemy = new Character("images/char_sw.png", 18, 15, 0, 0);
+		entityArray.add(enemy);
+		characters.add(enemy);
+		
 		inv = new Inventory(3); // size of inventory
 		tooltip = new Tooltip();
 		
 		entityArray.add(player);
+		characters.add(player);
 		for (Point p : player.getCorners()) {
 			System.out.println(p);
 		} // for
@@ -173,24 +183,48 @@ public class Game extends Canvas {
 			} // if
 			
 			// moves projectiles 
-			for (Projectile p : projectiles) {
-				p.move(delta);
+			for (Attack a : attacks) {
+				a.move(delta);
 			} // for
 			
 			// clear graphics and flip buffer
 			g.dispose();
 			strategy.show();
 			
-			// movement
+			// range attack
 			handlePlayerMovement(delta);
 			
-			if (shotFired) {
-				Projectile p = spawnProjectile();
-				if(p != null) {
-					projectiles.add(p);
+			if (shotFired && !melee && player.getManaValue() > 0) {
+				Attack p = startAttack(1000);
+				if (p != null) {
+					attacks.add(p);
 					entityArray.add(p);
+					player.getMana().decrement(10);
 				} // if
 			} // if
+			
+			// melee attack
+			if (melee && !shotFired && player.getStaminaValue() > 10) {
+				Attack m = startAttack(100);
+				if (m != null) {
+					attacks.add(m);
+					entityArray.add(m);
+					player.getStamina().decrement(10);
+				} // if
+			} // if
+			
+			// check for collision with attacks
+			for (Attack a : attacks) {
+				if(a.collidesWith(characters)) {
+					removeEntity(a);
+				} // if
+			} // for
+			
+			// regenerate stamina
+			if ((System.currentTimeMillis() - lastRegen) > regenInterval) {
+				player.getStamina().increment(1);
+				lastRegen = System.currentTimeMillis();
+			}
 			
 		} // while
 	} // gameLoop
@@ -202,7 +236,7 @@ public class Game extends Canvas {
 		if (upPressed && !downPressed) {
 			
 			if (leftPressed && !rightPressed) {
-				player.setXVelocity(-1 * speed);
+				player.setXVelocity( -1 * speed);
 				player.setSprite("images/char_nw.png");
 				horizontalDirection = -1;
 				verticalDirection = 0;
@@ -227,8 +261,8 @@ public class Game extends Canvas {
 				horizontalDirection = 0;
 				verticalDirection = 1;
 			} else {
-				player.setXVelocity(-1 * speed);
-				player.setYVelocity(speed);
+				player.setXVelocity((int)(-1 * speed * 0.7));
+				player.setYVelocity((int)(speed * 0.7));
 				player.setSprite("images/char_w.png");
 				horizontalDirection = -1;
 				verticalDirection = 1;
@@ -249,8 +283,8 @@ public class Game extends Canvas {
 			} // else
 			
 		} else if (rightPressed && !leftPressed) {
-			player.setXVelocity(speed);
-			player.setYVelocity(-1 * speed);
+			player.setXVelocity((int)(speed * 0.7));
+			player.setYVelocity((int)(-1 * speed * 0.7));
 			player.setSprite("images/char_e.png");
 			horizontalDirection = 1;
 			verticalDirection = -1;
@@ -260,14 +294,14 @@ public class Game extends Canvas {
 	} // handlePlayerMovement
 	
 	// 
-	private Projectile spawnProjectile() { 
+	private Attack startAttack(int range) { 
 		// check that we've waited long enough to fire
         if ((System.currentTimeMillis() - lastFire) < firingInterval){
           return null;
         } // if
         lastFire = System.currentTimeMillis();
 		System.out.println("spawn projectile");//
-		return new Projectile("images/sprite1.png", (int) player.getX(), (int) player.getY(), horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed);
+		return new Attack("images/sprite1.png", (int) player.getX(), (int) player.getY(), horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range);
 	} // spawnProjectile
 	
 	
@@ -305,13 +339,17 @@ public class Game extends Canvas {
 				//System.out.println("Pressed: space");
 			} // if
 			
-			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { // should we have this?
 				System.exit(0);
 			} // if
 			
-//			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-//				player.().decrement(10);
-//			}
+			if (e.getKeyCode() == KeyEvent.VK_Z) {
+				melee = true;
+			} // if
+			
+			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+				player.getHp().decrement(10);
+			}
 
 		} // keyPressed
 
@@ -341,6 +379,10 @@ public class Game extends Canvas {
 				shotFired = false;
 				//System.out.println("Released: space");
 			}
+			
+			if (e.getKeyCode() == KeyEvent.VK_Z) {
+				melee = false;
+			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_I) {
 				inventoryVisible = !inventoryVisible;
