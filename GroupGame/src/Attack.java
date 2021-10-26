@@ -43,8 +43,8 @@ public class Attack extends Movable {
 	} // move
 	
 	// temp
-	public void draw(Graphics g, Camera c) {
-		super.draw(g,c);
+	public void draw(Graphics g) {
+		super.draw(g);
 	} // draw
 	
 	// check if attack collides with a character

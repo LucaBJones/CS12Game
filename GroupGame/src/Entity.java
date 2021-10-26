@@ -4,9 +4,7 @@ import java.awt.Rectangle;
 
 public class Entity {
 	
-	protected static final int TILE_LENGTH = 60; // should this be static?
-	protected static final int X_OFFSET = 200;
-	protected static final int Y_OFFSET = 250;
+	protected static final int TILE_LENGTH = 60;
 	
 	// position of the top left corner of the tile that the sprite is "in"
 	protected double x;
@@ -50,21 +48,12 @@ public class Entity {
 	} // getCorners
 	
 	// draws the sprite to the screen relative to camera position
-	public void draw(Graphics g, Camera c) {
-		int xPos = (int) x;
-		int yPos = (int) y;
-		
-		Point isoPoint = toIso(xPos, yPos);
-		sprite.draw(g, isoPoint.x - c.getX(), isoPoint.y + TILE_LENGTH - sprite.getHeight() - c.getY());
-	} // draw
-	
-	// draws the sprite to the screen
 	public void draw(Graphics g) {
 		int xPos = (int) x;
 		int yPos = (int) y;
 		
 		Point isoPoint = toIso(xPos, yPos);
-		sprite.draw(g, isoPoint.x + X_OFFSET, isoPoint.y + TILE_LENGTH - sprite.getHeight() + Y_OFFSET);
+		sprite.draw(g, isoPoint.x - Camera.getX(), isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY());
 	} // draw
 	
 	public void setSprite(String r) {

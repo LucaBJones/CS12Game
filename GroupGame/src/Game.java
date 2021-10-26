@@ -17,8 +17,6 @@ import javax.swing.SwingUtilities;
 
 public class Game extends Canvas {
 	
-	private Camera camera = new Camera();
-	
 	private BufferStrategy strategy;
 
 	private boolean gameIsRunning = false;
@@ -144,8 +142,8 @@ public class Game extends Canvas {
 			} // for
 		} // for
 		
-		player = new Character("images/char_sw.png", 17, 12, 0, 0);
-		Character enemy = new Character("images/char_sw.png", 18, 15, 0, 0);
+		player = new Character("images/char_sw.png", 17, 12, 0, 0, true);
+		Character enemy = new Character("images/char_sw.png", 18, 15, 0, 0, false);
 		entityArray.add(enemy);
 		characters.add(enemy);
 		
@@ -172,10 +170,10 @@ public class Game extends Canvas {
 			g.setColor(Color.gray);
 			g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
 			
-			camera.center(player);
+			Camera.center(player);
 			
 			for (Entity e : entityArray) {
-				e.draw(g, camera);
+				e.draw(g);
 			} // for
 			
 			if (inventoryVisible) {
@@ -224,7 +222,7 @@ public class Game extends Canvas {
 			if ((System.currentTimeMillis() - lastRegen) > regenInterval) {
 				player.getStamina().increment(1);
 				lastRegen = System.currentTimeMillis();
-			}
+			} // if
 			
 		} // while
 	} // gameLoop

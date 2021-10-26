@@ -47,19 +47,52 @@ public class Bar extends Entity {
 	public int getValue() {
 		return currentValue;
 	} // getValue
+	
+	public void updatePosition(int xPos, int yPos) {
+		x = xPos;
+		y = yPos;
+	}
 
 	// draw the bar (too obvious?) 
 	@Override
 	public void draw(Graphics g) {
 		double percent = (double) currentValue / maxValue;
-
+		
 		// draw bar background
 		g.setColor(bgColor);
 		g.fillRect((int) x, (int) y, BAR_WIDTH, BAR_HEIGHT);
-
+	
 		// draw bar foreground
 		g.setColor(fgColor);
 		g.fillRect((int) x, (int) y, (int) (BAR_WIDTH * percent), BAR_HEIGHT);
+		
 	} // draw
+	
+	public void drawInIso(Graphics g, Character c) {
+		
+		double percent = (double) currentValue / maxValue;
+		
+		Point isoPoint = toIso((int) x, (int) y);
+		
+		g.setColor(bgColor);
+		g.fillRect(isoPoint.x - Camera.getX(), isoPoint.y + TILE_LENGTH - c.sprite.getHeight() - Camera.getY(), BAR_WIDTH, BAR_HEIGHT);
+		
+		g.setColor(fgColor);
+		g.fillRect(isoPoint.x - Camera.getX(), isoPoint.y + TILE_LENGTH - c.sprite.getHeight() - Camera.getY(), BAR_WIDTH, BAR_HEIGHT);
+		
+		
+		
+//		// draw bar background
+//		g.setColor(bgColor);
+//		g.fillRect((int) isoPoint.getX() - Camera.getX(), (int) isoPoint.getY() - charHeight - Camera.getY(), BAR_WIDTH, BAR_HEIGHT);
+//	
+//		// draw bar foreground
+//		g.setColor(fgColor);
+//		g.fillRect((int) isoPoint.getX() - Camera.getX(), (int) isoPoint.getY() - charHeight - Camera.getY(), (int) (BAR_WIDTH * percent), BAR_HEIGHT);
+//		
+////		g.fillRect(0, 0, 100, 100);
+		System.out.println("bar, x: " + isoPoint.getX() + ", y: " + isoPoint.getY());
+	}
+	
 
 } // Bar

@@ -7,17 +7,38 @@ public class Character extends Movable {
 	private Bar hp;
 	private Bar stamina;
 	private Bar mana;
+	
+	private boolean isPlayer;
 
 	// constructor
-	public Character(String r, int xPos, int yPos, int dx, int dy) {
+	public Character(String r, int xPos, int yPos, int dx, int dy, boolean isPlayer) {
 		super(r, xPos, yPos, dx, dy); // double or int for speed?
 
+		this.isPlayer = isPlayer;
+		
 		// set up status bars
-		hp = new Bar(10, 10, 100, Color.DARK_GRAY, Color.RED);
-		stamina = new Bar(10, 30, 100, Color.DARK_GRAY, Color.GREEN);
-		mana = new Bar(10, 50, 100, Color.DARK_GRAY, Color.BLUE);
+		if (isPlayer) {
+			hp = new Bar(10, 10, 100, Color.DARK_GRAY, Color.RED);
+			stamina = new Bar(10, 30, 100, Color.DARK_GRAY, Color.GREEN);
+			mana = new Bar(10, 50, 100, Color.DARK_GRAY, Color.BLUE);
+		} else {
+			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, Color.DARK_GRAY, Color.RED);
+			stamina = null;
+			mana = null;
+		} // else
+		
 
 	} // Player
+	
+	@Override
+	public void move(long delta) {
+		super.move(delta);
+		
+		if (!isPlayer) {
+			hp.updatePosition((int) x, (int) y - sprite.getHeight() - 20);
+			System.out.println("hp bar of non-player");
+		} // if
+	} // move
 
 	public Bar getHp() {
 		return hp;
@@ -61,11 +82,17 @@ public class Character extends Movable {
 
 	// draw the player with its health, stamina, and mana bars
 	@Override
-	public void draw(Graphics g, Camera c) {
-		super.draw(g, c);
-		hp.draw(g);
-		stamina.draw(g);
-		mana.draw(g);
+	public void draw(Graphics g) {
+		super.draw(g);
+		if (isPlayer) {
+			hp.draw(g);
+			stamina.draw(g);
+			mana.draw(g);
+		} else {
+			hp.drawInIso(g, this);
+		} // else
+		
+		
 	} // draw
 
 } // Player
