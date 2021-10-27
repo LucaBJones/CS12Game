@@ -83,7 +83,7 @@ public class Game extends Canvas {
     private long lastRegen = 0; // time stamina was last regenerated
     private long regenInterval = 500; // interval between stamina regen
 	
-	private static int speed = 100;
+	private static int speed = 300;
 	
 	public static void main(String[] args) {
 		new Game();
@@ -293,13 +293,25 @@ public class Game extends Canvas {
 	
 	// 
 	private Attack startAttack(int range) { 
+		int xSpawn = 0;				// just to make things
+		int ySpawn = 0;				// nice and not messy
+		double diagonal = 0;		// used to make diagonal shots come from the same place
+		final int INIT_DIST = 30;	// distance from player at spawn
+		
 		// check that we've waited long enough to fire
         if ((System.currentTimeMillis() - lastFire) < firingInterval){
           return null;
         } // if
         lastFire = System.currentTimeMillis();
 		System.out.println("spawn projectile");//
-		return new Attack("images/sprite1.png", (int) player.getX(), (int) player.getY(), horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range);
+		
+		diagonal = Math.pow(Math.pow(horizontalDirection, 2) + Math.pow(verticalDirection, 2), -0.5);
+		xSpawn = (int) (player.getX() + INIT_DIST * horizontalDirection *  diagonal);
+		ySpawn = (int) (player.getY() - 30 + INIT_DIST * verticalDirection * diagonal);		
+		
+		return new Attack("images/sprite1.png", xSpawn, ySpawn, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range);
+
+		//return new Attack("images/sprite1.png", (int) player.getX() + 60 * horizontalDirection, (int) player.getY() + 60 * verticalDirection, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range);
 	} // spawnProjectile
 	
 	
@@ -347,6 +359,7 @@ public class Game extends Canvas {
 			
 			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 				player.getHp().decrement(10);
+				player.getMana().increment(100);
 			}
 
 		} // keyPressed
@@ -458,3 +471,4 @@ public class Game extends Canvas {
 	}
 	
 } // Game
+
