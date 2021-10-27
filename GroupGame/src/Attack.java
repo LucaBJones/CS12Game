@@ -1,3 +1,5 @@
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -38,20 +40,33 @@ public class Attack extends Movable {
 			Game.removeEntity(this);
 		} // if
 		
+		hitBox.setLocation((int) x, (int) y);
 		
 	} // move
 
 	
 	// check if attack collides with a character
 	// decrements hp of character that was collided with
-	public boolean collidesWith(ArrayList<Character> characters){
+	public boolean collidesWith(ArrayList<Character> characters, Graphics g){
+		System.out.println("collides with");
 		for (Character c : characters) {
+			g.setColor(Color.YELLOW);
+			
+			Point R = c.toIso((int)x, (int)y);
+			
+			
+			g.fillRect((int) c.getX(), (int) c.getY(), 60,60);
+			g.fillRect((int) R.getX() - Camera.getX(), (int) R.getY() - Camera.getY(), 60,60);
+			
+			System.out.println(R);
+			
+			System.out.println(hitBox + " " + c.getHitBox());
 			if (hitBox.intersects(c.getHitBox())) {
 				c.getHp().decrement(10);
+				System.out.println("intersects");
 				return true;
 			} // if
 		} // for
-		
 		return false;
 	} // collidesWith
 }

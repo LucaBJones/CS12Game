@@ -36,9 +36,9 @@ public class Game extends Canvas {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
         	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
         	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
         	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
+        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
         	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
         	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
         	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -63,6 +63,8 @@ public class Game extends Canvas {
 	private Character player;
 	private Inventory inv; // should this be in player?
 	private static Tooltip tooltip;
+	
+	private Animation anim; // temp
 	
 	private boolean upPressed = false;
 	private boolean leftPressed = false;
@@ -155,6 +157,13 @@ public class Game extends Canvas {
 		for (Point p : player.getCorners()) {
 			System.out.println(p);
 		} // for
+		
+		
+		// temp
+		anim = new Animation();
+		anim.start();
+		
+		
 	} // initEntities
 	
 	private void gameLoop() {
@@ -172,7 +181,12 @@ public class Game extends Canvas {
 			
 			Camera.center(player);
 			
-			for (Entity e : entityArray) {
+			ArrayList<Entity> tempEntities = (ArrayList<Entity>) entityArray.clone();
+			ArrayList<Character> tempChars = (ArrayList<Character>) characters.clone();
+
+			ArrayList<Attack> tempAttacks = (ArrayList<Attack>) attacks.clone();
+			
+			for (Entity e : tempEntities) {
 				e.draw(g);
 			} // for
 			
@@ -180,14 +194,18 @@ public class Game extends Canvas {
 				inv.draw(g);
 			} // if
 			
-			// moves projectiles 
-			for (Attack a : attacks) {
-				a.move(delta);
-			} // for
+			anim.update(delta);
+			anim.draw(g);
+			
 			
 			// clear graphics and flip buffer
 			g.dispose();
 			strategy.show();
+			
+			// moves projectiles 
+			for (Attack a : tempAttacks) {
+				a.move(delta);
+			} // for
 			
 			// range attack
 			handlePlayerMovement(delta);
@@ -211,10 +229,22 @@ public class Game extends Canvas {
 				} // if
 			} // if
 			
+			
+			
 			// check for collision with attacks
-			for (Attack a : attacks) {
-				if(a.collidesWith(characters)) {
+			for (Attack a : tempAttacks) {
+				if(a.collidesWith(characters, g)) {
 					removeEntity(a);
+					System.out.println("remove attack");
+				} // if
+				//System.out.println(a);
+				//System.out.println(characters);
+			} // for
+			
+			// delete characters if their hp is empty
+			for (Character c : characters) {
+				if (c.getHp().getValue() <= 0) {
+					removeEntity(c);
 				} // if
 			} // for
 			
@@ -317,6 +347,11 @@ public class Game extends Canvas {
 	
 	public static void removeEntity(Entity e) {
 		entityArray.remove(e);
+		if (e instanceof Attack) {
+			attacks.remove(e);
+		} else if (e instanceof Character) {
+			characters.remove(e);
+		} // else if
 	} // removeEntity
 	
 	// handles keyboard input from the user

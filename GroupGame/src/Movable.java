@@ -36,6 +36,9 @@ public class Movable extends Entity {
 			y -= dy * delta / 1000;
 		} // if
 		
+		// moves hitBox with the movable
+		hitBox.setLocation((int)x, (int)y);
+		
 	} // move
 	
 	// returns true if any of the points are inside of an obstacle

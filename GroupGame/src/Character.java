@@ -41,6 +41,7 @@ public class Character extends Movable {
 	} // move
 
 	public Bar getHp() {
+		System.out.println("get hp");
 		return hp;
 	}
 	

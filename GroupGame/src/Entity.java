@@ -32,8 +32,9 @@ public class Entity {
 	public Entity(String r, int xTile, int yTile) {
 		x = xTile * TILE_LENGTH;
 		y = yTile * TILE_LENGTH;
+		
 		sprite = (SpriteStore.get()).getSprite(r);
-		hitBox = new Rectangle((int) x, (int) y, TILE_LENGTH, TILE_LENGTH);
+		hitBox = new Rectangle((int) x, (int) y - sprite.getHeight(), TILE_LENGTH, TILE_LENGTH);
 	} // constructor
 	
 	// convert cartesian to isometric
