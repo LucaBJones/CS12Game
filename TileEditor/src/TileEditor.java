@@ -11,6 +11,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -190,6 +191,10 @@ public class TileEditor extends Canvas {
 				setAllTiles();
 			}
 			
+			if (e.getKeyCode() == KeyEvent.VK_S) { // doesn't work yet
+				save();
+			}
+			
 			if (e.getKeyCode() == KeyEvent.VK_Q) {
 				settingColumns = !settingColumns;
 				settingRows = false; // should this be here? could be cross-shaped
@@ -340,15 +345,50 @@ public class TileEditor extends Canvas {
 	public int getYOffset() {
 		return yOffset;
 	}
-
-	private void save() {
-//		BufferedWriter bw = new BufferedWriter(new OutputStream());
+	
+	public void save() {
+		int[][] tempMap = new int[rows][columns];
+		
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				tempMap[i][j] = tiles.get(i * columns + j).getSpriteNum();
+			} // for
+		} // for
+		
+		writeArrayToFile("map1.txt", tempMap);
 	}
 	
-	private void load() {
-		String fileName = "maps/map.txt"; // temp
-		InputStream input = TileEditor.class.getClassLoader().getResourceAsStream(fileName);
-		BufferedReader in = new BufferedReader(new InputStreamReader(input));
-	}
+	 // writes the array a to fileName, one array element per line in the file
+    public void writeArrayToFile(String fileName, int[][] a) {
+    	try {
+ 
+    		// output file pointer
+    		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+           
+			for (int i = 0; i < rows; i++) {
+				out.write("{");
+				for (int j = 0; j < columns; j++) {
+					out.write("" + a[i][j]);
+					if (j < columns - 1) {
+						out.write(", ");
+					} // if
+				} // for
+				out.write("},");
+				out.newLine();
+			} // for
+ 
+           out.close();
+ 
+       } catch (Exception e) {
+           System.out.println("File Output Error: " + e);
+       } // catch
+ 
+    } // writeArrayToFile
+	
+//	private void load() { // not done implementing
+//		String fileName = "maps/map.txt"; // temp
+//		InputStream input = TileEditor.class.getClassLoader().getResourceAsStream(fileName);
+//		BufferedReader in = new BufferedReader(new InputStreamReader(input));
+//	}
 	
 } // Game

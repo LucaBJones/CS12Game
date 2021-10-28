@@ -10,6 +10,8 @@ public class Tile {
 	protected double x;
 	protected double y;
 	
+	private int currentSpriteNum;
+	
 	TileEditor game;
 	
 	Sprite sprite;
@@ -59,8 +61,13 @@ public class Tile {
 	
 	public void setSprite(int n) {
 		sprite = (SpriteStore.get()).getSprite("images/tile" + n + ".png");
+		currentSpriteNum = n;
 		hasSprite = true;
 		System.out.println("set sprite");
+	}
+	
+	public int getSpriteNum() {
+		return currentSpriteNum;
 	}
 	
 } // Tile
