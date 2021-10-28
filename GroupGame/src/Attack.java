@@ -7,6 +7,7 @@ public class Attack extends Movable {
 	
 	private double totalDistTravelled;
 	private int maxDistance;
+	private Character shooter;
 	
 	// constructor
 	public Attack() {
@@ -15,12 +16,13 @@ public class Attack extends Movable {
 	} // Projectile
 	
 	// constructor
-	public Attack(String r, int xPos, int yPos, int dx, int dy, int range) {
+	public Attack(String r, int xPos, int yPos, int dx, int dy, int range, Character shooter) {
 		super(r, xPos, yPos, dx, dy);
 		x /= TILE_LENGTH;
 		y /= TILE_LENGTH;
 		totalDistTravelled = 0;
 		maxDistance = range;
+		this.shooter = shooter;
 	} // Projectile
 	
 	// updates position of projectile
@@ -50,22 +52,13 @@ public class Attack extends Movable {
 	public boolean collidesWith(ArrayList<Character> characters, Graphics g){
 		System.out.println("collides with");
 		for (Character c : characters) {
-			g.setColor(Color.YELLOW);
 			
-			Point R = c.toIso((int)x, (int)y);
-			
-			
-			g.fillRect((int) c.getX(), (int) c.getY(), 60,60);
-			g.fillRect((int) R.getX() - Camera.getX(), (int) R.getY() - Camera.getY(), 60,60);
-			
-			System.out.println(R);
-			
-			System.out.println(hitBox + " " + c.getHitBox());
-			if (hitBox.intersects(c.getHitBox())) {
+			if (hitBox.intersects(c.getHitBox()) && !c.equals(shooter)) {
 				c.getHp().decrement(10);
 				System.out.println("intersects");
 				return true;
 			} // if
+			
 		} // for
 		return false;
 	} // collidesWith

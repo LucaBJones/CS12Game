@@ -13,15 +13,19 @@ public class Entity {
 	protected int screenPosX;
 	protected int screenPosY;
 	
-	Sprite sprite; // may change later
-	protected Rectangle hitBox;
 	
-	// constructors
+	Sprite sprite; // may change later, should it be private?
+	protected Rectangle hitBox;
+	private String spriteName;
+	
+	protected Animation animation;
+	
 	
 	public Entity() {
 		x = 0;
 		y = 0;
 		sprite = null; // how should this be initialized?
+		animation = null;
 		
 		screenPosX = 0;
 		screenPosY = 0;
@@ -30,11 +34,12 @@ public class Entity {
 	} // default constructor
 	
 	public Entity(String r, int xTile, int yTile) {
-		x = xTile * TILE_LENGTH;
-		y = yTile * TILE_LENGTH;
+		x = xTile; // * TILE_LENGTH
+		y = yTile; // " "
 		
+		spriteName = r;
 		sprite = (SpriteStore.get()).getSprite(r);
-		hitBox = new Rectangle((int) x, (int) y - sprite.getHeight(), TILE_LENGTH, TILE_LENGTH);
+		hitBox = new Rectangle((int) x, (int) y, TILE_LENGTH, TILE_LENGTH);
 	} // constructor
 	
 	// convert cartesian to isometric
@@ -62,11 +67,24 @@ public class Entity {
 		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
 		
 		sprite.draw(g, screenPosX, screenPosY);
+		
+		if (animation != null) {
+			animation.draw(g, screenPosX, screenPosY);
+		}
+		
+		if (this instanceof Attack) {
+			System.out.println(spriteName + " " + screenPosX + " " + screenPosY + " " + sprite.getWidth() + " " + sprite.getHeight() + "---------------------------------------------------------------------------------------------------------------------");
+			hitBox = new Rectangle(screenPosX, screenPosY, sprite.getWidth(), sprite.getHeight());
+		} // if
 	} // draw
 	
 	public void setSprite(String r) {
 		sprite = (SpriteStore.get()).getSprite(r);
 	} // setSprite
+	
+	public void setAnimation(Animation anim) { // temp
+		animation = anim;
+	}
 	
 	public Rectangle getHitBox() {
 		return hitBox;

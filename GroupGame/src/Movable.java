@@ -37,7 +37,7 @@ public class Movable extends Entity {
 		} // if
 		
 		// moves hitBox with the movable
-		hitBox.setLocation((int)x, (int)y);
+		//hitBox.setLocation((int)x, (int)y- sprite.getHeight());
 		
 	} // move
 	

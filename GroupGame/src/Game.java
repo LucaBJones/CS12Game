@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+
 public class Game extends Canvas {
 	
 	private BufferStrategy strategy;
@@ -22,37 +23,18 @@ public class Game extends Canvas {
 	private boolean gameIsRunning = false;
 	
 	private static int[][] map = {
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+        	{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 		};
 	
 	private static Tile[][] tileMap = new Tile[map.length][map[0].length]; // array or arrayList?
@@ -64,18 +46,16 @@ public class Game extends Canvas {
 	private Inventory inv; // should this be in player?
 	private static Tooltip tooltip;
 	
-	private Animation anim; // temp
-	
 	private boolean upPressed = false;
 	private boolean leftPressed = false;
 	private boolean downPressed = false;
 	private boolean rightPressed = false;
 	private boolean shotFired = false;
 	private boolean inventoryVisible = false; 	// false bc otherwise hovering over inv creates nullPointer exceptions... 
-												// (a fix would be to add mouselistener after everything is initialized)
+												// (a fix would be to add the mouselistener after everything is initialized)
 	private boolean melee = false;
 	
-	private int horizontalDirection = 0; 	// stores direction for projectiles
+	private int horizontalDirection = 0; 	// stores direction for projectiles // we could use the direction enum for this
 	private int verticalDirection = 1;		// values: -1, 0, 1 
 	private int projectileSpeed = 1000; 	// may want to change this later in the game as power up or something
 	
@@ -139,13 +119,13 @@ public class Game extends Canvas {
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
 				boolean b = (map[i][j] > 1);
-				tileMap[i][j] = new Tile("images/tile" + map[i][j] + ".png", j, i, b);
+				tileMap[i][j] = new Tile("images/tile" + map[i][j] + ".png", 60 * j, 60 *i, b);
 				entityArray.add(tileMap[i][j]);
 			} // for
 		} // for
 		
-		player = new Character("images/char_sw.png", 17, 12, 0, 0, true);
-		Character enemy = new Character("images/char_sw.png", 18, 15, 0, 0, false);
+		player = new Character("images/char_sw.png", 0, 0, 0, 0, true);
+		Character enemy = new Character("images/char_sw.png", 120, 120, 0, 0, false);
 		entityArray.add(enemy);
 		characters.add(enemy);
 		
@@ -160,8 +140,8 @@ public class Game extends Canvas {
 		
 		
 		// temp
-		anim = new Animation();
-		anim.start();
+//		anim = new Animation("walk_s");
+//		anim.start();
 		
 		
 	} // initEntities
@@ -188,14 +168,19 @@ public class Game extends Canvas {
 			
 			for (Entity e : tempEntities) {
 				e.draw(g);
+				
 			} // for
 			
 			if (inventoryVisible) {
 				inv.draw(g);
 			} // if
 			
-			anim.update(delta);
-			anim.draw(g);
+			
+			// temp
+			if (player.animation != null) {
+				player.animation.update(delta);
+			}
+			
 			
 			
 			// clear graphics and flip buffer
@@ -207,11 +192,12 @@ public class Game extends Canvas {
 				a.move(delta);
 			} // for
 			
-			// range attack
+			// move the player
 			handlePlayerMovement(delta);
 			
+			// range attack
 			if (shotFired && !melee && player.getManaValue() > 0) {
-				Attack p = startAttack(1000);
+				Attack p = startAttack(1000, player);
 				if (p != null) {
 					attacks.add(p);
 					entityArray.add(p);
@@ -221,15 +207,13 @@ public class Game extends Canvas {
 			
 			// melee attack
 			if (melee && !shotFired && player.getStaminaValue() > 10) {
-				Attack m = startAttack(100);
+				Attack m = startAttack(100, player);
 				if (m != null) {
 					attacks.add(m);
 					entityArray.add(m);
 					player.getStamina().decrement(10);
 				} // if
 			} // if
-			
-			
 			
 			// check for collision with attacks
 			for (Attack a : tempAttacks) {
@@ -243,6 +227,10 @@ public class Game extends Canvas {
 			
 			// delete characters if their hp is empty
 			for (Character c : characters) {
+				g.setColor(Color.YELLOW);
+				
+				g.fillRect(0,0, 1000, 1000);
+				
 				if (c.getHp().getValue() <= 0) {
 					removeEntity(c);
 				} // if
@@ -254,7 +242,13 @@ public class Game extends Canvas {
 				lastRegen = System.currentTimeMillis();
 			} // if
 			
+			g.setColor(Color.BLACK);
+			g.fillRect(50, 50, 10, 10);
+			
+			
 		} // while
+		
+		
 	} // gameLoop
 
 	private void handlePlayerMovement(long delta) {
@@ -268,6 +262,7 @@ public class Game extends Canvas {
 				player.setSprite("images/char_nw.png");
 				horizontalDirection = -1;
 				verticalDirection = 0;
+			
 			} else if (rightPressed && !leftPressed) {
 				player.setYVelocity(-1 * speed);
 				player.setSprite("images/char_ne.png");
@@ -302,12 +297,16 @@ public class Game extends Canvas {
 				player.setSprite("images/char_se.png");
 				horizontalDirection = 1;
 				verticalDirection = 0;
+				
+				player.setDirection(Direction.SE);
 			} else {
 				player.setXVelocity(speed);
 				player.setYVelocity(speed);
 				player.setSprite("images/char_s.png");
 				horizontalDirection = 1;
 				verticalDirection = 1;
+				
+				player.setDirection(Direction.S);
 			} // else
 			
 		} else if (rightPressed && !leftPressed) {
@@ -318,11 +317,14 @@ public class Game extends Canvas {
 			verticalDirection = -1;
 		} // else if
 		
+
+		player.setWalkAnimation();
+		player.animation.start();
 		player.move(delta);
 	} // handlePlayerMovement
 	
 	// 
-	private Attack startAttack(int range) { 
+	private Attack startAttack(int range, Character shooter) { 
 		int xSpawn = 0;				// just to make things
 		int ySpawn = 0;				// nice and not messy
 		double diagonal = 0;		// used to make diagonal shots come from the same place
@@ -339,9 +341,8 @@ public class Game extends Canvas {
 		xSpawn = (int) (player.getX() + INIT_DIST * horizontalDirection *  diagonal);
 		ySpawn = (int) (player.getY() - 30 + INIT_DIST * verticalDirection * diagonal);		
 		
-		return new Attack("images/sprite1.png", xSpawn, ySpawn, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range);
+		return new Attack("images/sprite1.png", xSpawn * 60, ySpawn * 60, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range, shooter);
 
-		//return new Attack("images/sprite1.png", (int) player.getX() + 60 * horizontalDirection, (int) player.getY() + 60 * verticalDirection, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range);
 	} // spawnProjectile
 	
 	

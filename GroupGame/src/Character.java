@@ -9,7 +9,12 @@ public class Character extends Movable {
 	private Bar mana;
 	
 	private boolean isPlayer;
+	
+	private Animation walk_s = new Animation("walk_s"); // temp
+	private Animation walk_se = new Animation("walk_se"); // temp
 
+	private Direction direction; // temp
+	
 	// constructor
 	public Character(String r, int xPos, int yPos, int dx, int dy, boolean isPlayer) {
 		super(r, xPos, yPos, dx, dy); // double or int for speed?
@@ -27,7 +32,8 @@ public class Character extends Movable {
 			mana = null;
 		} // else
 		
-
+		animation = walk_s; // temp
+		direction = Direction.S; // temp
 	} // Player
 	
 	@Override
@@ -41,7 +47,6 @@ public class Character extends Movable {
 	} // move
 
 	public Bar getHp() {
-		System.out.println("get hp");
 		return hp;
 	}
 	
@@ -81,6 +86,24 @@ public class Character extends Movable {
 		return dy;
 	} // getYVelocity
 
+	
+	public void setWalkAnimation() { // temp
+		switch (direction) {
+			case S: 
+				animation = walk_s;
+				break;
+			case SE:
+				animation = walk_se;
+				break;
+			default:
+				//System.out.println("unimplemented animation");
+		}
+	}
+	
+	public void setDirection(Direction d) { // move to character?
+		direction = d;
+	}
+	
 	// draw the player with its health, stamina, and mana bars
 	@Override
 	public void draw(Graphics g) {
