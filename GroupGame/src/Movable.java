@@ -7,7 +7,7 @@ public class Movable extends Entity {
 	protected double dx;
 	protected double dy;
 	
-	// constructors
+	protected Direction direction; 
 	
 	public Movable() {
 		super();
@@ -37,7 +37,7 @@ public class Movable extends Entity {
 		} // if
 		
 		// moves hitBox with the movable
-		//hitBox.setLocation((int)x, (int)y- sprite.getHeight());
+		hitBox.setLocation((int)x, (int)y- sprite.getHeight());
 		
 	} // move
 	
@@ -81,5 +81,17 @@ public class Movable extends Entity {
 	public void setYVelocity(int ySpeed) {
 		dy = ySpeed;
 	} // setYVelocity
+	
+	public double getXVelocity() {
+		return dx;
+	} // getXVelocity
+	
+	public double getYVelocity() {
+		return dy;
+	} // getYVelocity
+	
+	public void setDirection(Direction d) {
+		direction = d;
+	} // setDirection
 	
 } // Movable

@@ -16,7 +16,6 @@ public class Entity {
 	
 	Sprite sprite; // may change later, should it be private?
 	protected Rectangle hitBox;
-	private String spriteName;
 	
 	protected Animation animation;
 	
@@ -37,7 +36,6 @@ public class Entity {
 		x = xTile; // * TILE_LENGTH
 		y = yTile; // " "
 		
-		spriteName = r;
 		sprite = (SpriteStore.get()).getSprite(r);
 		hitBox = new Rectangle((int) x, (int) y, TILE_LENGTH, TILE_LENGTH);
 	} // constructor
@@ -71,11 +69,7 @@ public class Entity {
 		if (animation != null) {
 			animation.draw(g, screenPosX, screenPosY);
 		}
-		
-		if (this instanceof Attack) {
-			System.out.println(spriteName + " " + screenPosX + " " + screenPosY + " " + sprite.getWidth() + " " + sprite.getHeight() + "---------------------------------------------------------------------------------------------------------------------");
-			hitBox = new Rectangle(screenPosX, screenPosY, sprite.getWidth(), sprite.getHeight());
-		} // if
+
 	} // draw
 	
 	public void setSprite(String r) {
@@ -97,5 +91,13 @@ public class Entity {
 	public int getScreenPosY() {
 		return screenPosY;
 	}
+	
+	public double getX() {
+		return x;
+	} // getX
+
+	public double getY() {
+		return y;
+	} // getY
 	
 } // Entity

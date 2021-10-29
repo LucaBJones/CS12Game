@@ -196,7 +196,7 @@ public class Game extends Canvas {
 			handlePlayerMovement(delta);
 			
 			// range attack
-			if (shotFired && !melee && player.getManaValue() > 0) {
+			if (shotFired && !melee && player.getMana().getValue() > 0) {
 				Attack p = startAttack(1000, player);
 				if (p != null) {
 					attacks.add(p);
@@ -206,7 +206,7 @@ public class Game extends Canvas {
 			} // if
 			
 			// melee attack
-			if (melee && !shotFired && player.getStaminaValue() > 10) {
+			if (melee && !shotFired && player.getStamina().getValue() > 10) {
 				Attack m = startAttack(100, player);
 				if (m != null) {
 					attacks.add(m);
@@ -221,20 +221,14 @@ public class Game extends Canvas {
 					removeEntity(a);
 					System.out.println("remove attack");
 				} // if
-				//System.out.println(a);
-				//System.out.println(characters);
 			} // for
 			
 			// delete characters if their hp is empty
-			for (Character c : characters) {
-				g.setColor(Color.YELLOW);
-				
-				g.fillRect(0,0, 1000, 1000);
-				
-				if (c.getHp().getValue() <= 0) {
-					removeEntity(c);
-				} // if
-			} // for
+//			for (Character c : characters) {
+//				if (c.getHp().getValue() <= 0) {
+//					removeEntity(c);
+//				} // if
+//			} // for
 			
 			// regenerate stamina
 			if ((System.currentTimeMillis() - lastRegen) > regenInterval) {
@@ -323,7 +317,7 @@ public class Game extends Canvas {
 		player.move(delta);
 	} // handlePlayerMovement
 	
-	// 
+	// move?
 	private Attack startAttack(int range, Character shooter) { 
 		int xSpawn = 0;				// just to make things
 		int ySpawn = 0;				// nice and not messy
