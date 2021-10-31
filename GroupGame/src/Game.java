@@ -43,10 +43,10 @@ public class Game extends Canvas {
 	private static ArrayList<Character> characters = new ArrayList<Character>();
 	
 	private Character player;
-	private Inventory inv; // should this be in player?
-	private boolean inventoryVisible = false; 	// false bc otherwise hovering over inv creates nullPointer exceptions... 
-												// (a fix would be to add the mouselistener after everything is initialized)
+	private Inventory inv;
+	private boolean inventoryVisible = false; 	
 	private static Tooltip tooltip;
+	private DialogueManager dialogue;
 	
 	// for character movement and attacks
 	private boolean upPressed = false;
@@ -91,14 +91,6 @@ public class Game extends Canvas {
 		frame.setVisible(true);
 		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
 		
-		// add key listener
-		addKeyListener(new KeyInputHandler());
-		requestFocus();
-		
-		// add mouse listeners
-		MouseMotion mouseMotion = new MouseMotion();
-		addMouseMotionListener(mouseMotion);
-		addMouseListener(mouseMotion);
 		
 		// create buffer strategy to take advantage of accelerated graphics
 		createBufferStrategy(2);
@@ -110,6 +102,15 @@ public class Game extends Canvas {
 		
 		// initialize entities
 		initEntities();
+		
+		// add key listener
+		addKeyListener(new KeyInputHandler());
+		requestFocus();
+		
+		// add mouse listeners
+		MouseMotion mouseMotion = new MouseMotion();
+		addMouseMotionListener(mouseMotion);
+		addMouseListener(mouseMotion);
 		
 		// start the game
 		gameIsRunning = true;
@@ -143,10 +144,25 @@ public class Game extends Canvas {
 		inv = new Inventory(3); // size of inventory
 		tooltip = new Tooltip();
 		
-		// temp
-//		anim = new Animation("walk_s");
-//		anim.start();
 		
+		
+		// temp, example dialogue
+		dialogue = new DialogueManager();
+		
+		String[] s1 = {"2"};
+		new DialogueNode("1", "NPC1", "Hello, my name is...", s1, dialogue);
+		
+		String[] s2 = {"3"};
+		new DialogueNode("2", "NPC1", "Wait! Don't leave, let me finish first...", s2, dialogue);
+		
+		String[] s3 = {"4", "5"};
+		new DialogueNode("3", "NPC1", "Hey!!!", s3, dialogue);
+		
+		new DialogueNode("4", "NPC1", "Yes!!! I am!!!!", "What? Are you talking to me?", null, dialogue);
+		new DialogueNode("5", "NPC1", "How dare you!", "Leave me alone...", null, dialogue);
+		
+//		dialogue.start("1"); // uncomment to display example dialogue
+
 	} // initEntities
 	
 	private void gameLoop() {
@@ -195,6 +211,8 @@ public class Game extends Canvas {
 			if (inventoryVisible) {
 				inv.draw(g);
 			} // if
+			
+			dialogue.draw(g);
 			
 			// temp
 			if (player.animation != null) {
@@ -412,6 +430,11 @@ public class Game extends Canvas {
 
 		public void keyReleased(KeyEvent e) {
 
+			// temp
+			if (e.getKeyCode() == KeyEvent.VK_T) {
+				dialogue.update();
+			} // if
+			
 			if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
 				//System.out.println("Released: w or up");
 				upPressed = false;
@@ -477,7 +500,7 @@ public class Game extends Canvas {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			//System.out.println("clicked");
+			dialogue.handleClick(e);
 		}
 
 		@Override
