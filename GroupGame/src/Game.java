@@ -44,20 +44,22 @@ public class Game extends Canvas {
 	
 	private Character player;
 	private Inventory inv; // should this be in player?
+	private boolean inventoryVisible = false; 	// false bc otherwise hovering over inv creates nullPointer exceptions... 
+												// (a fix would be to add the mouselistener after everything is initialized)
 	private static Tooltip tooltip;
 	
+	// for character movement and attacks
 	private boolean upPressed = false;
 	private boolean leftPressed = false;
 	private boolean downPressed = false;
 	private boolean rightPressed = false;
 	private boolean shotFired = false;
-	private boolean inventoryVisible = false; 	// false bc otherwise hovering over inv creates nullPointer exceptions... 
-												// (a fix would be to add the mouselistener after everything is initialized)
 	private boolean melee = false;
+	private static int speed = 300;
 	
 	private int horizontalDirection = 0; 	// stores direction for projectiles // we could use the direction enum for this
 	private int verticalDirection = 1;		// values: -1, 0, 1 
-	private int projectileSpeed = 1000; 	// may want to change this later in the game as power up or something
+	private int projectileSpeed = 300; 	// may want to change this later in the game as power up or something
 	
 	private long lastFire = 0; // time last shot fired
     private long firingInterval = 300; // interval between shots (ms)
@@ -65,14 +67,14 @@ public class Game extends Canvas {
     private long lastRegen = 0; // time stamina was last regenerated
     private long regenInterval = 500; // interval between stamina regen
 	
-	private static int speed = 300;
-	
 	public static void main(String[] args) {
 		new Game();
-		
 	} // Game
 	
+	// start the game
 	public Game() {
+		
+		// draw the window
 		JFrame frame = new JFrame("Game");
 		JPanel panel = new JPanel();
 		
@@ -89,7 +91,7 @@ public class Game extends Canvas {
 		frame.setVisible(true);
 		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
 		
-		// add key listener to this canvas
+		// add key listener
 		addKeyListener(new KeyInputHandler());
 		requestFocus();
 		
@@ -106,16 +108,19 @@ public class Game extends Canvas {
 		// be done using graphics acceleration
 		setIgnoreRepaint(true);
 		
-		// initializes Entities
+		// initialize entities
 		initEntities();
 		
-		gameIsRunning = true; // move?
+		// start the game
+		gameIsRunning = true;
 		gameLoop();
 		
 	} // Game
 	
+	// initialize entities
 	private void initEntities() {
-		// initiate tiles
+		
+		// initialize tiles
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
 				boolean b = (map[i][j] > 1);
@@ -124,68 +129,77 @@ public class Game extends Canvas {
 			} // for
 		} // for
 		
+		// create characters
 		player = new Character("images/char_sw.png", 0, 0, 0, 0, true);
-		Character enemy = new Character("images/char_sw.png", 120, 120, 0, 0, false);
+		Camera.center(player);
+		Character enemy = new Character("images/char_sw.png", 180, 180, 0, 0, false);
 		entityArray.add(enemy);
 		characters.add(enemy);
-		
-		inv = new Inventory(3); // size of inventory
-		tooltip = new Tooltip();
-		
 		entityArray.add(player);
 		characters.add(player);
-		for (Point p : player.getCorners()) {
-			System.out.println(p);
-		} // for
+		System.out.println(enemy.getHitBox());
 		
+		// create inventory and tooltip
+		inv = new Inventory(3); // size of inventory
+		tooltip = new Tooltip();
 		
 		// temp
 //		anim = new Animation("walk_s");
 //		anim.start();
 		
-		
 	} // initEntities
 	
 	private void gameLoop() {
+		
 		long lastLoopTime = System.currentTimeMillis();
 		
 		while (gameIsRunning) {
 			
+			// update the last loop time
 			long delta = System.currentTimeMillis() - lastLoopTime;
 			lastLoopTime = System.currentTimeMillis();
 			
-			// draw graphics
+			// draw graphics and center camera
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.gray);
 			g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
-			
 			Camera.center(player);
 			
-			ArrayList<Entity> tempEntities = (ArrayList<Entity>) entityArray.clone();
-			ArrayList<Character> tempChars = (ArrayList<Character>) characters.clone();
-
+			// not necessary right now
+			//ArrayList<Entity> tempEntities = (ArrayList<Entity>) entityArray.clone();
+			//ArrayList<Character> tempChars = (ArrayList<Character>) characters.clone();
+			
+			// for removing attacks
 			ArrayList<Attack> tempAttacks = (ArrayList<Attack>) attacks.clone();
 			
-			for (Entity e : tempEntities) {
+			// draw the entities
+			for (Entity e : entityArray) {
 				e.draw(g);
-				
 			} // for
 			
+			
+			for (Character c : characters) {
+				if (c.isPlayer()) {
+					c.drawHitbox(g);
+				} else {
+					c.move(delta);
+				}
+				c.drawHitbox(g);
+			} // for
+			
+			for (Attack a : attacks) {
+				a.drawHitbox(g);
+			} // for
+			
+			// draw the inventory
 			if (inventoryVisible) {
 				inv.draw(g);
 			} // if
-			
 			
 			// temp
 			if (player.animation != null) {
 				player.animation.update(delta);
 			}
-			
-			
-			
-			// clear graphics and flip buffer
-			g.dispose();
-			strategy.show();
 			
 			// moves projectiles 
 			for (Attack a : tempAttacks) {
@@ -195,7 +209,7 @@ public class Game extends Canvas {
 			// move the player
 			handlePlayerMovement(delta);
 			
-			// range attack
+			// long range attack
 			if (shotFired && !melee && player.getMana().getValue() > 0) {
 				Attack p = startAttack(1000, player);
 				if (p != null) {
@@ -203,9 +217,10 @@ public class Game extends Canvas {
 					entityArray.add(p);
 					player.getMana().decrement(10);
 				} // if
+				//System.out.println("shot");
 			} // if
 			
-			// melee attack
+			// short range attack
 			if (melee && !shotFired && player.getStamina().getValue() > 10) {
 				Attack m = startAttack(100, player);
 				if (m != null) {
@@ -215,7 +230,9 @@ public class Game extends Canvas {
 				} // if
 			} // if
 			
-			// check for collision with attacks
+			//System.out.println(player.getHitBox());
+			
+			// check for attacks hitting characters
 			for (Attack a : tempAttacks) {
 				if(a.collidesWith(characters, g)) {
 					removeEntity(a);
@@ -223,32 +240,27 @@ public class Game extends Canvas {
 				} // if
 			} // for
 			
-			// delete characters if their hp is empty
-//			for (Character c : characters) {
-//				if (c.getHp().getValue() <= 0) {
-//					removeEntity(c);
-//				} // if
-//			} // for
-			
 			// regenerate stamina
 			if ((System.currentTimeMillis() - lastRegen) > regenInterval) {
 				player.getStamina().increment(1);
 				lastRegen = System.currentTimeMillis();
 			} // if
 			
-			g.setColor(Color.BLACK);
-			g.fillRect(50, 50, 10, 10);
-			
+			// clear graphics and flip buffer
+			g.dispose();
+			strategy.show();
 			
 		} // while
-		
 		
 	} // gameLoop
 
 	private void handlePlayerMovement(long delta) {
+		
+		// reset speed
 		player.setXVelocity(0);
 		player.setYVelocity(0);
 		
+		// check for user input
 		if (upPressed && !downPressed) {
 			
 			if (leftPressed && !rightPressed) {
@@ -311,13 +323,15 @@ public class Game extends Canvas {
 			verticalDirection = -1;
 		} // else if
 		
-
+		// animation
 		player.setWalkAnimation();
 		player.animation.start();
 		player.move(delta);
+		
 	} // handlePlayerMovement
 	
 	// move?
+	// create an attack
 	private Attack startAttack(int range, Character shooter) { 
 		int xSpawn = 0;				// just to make things
 		int ySpawn = 0;				// nice and not messy
@@ -329,17 +343,19 @@ public class Game extends Canvas {
           return null;
         } // if
         lastFire = System.currentTimeMillis();
-		System.out.println("spawn projectile");//
+		//System.out.println("spawn projectile");//
 		
 		diagonal = Math.pow(Math.pow(horizontalDirection, 2) + Math.pow(verticalDirection, 2), -0.5);
 		xSpawn = (int) (player.getX() + INIT_DIST * horizontalDirection *  diagonal);
-		ySpawn = (int) (player.getY() - 30 + INIT_DIST * verticalDirection * diagonal);		
+		ySpawn = (int) (player.getY() - Entity.TILE_LENGTH + INIT_DIST * verticalDirection * diagonal);		
 		
+		//System.out.println(xSpawn);
+		//System.out.println( ySpawn);
 		return new Attack("images/sprite1.png", xSpawn * 60, ySpawn * 60, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range, shooter);
 
 	} // spawnProjectile
 	
-	
+	// remove an entity from the game
 	public static void removeEntity(Entity e) {
 		entityArray.remove(e);
 		if (e instanceof Attack) {
@@ -432,11 +448,6 @@ public class Game extends Canvas {
 			
 		} // keyReleased
 
-		// do we need this?
-		public void keyTyped(KeyEvent e) {
-	
-		} // keyTyped
-
 	} // class KeyInputHandler
 	
 	private class MouseMotion implements MouseMotionListener, MouseListener {
@@ -501,4 +512,3 @@ public class Game extends Canvas {
 	}
 	
 } // Game
-

@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -15,7 +16,6 @@ public class Entity {
 	
 	
 	Sprite sprite; // may change later, should it be private?
-	protected Rectangle hitBox;
 	
 	protected Animation animation;
 	
@@ -25,19 +25,20 @@ public class Entity {
 		y = 0;
 		sprite = null; // how should this be initialized?
 		animation = null;
-		
 		screenPosX = 0;
 		screenPosY = 0;
 		
-		hitBox = new Rectangle((int) x, (int) y, TILE_LENGTH, TILE_LENGTH);
 	} // default constructor
 	
 	public Entity(String r, int xTile, int yTile) {
 		x = xTile; // * TILE_LENGTH
 		y = yTile; // " "
+		Point isoPoint = toIso((int) x, (int) y);
+		
 		
 		sprite = (SpriteStore.get()).getSprite(r);
-		hitBox = new Rectangle((int) x, (int) y, TILE_LENGTH, TILE_LENGTH);
+		screenPosX = isoPoint.x - Camera.getX();
+		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
 	} // constructor
 	
 	// convert cartesian to isometric
@@ -65,6 +66,9 @@ public class Entity {
 		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
 		
 		sprite.draw(g, screenPosX, screenPosY);
+		if (this instanceof Attack) {
+			//System.out.println(screenPosX + " " + screenPosY);
+		}
 		
 		if (animation != null) {
 			animation.draw(g, screenPosX, screenPosY);
@@ -80,9 +84,7 @@ public class Entity {
 		animation = anim;
 	}
 	
-	public Rectangle getHitBox() {
-		return hitBox;
-	} // getHitBox
+
 	
 	public int getScreenPosX() {
 		return screenPosX;

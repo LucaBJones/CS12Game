@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class Attack extends Movable {
@@ -20,6 +21,7 @@ public class Attack extends Movable {
 		super(r, xPos, yPos, dx, dy);
 		x /= TILE_LENGTH;
 		y /= TILE_LENGTH;
+		System.out.println(x + " " + y);
 		totalDistTravelled = 0;
 		maxDistance = range;
 		this.shooter = shooter;
@@ -39,10 +41,15 @@ public class Attack extends Movable {
 		// check if the entity will be out of bounds after movement
 		// other condition for distance as well
 		if (isOutOfBounds(p) || totalDistTravelled > maxDistance) {
+			System.out.println(isOutOfBounds(p));
 			Game.removeEntity(this);
 		} // if
 		
-		hitBox.setLocation((int) x, (int) y);
+		Point isoPoint = toIso((int) x, (int) y);
+		screenPosX = isoPoint.x - Camera.getX();
+		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
+		
+		hitBox.setLocation(screenPosX, screenPosY);
 		
 	} // move
 
@@ -50,7 +57,7 @@ public class Attack extends Movable {
 	// check if attack collides with a character
 	// decrements hp of character that was collided with
 	public boolean collidesWith(ArrayList<Character> characters, Graphics g){
-		System.out.println("collides with");
+		//System.out.println("collides with");
 		for (Character c : characters) {
 			
 			if (hitBox.intersects(c.getHitBox()) && !c.equals(shooter)) {
@@ -58,11 +65,14 @@ public class Attack extends Movable {
 				if (c.getHp().getValue() <= 0) {
 					Game.removeEntity(c);
 				} // if
-				System.out.println("intersects");
+				System.out.println(this.getHitBox());
+				System.out.println(c.getHitBox());
+				//System.out.println("intersects");
 				return true;
 			} // if
 			
 		} // for
 		return false;
 	} // collidesWith
+	
 }

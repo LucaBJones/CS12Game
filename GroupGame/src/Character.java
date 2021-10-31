@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 
 public class Character extends Movable {
 
@@ -26,8 +27,6 @@ public class Character extends Movable {
 			mana = new Bar(10, 50, 100, Color.DARK_GRAY, Color.BLUE);
 		} else {
 			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, Color.DARK_GRAY, Color.RED);
-			stamina = null;
-			mana = null;
 		} // else
 		
 		animation = walk_s; // temp
@@ -40,7 +39,7 @@ public class Character extends Movable {
 		
 		if (!isPlayer) {
 			hp.updatePosition((int) x, (int) y - sprite.getHeight() - 20);
-			System.out.println("hp bar of non-player");
+			//System.out.println("hp bar of non-player");
 		} // if
 	} // move
 
@@ -81,7 +80,13 @@ public class Character extends Movable {
 			hp.drawInIso(g, this);
 		} // else
 		
-		
+		// temp
+			
+			
 	} // draw
+	
+	public boolean isPlayer() {
+		return isPlayer;
+	}
 
 } // Player
