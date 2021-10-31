@@ -66,14 +66,18 @@ public class Movable extends Entity {
 	// returns true if any of the points are inside of an obstacle
 	// or they are outside of the map
 	public boolean isOutOfBounds(Point[] p) {
-		
 		Tile[][] tiles = Game.getTiles();
+		int boundary = 0;
+		
+		if(this instanceof Attack) {
+			boundary = -TILE_LENGTH;
+		} // if
 		
 		for (int i = 0; i < p.length; i++) {
 			
 			// check if point is above or left of the map
 			// apparently y < 0 doesn't work
-			if (p[i].x < 0 || p[i].y < -TILE_LENGTH) { 
+			if (p[i].x < 0 || p[i].y < boundary) { 
 				System.out.println("help");
 				return true;
 			} // if
