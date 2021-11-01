@@ -59,5 +59,5 @@ public class SpriteStore {
 
 		return sprite;
 	} // getSprite
-
+	
 } // SpriteStore

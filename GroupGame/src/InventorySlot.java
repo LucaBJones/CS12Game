@@ -14,7 +14,7 @@ public class InventorySlot extends Entity {
 	// constructor
 	public InventorySlot(int x, int y, int i) {
 		index = i;
-		item = new InventoryItem("sprite" + index, "images/sprite" + index + ".png", "sprite" + index, "this is a description"); // temp
+		//item = new InventoryItem("sprite" + index, "images/sprite" + index + ".png", "sprite" + index, "this is a description"); // temp
 		
 		// set screen position of slot
 		this.x = (i) * (x - 200) + 200 + 10; // 200 = inv x & 10 is important regardless of positioning
@@ -75,11 +75,13 @@ public class InventorySlot extends Entity {
 		// display item if there is one
 		if (sprite != null) {
 			item.getSprite().draw(g, xPos + ((80 - item.getSprite().getWidth()) / 2), yPos + (80 - item.getSprite().getHeight()) / 2); // needs to be changed so sprite is centered
-		} // if
 		
-		if (Inventory.getHoveringSlotIndex() == index) {
-			item.getTooltip().position((int) x, (int) y, width, height);
-			item.getTooltip().draw(g);
+			// draw tooltip if hovering over
+			if (Inventory.getHoveringSlotIndex() == index) {
+				Game.getTooltip().setText(item.getName(), item.getDescription());
+				Game.getTooltip().position((int) x, (int) y, width, height);
+				Game.getTooltip().draw(g);
+			} // if
 		} // if
 		
 	} // draw

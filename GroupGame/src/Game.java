@@ -2,7 +2,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -10,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -44,9 +44,13 @@ public class Game extends Canvas {
 	
 	private Character player;
 	private Inventory inv;
-	private boolean inventoryVisible = false; 	
+	private boolean inventoryVisible = false; 
+	
 	private static Tooltip tooltip;
 	private DialogueManager dialogue;
+	
+	private QuestLog questLog;
+	private boolean questLogVisible = false;
 	
 	// for character movement and attacks
 	private boolean upPressed = false;
@@ -143,26 +147,66 @@ public class Game extends Canvas {
 		// create inventory and tooltip
 		inv = new Inventory(3); // size of inventory
 		tooltip = new Tooltip();
+
+		// temp, example quest
+		questLog = new QuestLog(inv);
 		
+		HashMap<String, Integer> obj1 = new HashMap<String, Integer>();
+		new InventoryItem("apple", "images/sprite1.png", "Apple", "An arrow-shaped blue apple.");
+		obj1.put("apple", 1); // 5?
+		
+		HashMap<String, Integer> reward1 = new HashMap<String, Integer>();
+		new InventoryItem("coin", "images/sprite2.png", "Coin", "Money.");
+		reward1.put("coin", 1);  
+		
+		new Quest(	"q1", // quest id
+					"First Quest", // name
+					"This is the beginning of your great adventure... Go give NPC1 5 apples.", // description
+					obj1, // objectives
+					reward1, // rewards
+					questLog);
 		
 		
 		// temp, example dialogue
-		dialogue = new DialogueManager();
+		dialogue = new DialogueManager(questLog);
 		
-		String[] s1 = {"2"};
-		new DialogueNode("1", "NPC1", "Hello, my name is...", s1, dialogue);
+		new DialogueNode("1", "NPC1", "Hello, my name is...", 
+				new String[] {"2"}, dialogue);
 		
-		String[] s2 = {"3"};
-		new DialogueNode("2", "NPC1", "Wait! Don't leave, let me finish first...", s2, dialogue);
+		new DialogueNode("2", "NPC1", "Wait! Don't leave, let me finish first...", 
+				new String[] {"3"}, dialogue);
 		
-		String[] s3 = {"4", "5"};
-		new DialogueNode("3", "NPC1", "Hey!!!", s3, dialogue);
+		new DialogueNode("3", "NPC1", "Hey!!!", 
+				new String[] {"4", "5"}, dialogue);
 		
-		new DialogueNode("4", "NPC1", "Yes!!! I am!!!!", "What? Are you talking to me?", null, dialogue);
-		new DialogueNode("5", "NPC1", "How dare you!", "Leave me alone...", null, dialogue);
+		new DialogueNode("4", "NPC1", "How dare you!", "Leave me alone...", null, dialogue);
 		
-//		dialogue.start("1"); // uncomment to display example dialogue
-
+		new DialogueNode("5", "NPC1", "Yes!!! I am!!!!", "What? Are you talking to me?", 
+				new String[] {"6"}, dialogue);
+		
+		new DialogueNode("6", "NPC1", "I just wanted to ask... Do you have any apples?", 
+				new String[] {"7", "8", "9"}, dialogue);
+		
+		new DialogueNode("7", "NPC1", "Really? That'd be great!", 
+							"I can go find some for you.", null, dialogue, "q1");
+		new DialogueNode("8", "NPC1", "Oh.. Sorry to bother you...", 
+							"No.", null, dialogue);
+		
+		new DialogueNode("9", "NPC1", "What? Really? You have apples?", 
+				"Here are some apples", "q1", 0,
+				new String[] {"10"}, dialogue);
+		
+		new DialogueQuestNode("10", "NPC1", 
+				"q1",
+				"Thank you so much! Here. I'll give you a coin in return.", "11", 
+				"You said you had apples... Where are they?", "12",
+				dialogue);
+		
+		new DialogueNode("11", "NPC1", "Thanks again.", null, dialogue);
+		new DialogueNode("12", "NPC1", "Come back when you actually get some.", null, dialogue);
+		
+		dialogue.start("1"); // uncomment to display example dialogue
+		
 	} // initEntities
 	
 	private void gameLoop() {
@@ -193,7 +237,6 @@ public class Game extends Canvas {
 				e.draw(g);
 			} // for
 			
-			
 			for (Character c : characters) {
 				if (c.isPlayer()) {
 					c.drawHitbox(g);
@@ -212,7 +255,14 @@ public class Game extends Canvas {
 				inv.draw(g);
 			} // if
 			
+			// display dialogue
 			dialogue.draw(g);
+			
+			// draw the quest log
+			if (questLogVisible) {
+				questLog.draw(g);
+			} // if
+			
 			
 			// temp
 			if (player.animation != null) {
@@ -430,6 +480,22 @@ public class Game extends Canvas {
 
 		public void keyReleased(KeyEvent e) {
 
+			// temp, for testing-------------------------------
+			if (e.getKeyCode() == KeyEvent.VK_1) {
+				inv.addItem("apple", 1);
+				System.out.println("added 1 apple to inv");
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_2) {
+				questLog.unlock("q1");
+				System.out.println("unlocked quest 1");
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_3) {
+				System.out.println("completing quest 1");
+			} // if
+			// --------------------------------------------------------
+			
 			// temp
 			if (e.getKeyCode() == KeyEvent.VK_T) {
 				dialogue.update();
@@ -467,6 +533,11 @@ public class Game extends Canvas {
 			if (e.getKeyCode() == KeyEvent.VK_I) {
 				inventoryVisible = !inventoryVisible;
 				System.out.println("inventoryVisible: " + inventoryVisible);
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_Q) {
+				questLogVisible = !questLogVisible;
+				System.out.println("questLogVisible: " + questLogVisible);
 			} // if
 			
 		} // keyReleased

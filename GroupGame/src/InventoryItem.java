@@ -7,13 +7,11 @@ public class InventoryItem {
 	private static HashMap<String, InventoryItem> itemLookUp = new HashMap<String, InventoryItem>();
 	
 	// stores sprite and id of item (too obvious?)
-	private Sprite sprite;
-	private String itemID;
+	private Sprite inventoryIcon;
 	
+	private String itemID;
 	private String name;
 	private String description;
-	
-	private Tooltip tooltip;
 	
 	// constructor
 	public InventoryItem(String id, String r, String n, String d) {
@@ -21,16 +19,14 @@ public class InventoryItem {
 		
 		// if item is already in itemLookUp, use it
 		if (itemLookUp.containsKey(id)) {
-			sprite = getItem(id).getSprite();
+			inventoryIcon = getItem(id).getSprite();
 			return;
 		} // if
 		
 		// set sprite of item, name, and description of item
-		sprite = (SpriteStore.get()).getSprite(r);
+		inventoryIcon = (SpriteStore.get()).getSprite(r);
 		name = n;
 		description = d;
-		
-		tooltip = new Tooltip(name, description, 0, 0);
 		
 		// add item to itemLookUp
 		itemLookUp.put(id, this);
@@ -48,11 +44,15 @@ public class InventoryItem {
 
 	// returns the sprite of this item
 	public Sprite getSprite() {
-		return sprite;
+		return inventoryIcon;
 	} // getSprite
 	
-	public Tooltip getTooltip() {
-		return tooltip;
+	public String getName() {
+		return name;
+	}
+	
+	public String getDescription() {
+		return description;
 	}
 	
 } // InventoryItem

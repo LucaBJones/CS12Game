@@ -21,7 +21,7 @@ public class Tooltip {
 		
 		title = "";
 		description = "";
-		background = Color.GRAY;
+		background = Color.LIGHT_GRAY;
 		
 		width = 150; // temp
 		height = 80; // temp
@@ -30,7 +30,7 @@ public class Tooltip {
 	public Tooltip(String t, String d, int xPos, int yPos) { // needed?
 		title = t;
 		description = d;
-		background = Color.GRAY;
+		background = Color.LIGHT_GRAY;
 		
 		width = 150; // temp
 		height = 80; // temp
@@ -67,7 +67,6 @@ public class Tooltip {
 				
 				x = xToMatch;
 				y = yToMatch - this.height;
-				System.out.println("bottom left");
 			} // if
 			
 			// at bottom right of screen
@@ -83,7 +82,6 @@ public class Tooltip {
 			
 			x = xToMatch;
 			y = yToMatch;
-			System.out.println("top left of screen");
 			
 			
 		} else {
@@ -91,21 +89,19 @@ public class Tooltip {
 			// at top right of screen
 			// set top right corner of tooltip to bottom left of xPos/yPos
 			
-			System.out.println("top right");
-			
 			xToMatch = xPos - this.width;
 			yToMatch = yPos + h;
-			
-			System.out.println("xPos: " + xPos);
-			System.out.println("yToMatch: " + yToMatch);
 			
 			x = xToMatch;
 			y = yToMatch;
 			
-			System.out.println("tooltip, x: " + x + ", y: " + y);
-			
 		} // else
 		
 	} // position
+	
+	public void setText(String title, String description) {
+		this.title = title;
+		this.description = description;
+	}
 	
 } // Tooltip

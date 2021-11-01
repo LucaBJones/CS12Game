@@ -3,6 +3,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.Timer;
@@ -37,7 +38,9 @@ public class DialogueManager {
 	private boolean textIsAnimating;
 	private int index;
 	
-	public DialogueManager() {
+	private QuestLog questLog;
+	
+	public DialogueManager(QuestLog log) {
 		currentDialogueID = null;
 		currentChoice = -1;
 		isDisplaying = false;
@@ -45,12 +48,14 @@ public class DialogueManager {
 		waitingForChoice = false;
 		displayText = "";
 		
+		questLog = log;
+		
 		textSpeed = 30; // can change, lower num is faster
 		index = 0;
 		
 		timer = new Timer(textSpeed, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                updateText();
+                animateText();
             } // actionPerformed
         });
 		
@@ -84,7 +89,7 @@ public class DialogueManager {
 	} // start
 	
 	// animates the text (one letter at a time)
-	public void updateText() {
+	private void animateText() {
 		if (!isDisplaying) { return; } // needed?
 		if (index > dialogueStore.get(currentDialogueID).getText().length() - 1) { 
 			timer.stop();
@@ -100,27 +105,53 @@ public class DialogueManager {
 	public void update() {
 		if (!isDisplaying || waitingForChoice) { return; }
 		
+		DialogueNode current = dialogueStore.get(currentDialogueID);
+		String[] next;
+		ArrayList<String> temp = new ArrayList<String>();
+		
 		// if text is animating, display full line of text
 		if (textIsAnimating) {
-			displayText = dialogueStore.get(currentDialogueID).getText();
+			displayText = current.getText();
 			timer.stop();
 			textIsAnimating = false;
 			return;
 		} // if
 		
-		// get the next dialogue nodes
-		String[] next = dialogueStore.get(currentDialogueID).getNext();
-		
 		// check if there is any more dialogue
-		if (next == null) { 
+		if (current.getNext() == null) { 
 			isDisplaying = false;
-			System.out.println("no more dialogue, isDisplaying: " + isDisplaying);
 			return; 
 		} // if
+		
+		// get the next dialogue nodes
+		// (only get the ones that the player meets the prerequisite for)
+		for (String str : current.getNext()) {
+			String prerequisiteQuest = dialogueStore.get(str).getPrerequisiteQuest();
+			if (prerequisiteQuest == null || prerequisiteQuest.isEmpty()) { // check if is null?
+				temp.add(str);
+			} else if (questLog.get(prerequisiteQuest).getStatus() == dialogueStore.get(str).getPrerequisiteStatus()) {
+				temp.add(str);
+			}
+			
+		} // for
+		
+		next = new String[temp.size()];
+		
+		for (int i = 0; i < next.length; i++) {
+			next[i] = temp.get(i);
+		}
+		
+		// check if current node is trying to complete a quest
+		if (dialogueStore.get(next[0]) instanceof DialogueQuestNode) { // assumes DialogueQuestNode is not a choice
+			boolean canComplete = questLog.canComplete(((DialogueQuestNode) dialogueStore.get(next[0])).getQuestToComplete());
+			((DialogueQuestNode) dialogueStore.get(next[0])).setText(canComplete);
+			((DialogueQuestNode) dialogueStore.get(next[0])).setNext(canComplete);
+		}
 		
 		// if there are no choices, set dialogue
 		if (next.length == 1) {
 			currentDialogueID = next[0];
+			handleQuest();
 			
 			textIsAnimating = true;
 			displayText = "";
@@ -136,8 +167,11 @@ public class DialogueManager {
 			return;
 		} // if
 		
-		// update to dialogue that player chose
+		// update to dialogue that player chose and reset
 		currentDialogueID = next[currentChoice];
+		handleQuest();
+		
+		currentChoice = -1;
 		displayText = "";
 		index = 0;
 		timer.restart();
@@ -145,7 +179,7 @@ public class DialogueManager {
 	} // update
 	
 	// sets currentChoice to what the player has chosen
-	public void choose(int n) {
+	private void choose(int n) {
 		if (!waitingForChoice) { return; }
 		currentChoice = n;
 		waitingForChoice = false;
@@ -168,6 +202,23 @@ public class DialogueManager {
 		
 		} // for
 	} // handleClick
+	
+	// handles unlocking and completing quests linked to the current dialogue
+	private void handleQuest() {
+		String questToUnlock = dialogueStore.get(currentDialogueID).getQuestToUnlock();
+
+		System.out.println("handleQuest: " + questToUnlock);
+		// if there is a quest to unlock, unlock it
+		if (!questToUnlock.isEmpty()) {
+			questLog.unlock(questToUnlock);
+			System.out.println("quest: " + questToUnlock + " unlocked!");
+		} // if
+		
+		// if there is a quest to complete, complete it
+		if (dialogueStore.get(currentDialogueID) instanceof DialogueQuestNode) {
+			questLog.complete(((DialogueQuestNode) dialogueStore.get(currentDialogueID)).getQuestToComplete());
+		} // if
+	} // handleQuest
 	
 	// draws the dialogue to the screen
 	public void draw(Graphics g) {
@@ -198,8 +249,7 @@ public class DialogueManager {
 	} // draw
 	
 	// draws the choices to the screen
-	public void drawChoices(Graphics g) {
-		
+	private void drawChoices(Graphics g) {
 		for (int i = 0; i < currentChoiceNodes.length; i++) {
 			int choiceX = Camera.getWidth() - choiceWidth - xPadding;
 			int choiceY = (int) y - (choiceHeight) * (i + 1) - ((i + 1) * yPadding);

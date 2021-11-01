@@ -29,10 +29,38 @@ public class Inventory extends Entity {
 		} // for
 	} // Inventory
 	
-	// add item to inventory (not implemented yet..)
-	public void addItem(InventoryItem item) {
+	// add item to inventory (not implemented yet..) and returns whether items were successfully added
+	public boolean addItem(String id, int n) { // multi-item not implemented
+		int emptySlot = getEmptySlotIndex();
 		
+		// check if there are any empty slots
+		if (emptySlot < 0) { return false; }
+		
+		slots[emptySlot].addItem(InventoryItem.getItem(id));
+		
+		return true;
 	} // addItem
+	
+	public void removeItem(String id, int n) { // multi-item remove not implemented yet
+		if (!contains(id, n)) { return; }
+		for (InventorySlot slot : slots) {
+			if (slot.getItem() == null) { continue; }
+			if (slot.getItem().getID().equals(id)) {
+				slot.removeItem();
+			} // if
+		} // for
+	}
+	
+	// returns whether the inventory has the item with the id passed in
+	public boolean contains(String id, int n) { // check for multiple of item not implemented yet
+		for (InventorySlot slot : slots) {
+			if (slot.getItem() == null) { continue; }
+			if (slot.getItem().getID().equals(id)) {
+				return true;
+			} // if
+		} // for
+		return false;
+	} // contains
 	
 	// draw the inventory slots
 	public void drawSlots(Graphics g) {
@@ -56,7 +84,6 @@ public class Inventory extends Entity {
 			dragItem.draw(g);
 		} // if
 	} // draw
-
 	
 	public static int getXPadding() {
 		return X_PADDING;
@@ -143,5 +170,15 @@ public class Inventory extends Entity {
 	public static int getHoveringSlotIndex() {
 		return hoveringSlotIndex;
 	} // getHoveringSlotIndex
+	
+	private int getEmptySlotIndex() {
+		for (int i = 0; i < slots.length; i++) {
+			if (slots[i].getItem() == null) {
+				return i;
+			} // if
+		} // for
+		
+		return -1;
+	} // int
 	
 } // Inventory
