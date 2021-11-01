@@ -1,6 +1,7 @@
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -63,13 +64,16 @@ public class Game extends Canvas {
 	
 	private int horizontalDirection = 0; 	// stores direction for projectiles // we could use the direction enum for this
 	private int verticalDirection = 1;		// values: -1, 0, 1 
-	private int projectileSpeed = 300; 	// may want to change this later in the game as power up or something
+	private int projectileSpeed = 1000; 	// may want to change this later in the game as power up or something
 	
 	private long lastFire = 0; // time last shot fired
     private long firingInterval = 300; // interval between shots (ms)
     
     private long lastRegen = 0; // time stamina was last regenerated
     private long regenInterval = 500; // interval between stamina regen
+    
+    private long lastDamage = 0;
+    private long damageInterval = 500;
 	
 	public static void main(String[] args) {
 		new Game();
@@ -241,7 +245,7 @@ public class Game extends Canvas {
 				if (c.isPlayer()) {
 					c.drawHitbox(g);
 				} else {
-					c.move(delta);
+					handleEnemyMovement(delta, c, player);
 				}
 				c.drawHitbox(g);
 			} // for
@@ -276,6 +280,11 @@ public class Game extends Canvas {
 			
 			// move the player
 			handlePlayerMovement(delta);
+			
+			if ((System.currentTimeMillis() - lastDamage) > damageInterval) {
+				player.playerCollision(characters);
+				lastDamage = System.currentTimeMillis();
+			} // if
 			
 			// long range attack
 			if (shotFired && !melee && player.getMana().getValue() > 0) {
@@ -313,6 +322,18 @@ public class Game extends Canvas {
 				player.getStamina().increment(1);
 				lastRegen = System.currentTimeMillis();
 			} // if
+			
+			if (player.getHp().getValue() <= 0) {
+				
+				gameOver(g);
+				
+				entityArray.clear();
+				
+			}
+			
+			if (noEnemies(characters)) {
+				win(g);
+			}
 			
 			// clear graphics and flip buffer
 			g.dispose();
@@ -397,6 +418,130 @@ public class Game extends Canvas {
 		player.move(delta);
 		
 	} // handlePlayerMovement
+	
+	private void handleEnemyMovement(long delta, Character enemy, Character player) {
+		
+		// reset speed
+		enemy.setXVelocity(0);
+		enemy.setYVelocity(0);
+		
+		// if on screen 
+		// do we want off screen characters to move?
+		if(enemy.getScreenPosX() > 0 - 100 && enemy.getScreenPosX() < Camera.getWidth() + 100 && enemy.getScreenPosY() > 0 - 100 && enemy.getScreenPosY() < Camera.getHeight() + 100) {
+			/*
+			// path finding
+			// the algorith should find the tile the player is closest to being on
+			// it doesn't matter if a player is on multiple tiles 
+			ArrayList<Node> open = new ArrayList<Node>();
+			ArrayList<Node> closed = new ArrayList<Node>();
+			
+			//this doesnt work yet if != 0
+			
+			// end Node (player location tile)
+			int playerTileX = 1;// (int) player.getScreenPosX() / 60;
+			int playerTileY = 1; // (int) player.getScreenPosY() / 60;
+			Node end = new Node(playerTileX, playerTileY);
+			
+			// start node
+			System.out.println((int) enemy.screenPosX / 60 + " : " + (int) enemy.screenPosY / 60);
+			Node start = new Node((int) enemy.screenPosX / 60, (int) enemy.screenPosY / 60, end);
+			
+			// add start to open
+			open.add(start);
+			
+			
+			 * do {
+				
+				// current = node in open with min f cost
+				Node current = getMinFCost(open);
+				
+				// set the neighbours of this node
+				for(int i = -1; i < 2; i ++) {
+					for(int j = -1; j < 2; j ++) {
+						if(i != 0 && j !=0){
+							current.addNeighbour(new Node(current.getY() + i, current.getX() + j, end, current));
+						}
+					} // for
+				} // for
+				
+				// remove current from open
+				open.remove(current);
+				
+				// add current to closed
+				closed.add(current);
+				
+				//if current == target node: return
+				if(current.getX() == end.getX() && current.getY() == end.getY()) {
+					System.out.println("break");
+					break;
+				} // if
+				
+				// for each neighbour of current:
+				for(Node neighbour : current.getNeighbours()) {
+					
+					//if neigh is not traversable || neighbor is in closed: continue
+					// 60 = TILE_LENGTH
+					try {
+						if (!tileMap[neighbour.getY()][neighbour.getX()].getIsPassable() || closed.contains(neighbour)) {
+							continue;
+						} // if
+					} catch (ArrayIndexOutOfBoundsException e) {
+						
+						continue;
+						
+					} // catch
+					
+					//if new gCost of neighbor < old gCost || neigh !in closed
+					if (current.getGCost() + (int) Math.pow((Math.pow(neighbour.getX() - current.getX(), 2) + Math.pow(neighbour.getX() - current.getY(), 2)), 0.5) < neighbour.getGCost() || !closed.contains(neighbour)) {
+						
+						// set fCost of neigh
+						neighbour.setFCost(neighbour.getGCost() + neighbour.getHCost());
+						neighbour.setGCost(current.getGCost() + (int) Math.pow((Math.pow(neighbour.getX() - current.getX(), 2) + Math.pow(neighbour.getX() - current.getY(), 2)), 0.5));
+						neighbour.setHCost((int) Math.pow((Math.pow(neighbour.getX() - end.getX(), 2) + Math.pow(neighbour.getY() - end.getY(), 2)), 0.5));
+						
+						// set parent of neighbor to current
+						neighbour.setParent(current);
+						
+						// if neigh !in open
+						if (!open.contains(neighbour)) {
+							
+							// add neigh to open
+							open.add(neighbour);
+							
+						} // if
+							
+					} // if
+					
+				} // for
+				System.out.println("finding path...");
+			} while(true);
+			 
+			
+			//Node goal = getMinFCost(start.getNeighbours());
+			//System.out.println(getMinFCost(start.getNeighbours()).getX() + " | " + getMinFCost(start.getNeighbours()).getX());
+			*/
+			
+			int XDirection = (int) (player.getX() - enemy.getX());
+			int YDirection = (int) (player.getY() - enemy.getY());
+			
+			System.out.println(XDirection);
+			System.out.println(YDirection);
+			
+			// probably some enemy direction
+			// decide the direction
+			enemy.setXVelocity( XDirection);
+			enemy.setYVelocity( YDirection);
+			enemy.setSprite("images/char_s.png");
+			
+		} // if
+		
+		// animation
+		enemy.setWalkAnimation();
+		enemy.animation.start();
+			
+		// move
+		enemy.move(delta);
+	} // handleEnemyMovement
 	
 	// move?
 	// create an attack
@@ -605,4 +750,33 @@ public class Game extends Canvas {
 		return tooltip;
 	}
 	
+	public boolean noEnemies(ArrayList<Character> chars) {
+		for (Character c : chars) {
+			if (!c.isPlayer()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static void gameOver(Graphics2D g) {
+		g.setColor(Color.black);
+		g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
+		g.setColor(Color.white);
+        g.setFont(new Font("Purisa" , Font.BOLD, 35));
+		g.drawString("GAME OVER", Camera.getWidth() / 2, Camera.getHeight() / 2);
+	}
+	
+	public void newGame() {
+		initEntities();
+		gameLoop();
+	}
+	
+	public static void win(Graphics2D g) {
+		g.setColor(Color.black);
+		g.fillRect(Camera.getX(), Camera.getY(), Camera.getWidth(), Camera.getHeight());
+		g.setColor(Color.white);
+        g.setFont(new Font("Purisa" , Font.BOLD, 35));
+		g.drawString("YOU WIN!", Camera.getWidth() / 2, Camera.getHeight() / 2);
+	}
 } // Game

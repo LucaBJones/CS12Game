@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 
 public class Character extends Movable {
 
@@ -87,6 +88,21 @@ public class Character extends Movable {
 	
 	public boolean isPlayer() {
 		return isPlayer;
+	}
+	
+	public boolean playerCollision(ArrayList<Character> characters) {
+		
+		if (isPlayer) {
+			for (Character c : characters) {
+				
+				if (hitBox.intersects(c.getHitBox()) && !c.isPlayer()) {
+					hp.decrement(10);
+					return true;
+				} // if
+				
+			} // for
+		}
+		return false;
 	}
 
 } // Player
