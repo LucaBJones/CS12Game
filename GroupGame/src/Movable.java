@@ -100,6 +100,17 @@ public class Movable extends Entity {
 			
 		} // for
 		
+		if (this instanceof Character && !((Character) this).isPlayer()) {
+			// this makes it so that a given pair is run only once
+			ArrayList<Character>chars = Game.getCharacters();
+			for (int i = chars.indexOf((Character) this); i < chars.size(); i ++) {//Character c : Game.characters
+				Character c = chars.get(i);
+				if (hitBox.intersects(c.getHitBox()) && !c.isPlayer() && !c.equals(this)) {
+					return true;
+				} // if
+			} // for
+		} // if
+		
 		return false;
 		
 	} // isOutOfBounds
