@@ -750,6 +750,10 @@ public class Game extends Canvas {
 		return tooltip;
 	}
 	
+	public static ArrayList<Character> getCharacters() {
+		return characters;
+	}
+	
 	public boolean noEnemies(ArrayList<Character> chars) {
 		for (Character c : chars) {
 			if (!c.isPlayer()) {
