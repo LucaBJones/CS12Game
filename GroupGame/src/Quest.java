@@ -55,6 +55,10 @@ public class Quest {
 	
 	public int getStatus() {
 		return status;
+	} // getStatus
+	
+	public void removeReward(String rewardID) {
+		rewards.remove(rewardID);
 	}
 	
 } // Quest

@@ -29,37 +29,60 @@ public class Inventory extends Entity {
 		} // for
 	} // Inventory
 	
-	// add item to inventory (not implemented yet..) and returns whether items were successfully added
-	public boolean addItem(String id, int n) { // multi-item not implemented
-		int emptySlot = getEmptySlotIndex();
+	// add items to inventory and returns whether items were successfully added
+	public boolean addItem(String id, int n) {
+		int availableSlots = getAvailableSlot(id);
 		
 		// check if there are any empty slots
-		if (emptySlot < 0) { return false; }
+		if (availableSlots < 0) { return false; }
 		
-		slots[emptySlot].addItem(InventoryItem.getItem(id));
+		slots[availableSlots].addItem(id, n);
 		
 		return true;
 	} // addItem
 	
-	public void removeItem(String id, int n) { // multi-item remove not implemented yet
+	// removes items from inventory
+	public void removeItem(String id, int n) {
 		if (!contains(id, n)) { return; }
+		int count = n;
+		
 		for (InventorySlot slot : slots) {
-			if (slot.getItem() == null) { continue; }
-			if (slot.getItem().getID().equals(id)) {
-				slot.removeItem();
+			if (slot.getNumber() <= 0 || slot.getItem().isEmpty()) { continue; }
+			if (slot.getItem().equals(id)) {
+				count -= slot.getNumber();
+				System.out.println("slot num: " + slot.getNumber());
+				
+				// remove all from slot
+				if (count >= 0) {
+					slot.removeItem(slot.getNumber());
+					System.out.println("removed all, count: " + count + ", n: " + n);
+					if (count == 0) { return; } // return if finished removing
+					continue;
+				} // if
+				
+				// remove some from slot if removed enough already
+				if (count < 0) {
+					slot.removeItem(slot.getNumber() + count); // count is negative
+					System.out.println("removed " + (0 - count) + ", n: " + n + ", count: " + count);
+					return;
+				} // if
+				
 			} // if
 		} // for
-	}
+	} // removeItem
 	
 	// returns whether the inventory has the item with the id passed in
 	public boolean contains(String id, int n) { // check for multiple of item not implemented yet
+		int count = 0;
+		
 		for (InventorySlot slot : slots) {
-			if (slot.getItem() == null) { continue; }
-			if (slot.getItem().getID().equals(id)) {
-				return true;
+			if (slot.getNumber() <= 0) { continue; }
+			if (slot.getItem().equals(id)) {
+				count += slot.getNumber();
 			} // if
 		} // for
-		return false;
+		
+		return count >= n;
 	} // contains
 	
 	// draw the inventory slots
@@ -80,7 +103,7 @@ public class Inventory extends Entity {
 
 		drawSlots(g);
 		
-		if (dragItem != null && dragItem.getItem() != null) {
+		if (dragItem != null && dragItem.getNumber() > 0) {
 			dragItem.draw(g);
 		} // if
 	} // draw
@@ -112,7 +135,7 @@ public class Inventory extends Entity {
 		if (slotIndex < 0) { return; }
 		
 		// check if slot contains item
-		if (slots[slotIndex].getItem() == null) { return; }
+		if (slots[slotIndex].getNumber() <= 0) { return; }
 		
 		// create dragItem to store drag info
 		dragItem.startDrag(slots[slotIndex]);
@@ -171,9 +194,11 @@ public class Inventory extends Entity {
 		return hoveringSlotIndex;
 	} // getHoveringSlotIndex
 	
-	private int getEmptySlotIndex() {
+	private int getAvailableSlot(String itemID) {
+		boolean checkForItem = itemID != null && !itemID.isEmpty();
+		
 		for (int i = 0; i < slots.length; i++) {
-			if (slots[i].getItem() == null) {
+			if (slots[i].getNumber() <= 0 || (checkForItem && slots[i].getItem().equals(itemID))) {
 				return i;
 			} // if
 		} // for

@@ -10,6 +10,7 @@ public class QuestLog { // rename to QuestManager?
 	private ArrayList<String> currentQuests = new ArrayList<String>();
 	
 	private Inventory inv;
+	private DialogueManager dialogue; // probably shouldn't have this here... but idk how to do it otherwise
 	
 	private int x;
 	private int y;
@@ -18,6 +19,7 @@ public class QuestLog { // rename to QuestManager?
 	
 	public QuestLog(Inventory i) {
 		inv = i;
+		dialogue = null;
 		
 		// can change
 		width = 100;
@@ -25,6 +27,10 @@ public class QuestLog { // rename to QuestManager?
 		x = Camera.getWidth() - width - 50;
 		y = 20;
 	} // QuestLog
+	
+	public void setDialogue(DialogueManager d) { // must be called in Game after initialising, else nullpointerexceptions...
+		dialogue = d;
+	}
 	
 	// adds a quest to the questStore
 	public void add(String id, Quest quest) {
@@ -46,6 +52,8 @@ public class QuestLog { // rename to QuestManager?
 		if (!canComplete(questID)) { return; }
 		questStore.get(questID).complete();
 		removeQuestItemsFromInventory(questID);
+		
+		
 		storeRewardInInventory(questID);
 		currentQuests.remove(questID);
 		
@@ -73,7 +81,7 @@ public class QuestLog { // rename to QuestManager?
 		for (String obj : objSet) {
 			inv.removeItem(obj, objectives.get(obj));
 		} // if
-	}
+	} // removeQuestItemsFromInventory
 	
 	private void storeRewardInInventory(String questID) { // what if inventory is full??
 		if (!questStore.get(questID).getIsCompleted()) { return; }
@@ -81,13 +89,26 @@ public class QuestLog { // rename to QuestManager?
 		HashMap<String, Integer> rewards = questStore.get(questID).getRewards();
 		Set<String> rewardSet = questStore.get(questID).getRewards().keySet();
 		
+		int rewardsCollected = 0;
+		
 		// adds rewards to inventory
 		for (String reward : rewardSet) {
-			inv.addItem(reward, rewards.get(reward));
+			
+			// add item to inventory and increment collected counter
+			if (inv.addItem(reward, rewards.get(reward))) {
+				rewardsCollected++;
+				questStore.get(questID).removeReward(reward);
+			} // if
+			
 		} // if
 		
-		System.out.println("storing reward");
-	}
+		if (rewardsCollected < rewardSet.size()) {
+			System.out.println("inv full, not finished collecting rewards");
+			// notify dialogue system that rewards are uncollected
+			dialogue.rewardsUncollected();
+		} // if
+		
+	} // storeRewardInInventory
 	
 	public void draw(Graphics g) {
 		
@@ -99,7 +120,7 @@ public class QuestLog { // rename to QuestManager?
 		
 		// draw title
 		g.setColor(Color.BLACK);
-		g.drawString("Quests", x + 20, y + 30); // can change
+		g.drawString("Quest Log", x + 15, y + 30); // can change
 		
 		// draw text (current quests)
 		for (int i = 0; i < currentQuests.size(); i++) {
@@ -112,7 +133,7 @@ public class QuestLog { // rename to QuestManager?
 			
 			// draw current quest text
 			g.setColor(Color.BLACK);
-			g.drawString(questStore.get(currentQuests.get(i)).getName(), x + 20, y + (height + 30) * (i + 1));
+			g.drawString(questStore.get(currentQuests.get(i)).getName(), x + 15, y + (height + 30) * (i + 1));
 		} // for
 		
 	} // draw

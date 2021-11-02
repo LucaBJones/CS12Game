@@ -142,11 +142,14 @@ public class DialogueManager {
 		}
 		
 		// check if current node is trying to complete a quest
-		if (dialogueStore.get(next[0]) instanceof DialogueQuestNode) { // assumes DialogueQuestNode is not a choice
-			boolean canComplete = questLog.canComplete(((DialogueQuestNode) dialogueStore.get(next[0])).getQuestToComplete());
-			((DialogueQuestNode) dialogueStore.get(next[0])).setText(canComplete);
-			((DialogueQuestNode) dialogueStore.get(next[0])).setNext(canComplete);
-		}
+		if (dialogueStore.get(next[0]) instanceof CompleteQuestNode) { // assumes DialogueQuestNode is not a choice
+			boolean canComplete = questLog.canComplete(((CompleteQuestNode) dialogueStore.get(next[0])).getQuestToComplete());
+					
+			((CompleteQuestNode) dialogueStore.get(next[0])).setText(canComplete);
+			((CompleteQuestNode) dialogueStore.get(next[0])).setNext(canComplete);
+			
+			
+		} // if
 		
 		// if there are no choices, set dialogue
 		if (next.length == 1) {
@@ -215,10 +218,15 @@ public class DialogueManager {
 		} // if
 		
 		// if there is a quest to complete, complete it
-		if (dialogueStore.get(currentDialogueID) instanceof DialogueQuestNode) {
-			questLog.complete(((DialogueQuestNode) dialogueStore.get(currentDialogueID)).getQuestToComplete());
+		if (dialogueStore.get(currentDialogueID) instanceof CompleteQuestNode) {
+			questLog.complete(((CompleteQuestNode) dialogueStore.get(currentDialogueID)).getQuestToComplete());
 		} // if
 	} // handleQuest
+	
+	// sets current dialogue node to uncollected rewards version
+	public void rewardsUncollected() {
+		((CompleteQuestNode) dialogueStore.get(currentDialogueID)).setToPendingRewardNextID();
+	} // rewardsUncollected
 	
 	// draws the dialogue to the screen
 	public void draw(Graphics g) {

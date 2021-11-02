@@ -35,61 +35,6 @@ public class DialogueNode {
 		d.add(id, this);
 	} // DialogueNode
 
-	// choice dialogueNode 
-	public DialogueNode(String id, String speaker, String text, String choiceText, String[] nextIDs,
-			DialogueManager d) {
-
-		this.id = id;
-		this.text = text;
-		this.speaker = speaker;
-		this.nextIDs = nextIDs;
-
-		this.choiceText = choiceText;
-
-		this.questToUnlock = "";
-
-		this.prerequisiteQuest = "";
-		this.prerequisiteStatus = -1;
-
-		d.add(id, this);
-	} // DialogueNode
-
-	// choice dialogueNode with prerequisites
-	public DialogueNode(String id, String speaker, String text, String choiceText, String prerequisiteQuest,
-			int prerequisiteStatus, String[] nextIDs, DialogueManager d) {
-
-		this.id = id;
-		this.text = text;
-		this.speaker = speaker;
-		this.nextIDs = nextIDs;
-
-		this.choiceText = choiceText;
-
-		this.questToUnlock = "";
-
-		this.prerequisiteQuest = prerequisiteQuest;
-		this.prerequisiteStatus = prerequisiteStatus;
-
-		d.add(id, this);
-	} // DialogueNode
-
-	// choice + questToUnlock dialogueNode
-	public DialogueNode(String id, String speaker, String text, String choiceText, String[] nextIDs, DialogueManager d,
-			String questToUnlock) {
-
-		this.id = id;
-		this.text = text;
-		this.speaker = speaker;
-		this.nextIDs = nextIDs;
-
-		this.choiceText = choiceText;
-
-		this.questToUnlock = questToUnlock;
-		System.out.println("init, " + id + ": " + questToUnlock);
-
-		d.add(id, this);
-	} // DialogueNode
-
 	// returns the dialogue text
 	public String getText() {
 		return text;
@@ -122,4 +67,21 @@ public class DialogueNode {
 		return prerequisiteStatus;
 	}
 
+	public void setText(String text) {
+		this.text = text;
+	} // setText
+	
+	public void setChoiceText(String choiceText) {
+		this.choiceText = choiceText;
+	} // setChoiceText
+	
+	public void setChoicePrerequisite(String questID, int questStatus) {
+		prerequisiteQuest = questID;
+		prerequisiteStatus = questStatus;
+	} // setChoicePrerequisite
+
+	public void setQuestToUnlock(String questID) {
+		questToUnlock = questID;
+	} // setQuestToUnlock
+	
 } // DialogueNode

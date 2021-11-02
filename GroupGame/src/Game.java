@@ -109,7 +109,7 @@ public class Game extends Canvas {
 		setIgnoreRepaint(true);
 		
 		// initialize entities
-		initEntities();
+		initGame();
 		
 		// add key listener
 		addKeyListener(new KeyInputHandler());
@@ -127,7 +127,7 @@ public class Game extends Canvas {
 	} // Game
 	
 	// initialize entities
-	private void initEntities() {
+	private void initGame() {
 		
 		// initialize tiles
 		for (int i = 0; i < map.length; i++) {
@@ -152,12 +152,63 @@ public class Game extends Canvas {
 		inv = new Inventory(3); // size of inventory
 		tooltip = new Tooltip();
 
+		initQuests();
+		initDialogue();
+		questLog.setDialogue(dialogue); // important... and probably not good
+		
+		dialogue.start("1"); // uncomment to display example dialogue
+		
+	} // initEntities
+
+	private void initDialogue() {
+		// temp, example dialogue
+		dialogue = new DialogueManager(questLog);
+		
+		new DialogueNode("1", "NPC1", "Hello, my name is...", new String[] {"2"}, dialogue);
+		
+		new DialogueNode("2", "NPC1", "Wait! Don't leave, let me finish first...", new String[] {"3"}, dialogue);
+		
+		new DialogueNode("3", "NPC1", "Hey!!!", new String[] {"4", "5"}, dialogue);
+		
+		DialogueNode d4 = new DialogueNode("4", "NPC1", "How dare you!", null, dialogue);
+		d4.setChoiceText("Leave me alone...");
+		
+		DialogueNode d5 = new DialogueNode("5", "NPC1", "Yes!!! I am!!!!", new String[] {"6"}, dialogue);
+		d5.setChoiceText("What? Are you talking to me?");
+		
+		new DialogueNode("6", "NPC1", "I just wanted to ask... Do you have any apples?", new String[] {"7", "8", "9"}, dialogue);
+		
+		DialogueNode d7 = new DialogueNode("7", "NPC1", "Really? That'd be great!", null, dialogue);
+		d7.setChoiceText("I can go find some for you.");
+		d7.setQuestToUnlock("q1");
+		
+		DialogueNode d8 = new DialogueNode("8", "NPC1", "Oh.. Sorry to bother you...", null, dialogue);
+		d8.setChoiceText("No.");
+		
+		DialogueNode d9 = new DialogueNode("9", "NPC1", "What? Really? You have apples?", new String[] {"10"}, dialogue);
+		d9.setChoiceText("Here are some apples");
+		d9.setChoicePrerequisite("q1", 0); // -1 = locked, 0 = unlocked, 1 = completed
+		
+		new CompleteQuestNode("10", "NPC1", // id and speaker
+				"q1", // questID
+				"Thank you so much! Here. I'll give you a coin in return.", "11",  // text and next node if quest is complete
+				"You said you had apples... Where are they?", "12", // text and next node if quest is incomplete
+				"13", // next node if inv is full
+				dialogue);
+		
+		new DialogueNode("13", "NPC1", "Is your bag full? That's fine, just come back whenever you're ready. I'll give you the coin then.", null, dialogue);
+		
+		new DialogueNode("11", "NPC1", "Thanks again.", null, dialogue);
+		new DialogueNode("12", "NPC1", "Come back when you actually get some.", null, dialogue);
+	}
+
+	private void initQuests() {
 		// temp, example quest
 		questLog = new QuestLog(inv);
 		
 		HashMap<String, Integer> obj1 = new HashMap<String, Integer>();
 		new InventoryItem("apple", "images/sprite1.png", "Apple", "An arrow-shaped blue apple.");
-		obj1.put("apple", 1); // 5?
+		obj1.put("apple", 5); 
 		
 		HashMap<String, Integer> reward1 = new HashMap<String, Integer>();
 		new InventoryItem("coin", "images/sprite2.png", "Coin", "Money.");
@@ -169,49 +220,7 @@ public class Game extends Canvas {
 					obj1, // objectives
 					reward1, // rewards
 					questLog);
-		
-		
-		// temp, example dialogue
-		dialogue = new DialogueManager(questLog);
-		
-		new DialogueNode("1", "NPC1", "Hello, my name is...", 
-				new String[] {"2"}, dialogue);
-		
-		new DialogueNode("2", "NPC1", "Wait! Don't leave, let me finish first...", 
-				new String[] {"3"}, dialogue);
-		
-		new DialogueNode("3", "NPC1", "Hey!!!", 
-				new String[] {"4", "5"}, dialogue);
-		
-		new DialogueNode("4", "NPC1", "How dare you!", "Leave me alone...", null, dialogue);
-		
-		new DialogueNode("5", "NPC1", "Yes!!! I am!!!!", "What? Are you talking to me?", 
-				new String[] {"6"}, dialogue);
-		
-		new DialogueNode("6", "NPC1", "I just wanted to ask... Do you have any apples?", 
-				new String[] {"7", "8", "9"}, dialogue);
-		
-		new DialogueNode("7", "NPC1", "Really? That'd be great!", 
-							"I can go find some for you.", null, dialogue, "q1");
-		new DialogueNode("8", "NPC1", "Oh.. Sorry to bother you...", 
-							"No.", null, dialogue);
-		
-		new DialogueNode("9", "NPC1", "What? Really? You have apples?", 
-				"Here are some apples", "q1", 0,
-				new String[] {"10"}, dialogue);
-		
-		new DialogueQuestNode("10", "NPC1", 
-				"q1",
-				"Thank you so much! Here. I'll give you a coin in return.", "11", 
-				"You said you had apples... Where are they?", "12",
-				dialogue);
-		
-		new DialogueNode("11", "NPC1", "Thanks again.", null, dialogue);
-		new DialogueNode("12", "NPC1", "Come back when you actually get some.", null, dialogue);
-		
-		dialogue.start("1"); // uncomment to display example dialogue
-		
-	} // initEntities
+	}
 	
 	private void gameLoop() {
 		
@@ -307,13 +316,10 @@ public class Game extends Canvas {
 				} // if
 			} // if
 			
-			//System.out.println(player.getHitBox());
-			
 			// check for attacks hitting characters
 			for (Attack a : tempAttacks) {
 				if(a.collidesWith(characters, g)) {
 					removeEntity(a);
-					System.out.println("remove attack");
 				} // if
 			} // for
 			
@@ -524,8 +530,8 @@ public class Game extends Canvas {
 			int XDirection = (int) (player.getX() - enemy.getX());
 			int YDirection = (int) (player.getY() - enemy.getY());
 			
-			System.out.println(XDirection);
-			System.out.println(YDirection);
+//			System.out.println(XDirection);
+//			System.out.println(YDirection);
 			
 			// probably some enemy direction
 			// decide the direction
@@ -556,14 +562,11 @@ public class Game extends Canvas {
           return null;
         } // if
         lastFire = System.currentTimeMillis();
-		//System.out.println("spawn projectile");//
 		
 		diagonal = Math.pow(Math.pow(horizontalDirection, 2) + Math.pow(verticalDirection, 2), -0.5);
 		xSpawn = (int) (player.getX() + INIT_DIST * horizontalDirection *  diagonal);
 		ySpawn = (int) (player.getY() - Entity.TILE_LENGTH + INIT_DIST * verticalDirection * diagonal);		
 		
-		//System.out.println(xSpawn);
-		//System.out.println( ySpawn);
 		return new Attack("images/sprite1.png", xSpawn * 60, ySpawn * 60, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range, shooter);
 
 	} // spawnProjectile
@@ -773,7 +776,7 @@ public class Game extends Canvas {
 	} // gameOver
 	
 	public void newGame() {
-		initEntities();
+		initGame();
 		gameLoop();
 	}
 	
