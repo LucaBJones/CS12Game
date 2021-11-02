@@ -760,12 +760,13 @@ public class Game extends Canvas {
 	}
 	
 	public static void gameOver(Graphics2D g) {
+		String message = "GAME OVER";
 		g.setColor(Color.black);
 		g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
 		g.setColor(Color.white);
         g.setFont(new Font("Purisa" , Font.BOLD, 35));
-		g.drawString("GAME OVER", Camera.getWidth() / 2, Camera.getHeight() / 2);
-	}
+		g.drawString(message, (Camera.getWidth() - g.getFontMetrics().stringWidth(message)) / 2, Camera.getHeight() / 2);
+	} // gameOver
 	
 	public void newGame() {
 		initEntities();
@@ -773,10 +774,11 @@ public class Game extends Canvas {
 	}
 	
 	public static void win(Graphics2D g) {
+		String message = "YOU WIN!";
 		g.setColor(Color.black);
-		g.fillRect(Camera.getX(), Camera.getY(), Camera.getWidth(), Camera.getHeight());
+		g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
 		g.setColor(Color.white);
         g.setFont(new Font("Purisa" , Font.BOLD, 35));
-		g.drawString("YOU WIN!", Camera.getWidth() / 2, Camera.getHeight() / 2);
-	}
+		g.drawString(message, (Camera.getWidth() - g.getFontMetrics().stringWidth(message))/ 2, Camera.getHeight() / 2);
+	} // win
 } // Game
