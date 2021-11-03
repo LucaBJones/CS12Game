@@ -23,6 +23,14 @@ public class Tile {
 		y = yTile * TILE_LENGTH;
 		game = g;
 	} // constructor
+	
+	public Tile(int xTile, int yTile, int num, TileEditor g) {
+		x = xTile * TILE_LENGTH;
+		y = yTile * TILE_LENGTH;
+		game = g;
+		currentSpriteNum = num;
+		setSprite(currentSpriteNum, 0);
+	}
 
 	public void updatePosition(int xTile, int yTile) {
 		x = xTile * TILE_LENGTH;
