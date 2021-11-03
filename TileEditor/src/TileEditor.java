@@ -45,6 +45,8 @@ public class TileEditor extends Canvas {
 	private boolean changingTile = false;
 	private String currentText = "";
 	
+	private boolean copyingTile = false;
+	
 	private static ArrayList<Tile> tiles = new ArrayList<Tile>();
 
 	private static Scanner in;
@@ -165,21 +167,15 @@ public class TileEditor extends Canvas {
 			g.drawString("Painting Columns: " + settingColumns + " (q to toggle)", 20, 190);
 			g.drawString("Painting Rows: " + settingRows + " (w to toggle)", 20, 210);
 
-			g.drawString("Click to set tiles", 20, 270);
+			g.drawString("Click/Drag to set tiles", 20, 270);
 			g.drawString("Middle Mouse Button to Drag", 20, 290);
+			g.drawString("Hold alt and click to copy tile", 20, 310);
 
-			g.drawString("s - save to map.txt", 20, 320);
+			g.drawString("s - save to map.txt", 20, 340);
 			
 			// clear graphics and flip buffer
 			g.dispose();
 			strategy.show();
-			
-
-//			if (controlPressed) {
-//				currentTileNum = in.nextInt();
-//				System.out.println("current: " + currentTileNum);
-//			}
-			
 
 		} // while
 	} // gameLoop
@@ -198,8 +194,12 @@ public class TileEditor extends Canvas {
 			
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 				changingTile = true;
-				System.out.println("Type in tile num: ");
+				System.out.print("Type in tile num: ");
 			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_ALT) {
+				copyingTile = true;
+			}
 
 		} // keyPressed
 
@@ -209,14 +209,18 @@ public class TileEditor extends Canvas {
 				setAllTiles();
 			}
 			
+			if (e.getKeyCode() == KeyEvent.VK_ALT) {
+				copyingTile = false;
+			}
+			
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				try {
 					currentTileNum = Integer.parseInt(currentText);
+					System.out.println();
 					System.out.println("currentTile: " + currentTileNum);
 					changingTile = false;
 				} catch (Exception ex) {
 					ex.printStackTrace();
-//					currentTileNum
 				}
 				
 				currentText = "";
@@ -349,11 +353,16 @@ public class TileEditor extends Canvas {
 			if (tileX > columns - 1 || tileY > rows - 1) {
 				return;
 			} // if
+			
+			if (copyingTile) {
+				currentTileNum = tiles.get(tileY * columns + tileX).getSpriteNum();
+				System.out.println("Copied! currentTile: " + currentTileNum);
+				return;
+			}
 
 			// "paint" columns
 			if (settingColumns) {
 				setColumns(tileX);
-				return;
 			} // if
 
 			// "paint" rows
