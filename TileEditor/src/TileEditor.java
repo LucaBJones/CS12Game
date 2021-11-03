@@ -9,12 +9,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -39,13 +37,20 @@ public class TileEditor extends Canvas {
 	private int dragPercentage = 1;
 
 	private int currentTileNum = 1;
+	private int currentLayer = 0;
 
 	private boolean settingColumns = false;
 	private boolean settingRows = false;
-
+	
+	private boolean changingTile = false;
+	private String currentText = "";
+	
 	private static ArrayList<Tile> tiles = new ArrayList<Tile>();
 
+	private static Scanner in;
+	
 	public static void main(String[] args) {
+		in = new Scanner(System.in);
 		new TileEditor();
 
 	} // Game
@@ -117,20 +122,19 @@ public class TileEditor extends Canvas {
 
 	private void setAllTiles() {
 		for (Tile t : tiles) {
-			t.setSprite(currentTileNum);
+			t.setSprite(currentTileNum, currentLayer);
 		}
 	}
 
 	private void setRows(int rowNum) {
 		for (int i = 0; i < columns; i++) {
-			tiles.get(columns * rowNum + i).setSprite(currentTileNum);
-			System.out.println("settingRows: " + (columns * rowNum + i));
+			tiles.get(columns * rowNum + i).setSprite(currentTileNum, currentLayer);
 		}
 	}
 
 	private void setColumns(int columnNum) {
 		for (int i = 0; i < rows; i++) {
-			tiles.get(columnNum + (i * columns)).setSprite(currentTileNum);
+			tiles.get(columnNum + (i * columns)).setSprite(currentTileNum, currentLayer);
 		}
 	}
 
@@ -138,7 +142,7 @@ public class TileEditor extends Canvas {
 		ArrayList<Tile> tempTiles;
 
 		while (true) {
-
+			
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.gray);
 			g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -150,25 +154,32 @@ public class TileEditor extends Canvas {
 
 			g.setColor(Color.white);
 			g.drawString("Current Tile: " + currentTileNum, 20, 30);
-			g.drawString("Rows: " + rows, 20, 50);
-			g.drawString("Columns: " + columns, 20, 70);
+			g.drawString("Current Layer: " + currentLayer + " (e to toggle)", 20, 50);
+			g.drawString("Rows: " + rows, 20, 70);
+			g.drawString("Columns: " + columns, 20, 90);
+			
+			g.drawString("r - add rows", 20, 130);
+			g.drawString("c - add columns", 20, 150);
+			
+			g.drawString("a - paint all", 20, 170);
+			g.drawString("Painting Columns: " + settingColumns + " (q to toggle)", 20, 190);
+			g.drawString("Painting Rows: " + settingRows + " (w to toggle)", 20, 210);
 
-			g.drawString("r - add rows", 20, 110);
-			g.drawString("c - add columns", 20, 130);
-			g.drawString("a - fill all", 20, 150);
-			g.drawString("q - fill columns (toggle)", 20, 170);
-			g.drawString("w - fill rows (toggle)", 20, 190);
+			g.drawString("Click to set tiles", 20, 270);
+			g.drawString("Middle Mouse Button to Drag", 20, 290);
 
-			g.drawString("Number keys to change Tiles", 20, 230);
-			g.drawString("Click to set tiles", 20, 250);
-			g.drawString("Middle Mouse Button to Drag", 20, 270);
-
-			g.drawString("s - save to map.txt", 20, 300);
-			g.drawString("l - load from map.txt (in bin folder)", 20, 320);
+			g.drawString("s - save to map.txt", 20, 320);
 			
 			// clear graphics and flip buffer
 			g.dispose();
 			strategy.show();
+			
+
+//			if (controlPressed) {
+//				currentTileNum = in.nextInt();
+//				System.out.println("current: " + currentTileNum);
+//			}
+			
 
 		} // while
 	} // gameLoop
@@ -184,6 +195,11 @@ public class TileEditor extends Canvas {
 			if (e.getKeyCode() == KeyEvent.VK_C) {
 				addColumn();
 			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+				changingTile = true;
+				System.out.println("Type in tile num: ");
+			} // if
 
 		} // keyPressed
 
@@ -192,9 +208,28 @@ public class TileEditor extends Canvas {
 			if (e.getKeyCode() == KeyEvent.VK_A) {
 				setAllTiles();
 			}
+			
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				try {
+					currentTileNum = Integer.parseInt(currentText);
+					System.out.println("currentTile: " + currentTileNum);
+					changingTile = false;
+				} catch (Exception ex) {
+					ex.printStackTrace();
+//					currentTileNum
+				}
+				
+				currentText = "";
+				
+			}
 
 			if (e.getKeyCode() == KeyEvent.VK_S) {
 				save();
+			}
+			
+			if (e.getKeyCode() == KeyEvent.VK_E) {
+				currentLayer = (currentLayer == 0) ? 1 : 0;
+				
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_Q) {
@@ -207,26 +242,17 @@ public class TileEditor extends Canvas {
 				settingColumns = false; // should this be here? could be cross-shaped
 			}
 
-			if (e.getKeyCode() == KeyEvent.VK_1) { // move to keyTyped?
-				currentTileNum = 1;
-			}
-
-			if (e.getKeyCode() == KeyEvent.VK_2) {
-				currentTileNum = 2;
-			}
-
-			if (e.getKeyCode() == KeyEvent.VK_3) {
-				currentTileNum = 3;
-			}
-
-			if (e.getKeyCode() == KeyEvent.VK_4) {
-				currentTileNum = 4;
-			}
-
 		} // keyReleased
 
 		public void keyTyped(KeyEvent e) {
-
+			if (changingTile) {
+				if ((e.getKeyChar() + "").toString().matches("[0-9]")) {
+					currentText += "" + e.getKeyChar();
+					System.out.print(e.getKeyChar());
+				}	
+			}
+			
+			
 		} // keyTyped
 
 	} // class KeyInputHandler
@@ -241,8 +267,6 @@ public class TileEditor extends Canvas {
 
 			// drag screen
 			if (SwingUtilities.isMiddleMouseButton(e)) {
-				System.out.println("middle");
-				System.out.println("e: " + e.getX() + ", " + e.getY());
 
 				if (isDragging) {
 					int dragX = e.getX() - dragStart.x;
@@ -250,9 +274,6 @@ public class TileEditor extends Canvas {
 
 					xOffset += dragX * (1.0 / dragPercentage);
 					yOffset += dragY * (1.0 / dragPercentage);
-
-					System.out.println("dragX: " + dragX);
-					System.out.println("xOffset: " + xOffset + ", yOffset: " + yOffset);
 
 					dragStart.x = e.getX();
 					dragStart.y = e.getY();
@@ -271,7 +292,6 @@ public class TileEditor extends Canvas {
 
 				// return if mouse was not on map
 				if (cart.x < 0 || cart.y < 0) {
-					System.out.println("out of bounds...");
 					return;
 				} // if
 
@@ -297,7 +317,7 @@ public class TileEditor extends Canvas {
 				} // if
 
 				// set sprite of single tile
-				tiles.get(tileY * columns + tileX).setSprite(currentTileNum);
+				tiles.get(tileY * columns + tileX).setSprite(currentTileNum, currentLayer);
 			} // if
 
 		} // mouseDragged
@@ -318,7 +338,6 @@ public class TileEditor extends Canvas {
 
 			// return if mouse was not on map
 			if (cart.x < 0 || cart.y < 0) {
-				System.out.println("out of bounds...");
 				return;
 			} // if
 
@@ -344,7 +363,7 @@ public class TileEditor extends Canvas {
 			} // if
 
 			// set sprite of single tile
-			tiles.get(tileY * columns + tileX).setSprite(currentTileNum);
+			tiles.get(tileY * columns + tileX).setSprite(currentTileNum, currentLayer);
 
 		} // mouseClicked
 
@@ -385,6 +404,10 @@ public class TileEditor extends Canvas {
 		return yOffset;
 	}
 
+	public int getCurrentLayer() {
+		return currentLayer;
+	}
+	
 	public void save() {
 		int[][] tempMap = new int[rows][columns];
 
