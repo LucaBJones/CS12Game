@@ -193,6 +193,7 @@ public class TileEditor extends Canvas {
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+				if (changingTile) { return; }
 				changingTile = true;
 				System.out.print("Type in tile num: ");
 			} // if
@@ -214,17 +215,14 @@ public class TileEditor extends Canvas {
 			}
 			
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				try {
-					currentTileNum = Integer.parseInt(currentText);
-					System.out.println();
-					System.out.println("currentTile: " + currentTileNum);
-					changingTile = false;
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+				if (!changingTile) { return; }
+				
+				currentTileNum = Integer.parseInt(currentText);
+				System.out.println();
+				System.out.println("currentTile: " + currentTileNum);
+				changingTile = false;
 				
 				currentText = "";
-				
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_S) {
@@ -250,7 +248,7 @@ public class TileEditor extends Canvas {
 
 		public void keyTyped(KeyEvent e) {
 			if (changingTile) {
-				if ((e.getKeyChar() + "").toString().matches("[0-9]")) {
+				if ((e.getKeyChar() + "").toString().matches("[0-9]") || (e.getKeyChar() + "").toString().matches("-")) {
 					currentText += "" + e.getKeyChar();
 					System.out.print(e.getKeyChar());
 				}	
