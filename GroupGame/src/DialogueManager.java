@@ -153,6 +153,10 @@ public class DialogueManager {
 		
 		// if there are no choices, set dialogue
 		if (next.length == 1) {
+			
+			// check if next node is not a choice
+			if (!dialogueStore.get(next[0]).getIsChoice()) {
+
 			currentDialogueID = next[0];
 			handleQuest();
 			
@@ -161,6 +165,7 @@ public class DialogueManager {
 			index = 0;
 			timer.restart();
 			return;
+			} // if
 		} // if
 		
 		// check if there are multiple choices and that the player hasn't chosen yet

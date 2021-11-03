@@ -4,6 +4,7 @@ public class DialogueNode {
 	protected String speaker;
 	protected String[] nextIDs;
 
+	private boolean isChoice;
 	private String choiceText;
 
 	private String questToUnlock;
@@ -73,6 +74,7 @@ public class DialogueNode {
 	
 	public void setChoiceText(String choiceText) {
 		this.choiceText = choiceText;
+		isChoice = true;
 	} // setChoiceText
 	
 	public void setChoicePrerequisite(String questID, int questStatus) {
@@ -83,5 +85,9 @@ public class DialogueNode {
 	public void setQuestToUnlock(String questID) {
 		questToUnlock = questID;
 	} // setQuestToUnlock
+	
+	public boolean getIsChoice() {
+		return isChoice;
+	}
 	
 } // DialogueNode

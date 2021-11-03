@@ -152,54 +152,124 @@ public class Game extends Canvas {
 		inv = new Inventory(3); // size of inventory
 		tooltip = new Tooltip();
 
+		initItems();
 		initQuests();
 		initDialogue();
 		questLog.setDialogue(dialogue); // important... and probably not good
 		
-		dialogue.start("1"); // uncomment to display example dialogue
+		dialogue.start("intro1"); // uncomment to display example dialogue
 		
 	} // initEntities
 
+	private void initItems() {
+		
+	}
+	
 	private void initDialogue() {
 		// temp, example dialogue
 		dialogue = new DialogueManager(questLog);
 		
-		new DialogueNode("1", "NPC1", "Hello, my name is...", new String[] {"2"}, dialogue);
+//		new DialogueNode("1", "NPC1", "Hello, my name is...", new String[] {"2"}, dialogue);
+//		
+//		new DialogueNode("2", "NPC1", "Wait! Don't leave, let me finish first...", new String[] {"3"}, dialogue);
+//		
+//		new DialogueNode("3", "NPC1", "Hey!!!", new String[] {"4", "5"}, dialogue);
+//		
+//		DialogueNode d4 = new DialogueNode("4", "NPC1", "How dare you!", null, dialogue);
+//		d4.setChoiceText("Leave me alone...");
+//		
+//		DialogueNode d5 = new DialogueNode("5", "NPC1", "Yes!!! I am!!!!", new String[] {"6"}, dialogue);
+//		d5.setChoiceText("What? Are you talking to me?");
+//		
+//		new DialogueNode("6", "NPC1", "I just wanted to ask... Do you have any apples?", new String[] {"7", "8", "9"}, dialogue);
+//		
+//		DialogueNode d7 = new DialogueNode("7", "NPC1", "Really? That'd be great!", null, dialogue);
+//		d7.setChoiceText("I can go find some for you.");
+//		d7.setQuestToUnlock("q1");
+//		
+//		DialogueNode d8 = new DialogueNode("8", "NPC1", "Oh.. Sorry to bother you...", null, dialogue);
+//		d8.setChoiceText("No.");
+//		
+//		DialogueNode d9 = new DialogueNode("9", "NPC1", "What? Really? You have apples?", new String[] {"10"}, dialogue);
+//		d9.setChoiceText("Here are some apples");
+//		d9.setChoicePrerequisite("q1", 0); // -1 = locked, 0 = unlocked, 1 = completed
+//		
+//		new CompleteQuestNode("10", "NPC1", // id and speaker
+//				"q1", // questID
+//				"Thank you so much! Here. I'll give you a coin in return.", "11",  // text and next node if quest is complete
+//				"You said you had apples... Where are they?", "12", // text and next node if quest is incomplete
+//				"13", // next node if inv is full
+//				dialogue);
+//		
+//		new DialogueNode("13", "NPC1", "Is your bag full? That's fine, just come back whenever you're ready. I'll give you the coin then.", null, dialogue);
+//		
+//		new DialogueNode("11", "NPC1", "Thanks again.", null, dialogue);
+//		new DialogueNode("12", "NPC1", "Come back when you actually get some.", null, dialogue);
+//	
+	
+		// Opening/intro dialogue -- add prerequisites!!
+		new DialogueNode("intro1", "", "Hey, you. You’re finally awake.", new String[] {"introChoice1", "introChoice2"}, dialogue);
 		
-		new DialogueNode("2", "NPC1", "Wait! Don't leave, let me finish first...", new String[] {"3"}, dialogue);
+		DialogueNode introChoice1 = new DialogueNode("introChoice1", "", "You don’t remember? Hmph. Some hunter you are.", new String[] {"intro2"}, dialogue);
+		introChoice1.setChoiceText("... What? Where am I?");
 		
-		new DialogueNode("3", "NPC1", "Hey!!!", new String[] {"4", "5"}, dialogue);
+		DialogueNode introChoice2 = new DialogueNode("introChoice2", "", "I am the chief of this town. Don’t you remember me?", new String[] {"intro2"}, dialogue);
+		introChoice2.setChoiceText("Who are you?");
 		
-		DialogueNode d4 = new DialogueNode("4", "NPC1", "How dare you!", null, dialogue);
-		d4.setChoiceText("Leave me alone...");
+		new DialogueNode("intro2", "", "You’re the one who’s meant to take down the demon lord up north.", new String[] {"introChoice3"}, dialogue);
 		
-		DialogueNode d5 = new DialogueNode("5", "NPC1", "Yes!!! I am!!!!", new String[] {"6"}, dialogue);
-		d5.setChoiceText("What? Are you talking to me?");
+		DialogueNode introChoice3 = new DialogueNode("introChoice3", "", "No memory, huh. Interesting. ", new String[] {"intro3"}, dialogue);
+		introChoice3.setChoiceText("The what now?");
 		
-		new DialogueNode("6", "NPC1", "I just wanted to ask... Do you have any apples?", new String[] {"7", "8", "9"}, dialogue);
+		new DialogueNode("intro3", "", "You are a hunter, but since you’ve lost your memory, I shall assign you a task to determine if you are worthy.", null, dialogue);
 		
-		DialogueNode d7 = new DialogueNode("7", "NPC1", "Really? That'd be great!", null, dialogue);
-		d7.setChoiceText("I can go find some for you.");
-		d7.setQuestToUnlock("q1");
+		// First Quest: Collect Apples
+		new DialogueNode("q1Text1", "", "Anyways, you look like you haven’t eaten in days. There are some apples in the orchard east of here.", new String[] {""}, dialogue);
+		new DialogueNode("q1Text2", "", "Go collect some - you’ll need the energy.", new String[] {""}, dialogue);
+		new DialogueNode("q1Text3", "", "When you’ve done that, we can talk about your quest.", new String[] {""}, dialogue);
 		
-		DialogueNode d8 = new DialogueNode("8", "NPC1", "Oh.. Sorry to bother you...", null, dialogue);
-		d8.setChoiceText("No.");
+		// dialogue when quest 1 is in progress
+		new DialogueNode("q1Text4", "", "Come back when you’ve gotten some apples. They’re in the orchard to the east.", new String[] {""}, dialogue);
 		
-		DialogueNode d9 = new DialogueNode("9", "NPC1", "What? Really? You have apples?", new String[] {"10"}, dialogue);
-		d9.setChoiceText("Here are some apples");
-		d9.setChoicePrerequisite("q1", 0); // -1 = locked, 0 = unlocked, 1 = completed
+		// dialogue when quest 1 is complete
+		new DialogueNode("q1Complete1", "", "Eating food will replenish your health.", new String[] {""}, dialogue);
+		new DialogueNode("q1Complete2", "", "That’ll be useful on your journey.", new String[] {""}, dialogue);
 		
-		new CompleteQuestNode("10", "NPC1", // id and speaker
-				"q1", // questID
-				"Thank you so much! Here. I'll give you a coin in return.", "11",  // text and next node if quest is complete
-				"You said you had apples... Where are they?", "12", // text and next node if quest is incomplete
-				"13", // next node if inv is full
-				dialogue);
 		
-		new DialogueNode("13", "NPC1", "Is your bag full? That's fine, just come back whenever you're ready. I'll give you the coin then.", null, dialogue);
+		// Second quest: Kill a few enemies -- add prerequisites
+		new DialogueNode("", "", "Now that you’ve proven to be at least competent, I believe that I can trust you to protect the village from the enemies in the west.", new String[] {""}, dialogue);
 		
-		new DialogueNode("11", "NPC1", "Thanks again.", null, dialogue);
-		new DialogueNode("12", "NPC1", "Come back when you actually get some.", null, dialogue);
+		// during quest 2
+		new DialogueNode("", "", "There are a few stray enemies roaming on the field west of here. Take care of them.", new String[] {""}, dialogue);
+		
+		// quest 2 complete
+		new DialogueNode("", "", "So you can fight.", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		
+
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		
 	}
 
 	private void initQuests() {
