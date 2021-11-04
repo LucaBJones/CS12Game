@@ -1,10 +1,12 @@
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Character extends Movable {
 
+	private static HashMap<String, Integer> deaths = new HashMap<String, Integer>();
+	
 	// health, stamina, and mana bars
 	private Bar hp;
 	private Bar stamina;
@@ -123,6 +125,12 @@ public class Character extends Movable {
 	public boolean isPlayer() {
 		return isPlayer;
 	}
+	
+	public void kill() {
+		int currentNum = (deaths.containsKey(id)) ? deaths.get(id) : 0;
+		deaths.put(id, currentNum + 1);
+		Game.removeEntity(this);
+	} // kill
 	
 	public boolean playerCollision(ArrayList<Character> characters) {
 		

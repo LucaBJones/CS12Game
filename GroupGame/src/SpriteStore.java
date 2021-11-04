@@ -13,12 +13,23 @@ import javax.imageio.ImageIO;
 public class SpriteStore {
 
 	private static SpriteStore spriteStore = new SpriteStore(); // one instance of this class will exist
+	
 	private HashMap<String, Sprite> sprites = new HashMap<String, Sprite>(); // stores sprites
+	private HashMap<String, Animation> animations = new HashMap<String, Animation>(); // stores sprites
+	
 
-	// returns the spriteStore instance
+// returns the riteStore instance
 	public static SpriteStore get() {
 		return spriteStore;
 	} // get
+	
+	public void addAnimation(String ref, Animation anim) {
+		animations.put(ref, anim);
+	}
+	
+	public Animation getAnimation(String ref) {
+		return animations.get(ref);
+	}
 
 	// returns the sprite associated with the String passed in
 	public Sprite getSprite(String ref) {

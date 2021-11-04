@@ -76,8 +76,8 @@ public class Entity {
 		sprite = (SpriteStore.get()).getSprite(r);
 	} // setSprite
 	
-	public void setAnimation(Animation anim) { // temp
-		animation = anim;
+	public void setAnimation(String animID) { // temp
+		animation = SpriteStore.get().getAnimation(animID);
 	}
 	
 	public int getScreenPosX() {

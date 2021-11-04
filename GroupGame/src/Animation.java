@@ -43,6 +43,8 @@ public class Animation {
 		
 		isPlaying = false;
 		entity = e;
+		
+		//SpriteStore.get().addAnimation(prefix, this);
 	} // Animation
 	
 	

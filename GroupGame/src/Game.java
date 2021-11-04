@@ -61,6 +61,11 @@ public class Game extends Canvas {
 	private boolean melee = false;
 	private static int speed = 300;
 	
+	private boolean instructions = false;
+	private boolean credits = false;
+	private boolean returnToMenu = false;
+	private int screen = 0; // 0 for menu, 1 for instructions, 2 for credits, 3 for win, 4 for game over
+	
 	private int horizontalDirection = 0; 	// stores direction for projectiles // we could use the direction enum for this
 	private int verticalDirection = 1;		// values: -1, 0, 1 
 	private int projectileSpeed = 1000; 	// may want to change this later in the game as power up or something
@@ -78,7 +83,7 @@ public class Game extends Canvas {
 		new Game();
 	} // Game
 	
-	// start the game
+	// set up the window and show the menu
 	public Game() {
 		
 		// draw the window
@@ -107,9 +112,6 @@ public class Game extends Canvas {
 		// be done using graphics acceleration
 		setIgnoreRepaint(true);
 		
-		// initialize entities
-		initGame();
-		
 		// add key listener
 		addKeyListener(new KeyInputHandler());
 		requestFocus();
@@ -120,13 +122,12 @@ public class Game extends Canvas {
 		addMouseListener(mouseMotion);
 		
 		// start the game
-		gameIsRunning = true;
 		gameLoop();
 		
 	} // Game
 	
 	// initialize entities
-	private void initGame() {
+	private void initEntities() {
 		
 		// initialize tiles
 		for (int i = 0; i < map.length; i++) {
@@ -358,12 +359,12 @@ public class Game extends Canvas {
 		
 		
 	}
-	
+		
 	private void gameLoop() {
 		
 		long lastLoopTime = System.currentTimeMillis();
 		
-		while (gameIsRunning) {
+		while (true) {
 			
 			// update the last loop time
 			long delta = System.currentTimeMillis() - lastLoopTime;
@@ -373,7 +374,115 @@ public class Game extends Canvas {
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.gray);
 			g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
+
+			
+			// show the menu
+			if (screen == 0) {
+				// show menu text
+				g.setColor(Color.BLACK);
+				g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 2f)); // temp
+				g.drawString("[A] View instructions", 200, 200);
+				g.drawString("[C] View credits", 200, 300);
+				g.drawString("[ENTER] Start", 200, 400);
+				returnToMenu = false;
+				
+				if (instructions) {
+					screen = 1;
+				} else if (credits) {
+					screen = 2;
+				} else if (gameIsRunning) {
+					initEntities();
+					screen = 5;
+				} else {
+					g.dispose();
+					strategy.show();
+					continue;
+				}
+			} // if
+			
+			// show instructions
+			if (screen == 1) {
+				// show instructions
+				g.setColor(Color.BLACK);
+				g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 2f)); // temp
+				g.drawString("Use the arrow keys to move.", 200, 200);
+				g.drawString("Press [X] for long-range attack. Costs mana.", 200, 250);
+				g.drawString("Press [Z] for short-range attack. Costs stamina.", 200, 300);
+				g.drawString("Press [T] to talk to NPCs and advance dialogue.", 200, 350);
+				g.drawString("Press [I] to open your inventory.", 200, 400);
+				g.drawString("Press [Q] to view quests.", 200, 450);
+				g.drawString("[A]: return to menu", 200, 550);
+				
+				credits = false;
+				gameIsRunning = false;
+				
+				if (!instructions) {
+					screen = 0;
+				}
+				g.dispose();
+				strategy.show();
+				continue;
+			} // if
+			
+			// show credits
+			if (screen == 2) {
+				// show credits
+				g.setColor(Color.BLACK);
+				g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 2f)); // temp
+				g.drawString("Developers: ", 200, 200);
+				g.drawString("Rosanna Jiang", 200, 250);
+				g.drawString("Luca Buscaglia Jones", 200, 300);
+				g.drawString("Samuel Li", 200, 350);
+				
+				instructions = false;
+				gameIsRunning = false;
+				if (!credits) {
+					screen = 0;
+				}
+				g.dispose();
+				strategy.show();
+				continue;
+			} // if
+			
+			if (screen == 3) {
+				// show "you won" text
+				String message = "YOU WIN!";
+				g.setColor(Color.black);
+				g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
+				g.setColor(Color.white);
+		        g.setFont(new Font("Purisa" , Font.BOLD, 35));
+				g.drawString(message, (Camera.getWidth() - g.getFontMetrics().stringWidth(message))/ 2, Camera.getHeight() / 2);
+				g.drawString("Press M to return to menu", (Camera.getWidth() - g.getFontMetrics().stringWidth(message)) / 2, Camera.getHeight() / 2 + 100);
+				
+				if (returnToMenu) {
+					screen = 0;
+				}
+				g.dispose();
+				strategy.show();
+				continue;
+			}
+			
+			if (screen == 4) {
+				// show "you died" text
+				String message = "GAME OVER";
+				g.setColor(Color.black);
+				g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
+				g.setColor(Color.white);
+		        g.setFont(new Font("Purisa" , Font.BOLD, 35));
+				g.drawString(message, (Camera.getWidth() - g.getFontMetrics().stringWidth(message)) / 2, Camera.getHeight() / 2);
+				g.drawString("Press M to return to menu", (Camera.getWidth() - g.getFontMetrics().stringWidth(message)) / 2, Camera.getHeight() / 2 + 100);
+				
+				if (returnToMenu) {
+					screen = 0;
+				}
+				g.dispose();
+				strategy.show();
+				continue;
+			}
+			
 			Camera.center(player);
+			
+			// run the game
 			
 			// not necessary right now
 			//ArrayList<Entity> tempEntities = (ArrayList<Entity>) entityArray.clone();
@@ -476,15 +585,15 @@ public class Game extends Canvas {
 			} // if
 			
 			if (player.getHp().getValue() <= 0) {
-				
-				gameOver(g);
-				
 				entityArray.clear();
-				
+				gameIsRunning = false;
+				screen = 4;
 			}
 			
 			if (noEnemies(characters)) {
-				win(g);
+				entityArray.clear();
+				gameIsRunning = false;
+				screen = 3;
 			}
 			
 			// clear graphics and flip buffer
@@ -845,6 +954,21 @@ public class Game extends Canvas {
 				System.out.println("inventoryVisible: " + inventoryVisible);
 			} // if
 			
+			if (e.getKeyCode() == KeyEvent.VK_A) {
+				instructions = !instructions;
+			}
+			
+			if (e.getKeyCode() == KeyEvent.VK_C) {
+				credits = !credits;
+			}
+			
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				gameIsRunning = true;
+			}
+			
+			if (e.getKeyCode() == KeyEvent.VK_M) {
+				returnToMenu = true;
+			}
 			
 		} // keyReleased
 
@@ -924,26 +1048,4 @@ public class Game extends Canvas {
 		return true;
 	}
 	
-	public static void gameOver(Graphics2D g) {
-		String message = "GAME OVER";
-		g.setColor(Color.black);
-		g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
-		g.setColor(Color.white);
-        g.setFont(new Font("Purisa" , Font.BOLD, 35));
-		g.drawString(message, (Camera.getWidth() - g.getFontMetrics().stringWidth(message)) / 2, Camera.getHeight() / 2);
-	} // gameOver
-	
-	public void newGame() {
-		initGame();
-		gameLoop();
-	}
-	
-	public static void win(Graphics2D g) {
-		String message = "YOU WIN!";
-		g.setColor(Color.black);
-		g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
-		g.setColor(Color.white);
-        g.setFont(new Font("Purisa" , Font.BOLD, 35));
-		g.drawString(message, (Camera.getWidth() - g.getFontMetrics().stringWidth(message))/ 2, Camera.getHeight() / 2);
-	} // win
 } // Game
