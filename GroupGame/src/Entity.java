@@ -65,26 +65,20 @@ public class Entity {
 		screenPosX = isoPoint.x - Camera.getX();
 		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
 		
-		sprite.draw(g, screenPosX, screenPosY);
-		if (this instanceof Attack) {
-			//System.out.println(screenPosX + " " + screenPosY);
-		}
-		
-		if (animation != null) {
-			animation.draw(g, screenPosX, screenPosY);
+		if (sprite != null) { // needed?
+			sprite.draw(g, screenPosX, screenPosY);
 		}
 
 	} // draw
 	
 	public void setSprite(String r) {
+		System.out.println("r: " + r);
 		sprite = (SpriteStore.get()).getSprite(r);
 	} // setSprite
 	
 	public void setAnimation(Animation anim) { // temp
 		animation = anim;
 	}
-	
-
 	
 	public int getScreenPosX() {
 		return screenPosX;

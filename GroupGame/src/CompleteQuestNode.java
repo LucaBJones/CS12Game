@@ -46,4 +46,5 @@ public class CompleteQuestNode extends DialogueNode {
 		return questToComplete;
 	} // getQuestToComplete
 	
+	
 } // DialogueQuestNode

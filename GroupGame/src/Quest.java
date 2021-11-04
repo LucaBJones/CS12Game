@@ -4,18 +4,16 @@ public class Quest {
 
 	private String id;
 	private String name;
-	private String description;
 	
 	// should objectives and rewards be hashmaps?
 	private HashMap<String, Integer> objectives;	// stores item id and num for each objective
 	private HashMap<String, Integer> rewards;		// stores item id and num of that item of rewards
 	
-	private int status; // -1 = locked, 0 = unlocked, 1 = complete;
+	private int status; // -1 = locked, 0 = unlocked, 1 = complete, 2 = pending rewards
 	
-	public Quest(String id, String name, String description, HashMap<String, Integer> objectives, HashMap<String, Integer> rewards, QuestLog log) {
+	public Quest(String id, String name, HashMap<String, Integer> objectives, HashMap<String, Integer> rewards, QuestLog log) {
 		this.id = id;
 		this.name = name;
-		this.description = description;
 		
 		this.objectives = objectives;
 		this.rewards = rewards;
@@ -56,6 +54,10 @@ public class Quest {
 	public int getStatus() {
 		return status;
 	} // getStatus
+	
+	public void setStatus(int n) {
+		status = n;
+	}
 	
 	public void removeReward(String rewardID) {
 		rewards.remove(rewardID);

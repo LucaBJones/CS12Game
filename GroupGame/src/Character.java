@@ -11,9 +11,17 @@ public class Character extends Movable {
 	private Bar mana;
 	
 	private boolean isPlayer;
+	private String id;
 	
-	private Animation walk_s = new Animation("walk_s"); // temp
-	private Animation walk_se = new Animation("walk_se"); // temp
+	// walking animations, is there a better way to do this?
+	private Animation walk_s  = new Animation(this, "animations/player/walk_s", ".png", 0, 8);
+	private Animation walk_se = new Animation(this, "animations/player/walk_se", ".png", 0, 8);
+	private Animation walk_sw = new Animation(this, "animations/player/walk_sw", ".png", 0, 8);
+	private Animation walk_n  = new Animation(this, "animations/player/walk_n", ".png", 0, 8);
+	private Animation walk_ne = new Animation(this, "animations/player/walk_ne", ".png", 0, 8);
+	private Animation walk_nw = new Animation(this, "animations/player/walk_nw", ".png", 0, 8);
+	private Animation walk_e  = new Animation(this, "animations/player/walk_e", ".png", 0, 8);
+	private Animation walk_w  = new Animation(this, "animations/player/walk_w", ".png", 0, 8);
 	
 	// constructor
 	public Character(String r, int xPos, int yPos, int dx, int dy, boolean isPlayer) {
@@ -56,13 +64,42 @@ public class Character extends Movable {
 		return stamina;
 	}
 	
+	public Direction getDirection() {
+		return direction;
+	}
+	
 	public void setWalkAnimation() { // temp
 		switch (direction) {
 			case S: 
 				animation = walk_s;
 				break;
+				
 			case SE:
 				animation = walk_se;
+				break;
+				
+			case SW:
+				animation = walk_sw;
+				break;
+				
+			case N:
+				animation = walk_n;
+				break;
+				
+			case NE:
+				animation = walk_ne;
+				break;
+				
+			case NW:
+				animation = walk_nw;
+				break;
+				
+			case E:
+				animation = walk_e;
+				break;
+				
+			case W:
+				animation = walk_w;
 				break;
 			default:
 				//System.out.println("unimplemented animation");
@@ -81,9 +118,6 @@ public class Character extends Movable {
 			hp.drawInIso(g, this);
 		} // else
 		
-		// temp
-			
-			
 	} // draw
 	
 	public boolean isPlayer() {

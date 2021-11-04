@@ -14,40 +14,44 @@ public class Animation {
 	
 	private boolean isPlaying;
 	
-	public Animation(String animName) { // temp
+	private Entity entity;
+	private String prefix;
+	private String suffix;
+	
+	private int min;
+	
+	public Animation(Entity e, String prefix, String suffix, int min, int max) { // temp
 		this.frames = new ArrayList<Sprite>();
-
-		for (int i = 0; i < 15; i++) {
-			frames.add((SpriteStore.get()).getSprite("animations/" + animName + i + ".png"));
+		
+		this.prefix = prefix;
+		this.suffix = suffix;
+		
+		this.min = min;
+		
+		for (int i = min; i < max; i++) {
+			System.out.println("i " + i);
+			frames.add((SpriteStore.get()).getSprite(prefix + i + suffix));
+			System.out.println(prefix + i + suffix);
 		} // for
 		
 		
 		totalFrames = this.frames.size();
 		
-		currentFrame = 0;
+		currentFrame = min;
 		counter = 0;
-		delayBetweenFrames = 180;
+		delayBetweenFrames = 100;
 		
 		isPlaying = false;
+		entity = e;
 	} // Animation
 	
-//	public Animation(ArrayList<Sprite> frames) {
-//		this.frames = frames;
-//		totalFrames = this.frames.size();
-//		
-//		currentFrame = 0;
-//		counter = 0;
-//		delayBetweenFrames = 1;
-//		
-//		isPlaying = false;
-//	} // Animation
 	
 	public void start() {
 		if (totalFrames < 1) { return; }
 		isPlaying = true;
 	} // start
 	
-	public void stop() {
+	public void stop() { // not implemented
 		
 	}
 	
@@ -58,26 +62,14 @@ public class Animation {
 		
 		if (counter > delayBetweenFrames) {
 			counter = 0;
-
 			
 			currentFrame++;
 			if (currentFrame > totalFrames - 1) {
-				currentFrame = 0;
+				currentFrame = min;
 			}
 		} // if
-	} // update
-	
-//	// temp
-//	public void draw(Graphics g) {
-//		if (!isPlaying || totalFrames < 1) { return; }
-//		
-//		frames.get(currentFrame).draw(g, 10, 10);
-//	}
-	
-	public void draw(Graphics g, int xPos, int yPos) {
-		if (!isPlaying || totalFrames < 1) { return; }
 		
-		frames.get(currentFrame).draw(g, xPos, yPos);
-	}
+		entity.setSprite(prefix + currentFrame + suffix);
+	} // update
 	
 } // Animation

@@ -51,7 +51,6 @@ public class Game extends Canvas {
 	private DialogueManager dialogue;
 	
 	private QuestLog questLog;
-	private boolean questLogVisible = false;
 	
 	// for character movement and attacks
 	private boolean upPressed = false;
@@ -139,7 +138,7 @@ public class Game extends Canvas {
 		} // for
 		
 		// create characters
-		player = new Character("images/char_sw.png", 0, 0, 0, 0, true);
+		player = new Character("animations/player/walk_w0.png", 0, 0, 0, 0, true);
 		Camera.center(player);
 		Character enemy = new Character("images/char_sw.png", 180, 180, 0, 0, false);
 		entityArray.add(enemy);
@@ -152,18 +151,23 @@ public class Game extends Canvas {
 		inv = new Inventory(3); // size of inventory
 		tooltip = new Tooltip();
 
+		questLog = new QuestLog(inv);
 		initItems();
 		initQuests();
 		initDialogue();
 		questLog.setDialogue(dialogue); // important... and probably not good
 		
-		dialogue.start("intro1"); // uncomment to display example dialogue
+		dialogue.start("q1Start"); // uncomment to display example dialogue
 		
 	} // initEntities
 
 	private void initItems() {
+
+		// items
+		new InventoryItem("apple", "images/sprite1.png", "Apple", "A juicy red apple. Looks tasty. Eat to replenish health.");
+		new InventoryItem("key", "images/sprite2.png", "Key", "Key to the demon’s lair.");
 		
-	}
+	} // initItems
 	
 	private void initDialogue() {
 		// temp, example dialogue
@@ -207,8 +211,8 @@ public class Game extends Canvas {
 //		new DialogueNode("12", "NPC1", "Come back when you actually get some.", null, dialogue);
 //	
 	
-		// Opening/intro dialogue -- add prerequisites!!
-		new DialogueNode("intro1", "", "Hey, you. You’re finally awake.", new String[] {"introChoice1", "introChoice2"}, dialogue);
+		// Opening/intro dialogue
+		new DialogueNode("intro", "", "Hey, you. You’re finally awake.", new String[] {"introChoice1", "introChoice2"}, dialogue);
 		
 		DialogueNode introChoice1 = new DialogueNode("introChoice1", "", "You don’t remember? Hmph. Some hunter you are.", new String[] {"intro2"}, dialogue);
 		introChoice1.setChoiceText("... What? Where am I?");
@@ -221,75 +225,138 @@ public class Game extends Canvas {
 		DialogueNode introChoice3 = new DialogueNode("introChoice3", "", "No memory, huh. Interesting. ", new String[] {"intro3"}, dialogue);
 		introChoice3.setChoiceText("The what now?");
 		
-		new DialogueNode("intro3", "", "You are a hunter, but since you’ve lost your memory, I shall assign you a task to determine if you are worthy.", null, dialogue);
+		new DialogueNode("intro3", "", "You are a hunter, but since you’ve lost your memory, I shall assign you a task to determine if you are worthy.", new String[] {"q1Start"}, dialogue);
 		
+		// Starting Village Quests
+		
+		//----------------------------
 		// First Quest: Collect Apples
-		new DialogueNode("q1Text1", "", "Anyways, you look like you haven’t eaten in days. There are some apples in the orchard east of here.", new String[] {""}, dialogue);
-		new DialogueNode("q1Text2", "", "Go collect some - you’ll need the energy.", new String[] {""}, dialogue);
-		new DialogueNode("q1Text3", "", "When you’ve done that, we can talk about your quest.", new String[] {""}, dialogue);
+		//----------------------------
+		new DialogueNode("q1Start", "", "Anyways, you look like you haven’t eaten in days.", new String[] {"q1Start2"}, dialogue);
+		new DialogueNode("q1Start2", "", "There are some apples in the orchard east of here.", new String[] {"q1Start3"}, dialogue);
+		new DialogueNode("q1Start3", "", "Go collect some - you’ll need the energy.", new String[] {"q1Start4"}, dialogue);
+		DialogueNode q1Start = new DialogueNode("q1Start4", "", "When you’ve done that, we can talk about your quest.", null, dialogue);
+		q1Start.setQuestToUnlock("q1");
 		
 		// dialogue when quest 1 is in progress
-		new DialogueNode("q1Text4", "", "Come back when you’ve gotten some apples. They’re in the orchard to the east.", new String[] {""}, dialogue);
+		new DialogueNode("chief", "", "Hello there.", new String[] {"q1InProgress", "q1Complete", "chief2"}, dialogue);
+		DialogueNode q1InProgress = new DialogueNode("q1InProgress", "", "Come back when you’ve gotten some apples. They’re in the orchard to the east.", null, dialogue);
+		q1InProgress.setChoicePrerequisite("q1", 0);
 		
 		// dialogue when quest 1 is complete
-		new DialogueNode("q1Complete1", "", "Eating food will replenish your health.", new String[] {""}, dialogue);
-		new DialogueNode("q1Complete2", "", "That’ll be useful on your journey.", new String[] {""}, dialogue);
+		new DialogueNode("q1Complete", "", "Eating food will replenish your health.", new String[] {"q1Complete2"}, dialogue);
+		new DialogueNode("q1Complete2", "", "That’ll be useful on your journey.", null, dialogue);
+		
+		// random smalltalk
+		new DialogueNode("chief2", "", "What are you still doing here?", null, dialogue);
+		new DialogueNode("chief2", "", "Have you defeated the demon lord yet?", null, dialogue);
 		
 		
-		// Second quest: Kill a few enemies -- add prerequisites
-		new DialogueNode("", "", "Now that you’ve proven to be at least competent, I believe that I can trust you to protect the village from the enemies in the west.", new String[] {""}, dialogue);
+		//---------------------------------
+		// Second quest: Kill a few enemies
+		//---------------------------------
+		DialogueNode q2Start = new DialogueNode("q2Start", "", "Now that you’ve proven to be at least competent, I believe that I can trust you to protect the village from the enemies in the west.", null, dialogue);
+		q2Start.setQuestToUnlock("q2");
 		
 		// during quest 2
-		new DialogueNode("", "", "There are a few stray enemies roaming on the field west of here. Take care of them.", new String[] {""}, dialogue);
+		new DialogueNode("q2InProgress", "", "There are a few stray enemies roaming on the field west of here. Take care of them.", null, dialogue);
+		
 		
 		// quest 2 complete
-		new DialogueNode("", "", "So you can fight.", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		new DialogueNode("q2Complete", "", "So you can fight.", new String[] {"q2Complete2"}, dialogue);
+		new DialogueNode("q2Complete2", "", "Good. I suppose you’ve truly proven yourself.", new String[] {"q2Complete3"}, dialogue);
+		new DialogueNode("q2Complete3", "", "Take the road north until you reach the next village.", new String[] {"q2Complete4"}, dialogue);
+		new DialogueNode("q2Complete4", "", "The chief there will help you—", new String[] {"q2Complete5"}, dialogue);
+		new DialogueNode("q2Complete5", "", "if he’s alive, that is.", null, dialogue);
 		
-
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
-		new DialogueNode("", "", "", new String[] {""}, dialogue);
+		// quest 2 after completion
+		new DialogueNode("q2AfterComplete", "", "Take care, hunter.", null, dialogue);
 		
+		
+		// Second Village (North)
+		// Intro Dialogue
+		new DialogueNode("northChief", "", "Hello.", new String[] {"northIntro"}, dialogue);
+		new DialogueNode("northIntro", "", "Are you the hunter? It’s about time you got here.", new String[] {"northIntro2"}, dialogue);
+		new DialogueNode("northIntro2", "", "Better late than never, I suppose.", null, dialogue);
+		
+		//-------------------------------
+		// Third Quest: Kill More Enemies
+		//-------------------------------
+		new DialogueNode("q3Start", "", "There are enemies surrounding this village.", new String[] {"q3Start2"}, dialogue);
+		DialogueNode q3Start = new DialogueNode("q3Start2", "", "You’ll need to get rid of them before I grant you passage to the demon’s lair.", null, dialogue);
+		q3Start.setQuestToUnlock("q3");
+		
+		// quest 3 in progress
+		new DialogueNode("q2InProgress", "", "The safety of this village is in your hands, brave hunter.", new String[] {"q2InProgress2"}, dialogue);
+		new DialogueNode("q2InProgress2", "", "Let me remind you that I will reward you with passage to the demon’s lair if you are to succeed.", null, dialogue);
+		
+		// quest 3 complete
+		new DialogueNode("q3Complete", "", "Impressive.", new String[] {"q3Complete2"}, dialogue);
+		new DialogueNode("q3Complete2", "", "Perhaps you’ll be the first to come back alive from the demon lord’s home.", null, dialogue);
+		
+		//----------------------------
+		// Fourth Quest: Find the key
+		//----------------------------
+		
+		// quest 4 start
+		new DialogueNode("q4Start", "", "Now, you’ll need a key to unlock the entrance to the demon lord’s castle.", new String[] {"q4Start2"}, dialogue);
+		DialogueNode q4Start = new DialogueNode("q4Start2", "", "Try looking around for it.", null, dialogue);
+		q4Start.setQuestToUnlock("q4");
+		
+		// quest 4 in progress
+		new DialogueNode("q4InProgress", "", "I wonder where the key is...", new String[] {"q4InProgress2"}, dialogue);
+		new DialogueNode("q4InProgress2", "", "Maybe try looking where there are more enemies.", null, dialogue);
+		
+		// quest 4 complete
+		new DialogueNode("q4Complete", "", "You found it!", new String[] {"q4Complete2"}, dialogue);
+		new DialogueNode("q4Complete2", "", "Now you can pass through to the demon’s home.", new String[] {"q4AfterComplete"}, dialogue);
+		
+		// quest 4 after completion
+		new DialogueNode("q4AfterComplete", "", "Best of luck, hunter.", null, dialogue);
+		
+		//----------------------------
+		// Final: Slay the Demon Lord
+		//----------------------------
+		
+		new DialogueNode("final",  "Demon Lord", "Who dares enter my lair?", new String[] {"final2"}, dialogue);
+		new DialogueNode("final2", "Demon Lord", "Ah. Could you be the hunter?", new String[] {"final3"}, dialogue);
+		new DialogueNode("final3", "Demon Lord", "Do you know how many of your kind I’ve slain?", new String[] {"final4"}, dialogue);
+		new DialogueNode("final4", "Demon Lord", "Look around you.", new String[] {"final5"}, dialogue);
+		new DialogueNode("final5", "Demon Lord", "You walk on their bones—", new String[] {"final6"}, dialogue);
+		new DialogueNode("final6", "Demon Lord", "hundreds of skeletons, all killed by me.", new String[] {"final7"}, dialogue);
+		new DialogueNode("final7", "Demon Lord", "What would you think if I were to use those very hero’s remains to conjure an army and decimate the villages of this world?", new String[] {"final8"}, dialogue);
+		new DialogueNode("final8", "Demon Lord", "HAHAHA!", null, dialogue);
 	}
 
 	private void initQuests() {
-		// temp, example quest
-		questLog = new QuestLog(inv);
 		
+		
+		
+		// Quest 1: Collect Food
 		HashMap<String, Integer> obj1 = new HashMap<String, Integer>();
-		new InventoryItem("apple", "images/sprite1.png", "Apple", "An arrow-shaped blue apple.");
-		obj1.put("apple", 5); 
-		
-		HashMap<String, Integer> reward1 = new HashMap<String, Integer>();
-		new InventoryItem("coin", "images/sprite2.png", "Coin", "Money.");
-		reward1.put("coin", 1);  
-		
-		new Quest(	"q1", // quest id
-					"First Quest", // name
-					"This is the beginning of your great adventure... Go give NPC1 5 apples.", // description
-					obj1, // objectives
-					reward1, // rewards
+		obj1.put("apple", 10); 
+			
+		new Quest(	"q1",				// quest id
+					"Collect Food", 	// name
+					obj1, 				// objectives
+					null, 				// rewards
 					questLog);
+		
+		// Quest 2: Kill the Stray Enemies
+		
+		
+		// Quest 3: Kill the Surrounding Enemies
+		
+		
+		// Quest 4: Find the Key
+		
+		new Quest(	"q1",				
+					"Find the Key", 	
+					obj1, 				
+					null, 				
+					questLog);
+		
+		
 	}
 	
 	private void gameLoop() {
@@ -329,9 +396,9 @@ public class Game extends Canvas {
 				c.drawHitbox(g);
 			} // for
 			
-			for (Attack a : attacks) {
-				a.drawHitbox(g);
-			} // for
+//			for (Attack a : attacks) {
+//				a.drawHitbox(g);
+//			} // for
 			
 			// draw the inventory
 			if (inventoryVisible) {
@@ -342,15 +409,20 @@ public class Game extends Canvas {
 			dialogue.draw(g);
 			
 			// draw the quest log
-			if (questLogVisible) {
-				questLog.draw(g);
-			} // if
+			questLog.draw(g);
 			
 			
 			// temp
 			if (player.animation != null) {
 				player.animation.update(delta);
 			}
+			
+			// updates projectile sprites
+			for (int i = 0; i < attacks.size(); i++) {
+				if (attacks.get(i).animation != null) {
+					attacks.get(i).animation.update(delta);
+				}
+			} // for
 			
 			// moves projectiles 
 			for (Attack a : tempAttacks) {
@@ -372,6 +444,8 @@ public class Game extends Canvas {
 					attacks.add(p);
 					entityArray.add(p);
 					player.getMana().decrement(10);
+					p.setAnimation();
+					p.animation.start();
 				} // if
 				//System.out.println("shot");
 			} // if
@@ -383,6 +457,8 @@ public class Game extends Canvas {
 					attacks.add(m);
 					entityArray.add(m);
 					player.getStamina().decrement(10);
+					m.setAnimation();
+					m.animation.start();
 				} // if
 			} // if
 			
@@ -430,42 +506,51 @@ public class Game extends Canvas {
 			
 			if (leftPressed && !rightPressed) {
 				player.setXVelocity( -1 * speed);
-				player.setSprite("images/char_nw.png");
+//				player.setSprite("images/char_nw.png");
 				horizontalDirection = -1;
 				verticalDirection = 0;
 			
+				player.setDirection(Direction.NW);
 			} else if (rightPressed && !leftPressed) {
 				player.setYVelocity(-1 * speed);
-				player.setSprite("images/char_ne.png");
+//				player.setSprite("images/char_ne.png");
 				horizontalDirection = 0;
 				verticalDirection = -1;
+				
+				player.setDirection(Direction.NE);
 			} else {
 				player.setXVelocity(-1 * speed);
 				player.setYVelocity(-1 * speed);
-				player.setSprite("images/char_n.png");
+//				player.setSprite("images/char_n.png");
 				horizontalDirection = -1;
 				verticalDirection = -1;
+				
+				player.setDirection(Direction.N);
 			} // else
 			
 		} else if (leftPressed && !rightPressed) {
 			
 			if (downPressed && !upPressed) {
 				player.setYVelocity(speed);
-				player.setSprite("images/char_sw.png");
+//				player.setSprite("images/char_sw.png");
 				horizontalDirection = 0;
 				verticalDirection = 1;
+				
+				player.setDirection(Direction.SW);
 			} else {
 				player.setXVelocity((int)(-1 * speed * 0.7));
 				player.setYVelocity((int)(speed * 0.7));
-				player.setSprite("images/char_w.png");
+//				player.setSprite("images/char_w.png");
 				horizontalDirection = -1;
 				verticalDirection = 1;
+				
+				player.setDirection(Direction.W);
 			} // else
 			
 		} else if (downPressed && !upPressed) {
 			if (rightPressed && !leftPressed) {
 				player.setXVelocity(speed);
-				player.setSprite("images/char_se.png");
+//				player.setSprite("images/char_se.png");
 				horizontalDirection = 1;
 				verticalDirection = 0;
 				
@@ -473,7 +558,7 @@ public class Game extends Canvas {
 			} else {
 				player.setXVelocity(speed);
 				player.setYVelocity(speed);
-				player.setSprite("images/char_s.png");
+//				player.setSprite("images/char_s.png");
 				horizontalDirection = 1;
 				verticalDirection = 1;
 				
@@ -483,9 +568,11 @@ public class Game extends Canvas {
 		} else if (rightPressed && !leftPressed) {
 			player.setXVelocity((int)(speed * 0.7));
 			player.setYVelocity((int)(-1 * speed * 0.7));
-			player.setSprite("images/char_e.png");
+//			player.setSprite("images/char_e.png");
 			horizontalDirection = 1;
 			verticalDirection = -1;
+			
+			player.setDirection(Direction.E);
 		} // else if
 		
 		// animation
@@ -607,7 +694,7 @@ public class Game extends Canvas {
 			// decide the direction
 			enemy.setXVelocity( XDirection);
 			enemy.setYVelocity( YDirection);
-			enemy.setSprite("images/char_s.png");
+//			enemy.setSprite("images/char_s.png");
 			
 		} // if
 		
@@ -621,7 +708,7 @@ public class Game extends Canvas {
 	
 	// move?
 	// create an attack
-	private Attack startAttack(int range, Character shooter) { 
+	private Attack startAttack(int range, Character shooter) { // do we still need shooter?
 		int xSpawn = 0;				// just to make things
 		int ySpawn = 0;				// nice and not messy
 		double diagonal = 0;		// used to make diagonal shots come from the same place
@@ -637,7 +724,7 @@ public class Game extends Canvas {
 		xSpawn = (int) (player.getX() + INIT_DIST * horizontalDirection *  diagonal);
 		ySpawn = (int) (player.getY() - Entity.TILE_LENGTH + INIT_DIST * verticalDirection * diagonal);		
 		
-		return new Attack("images/sprite1.png", xSpawn * 60, ySpawn * 60, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range, shooter);
+		return new Attack("animations/projectile/shot_s1.png", xSpawn * 60, ySpawn * 60, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range, shooter, shooter.getDirection());
 
 	} // spawnProjectile
 	
@@ -750,13 +837,14 @@ public class Game extends Canvas {
 			
 			if (e.getKeyCode() == KeyEvent.VK_I) {
 				inventoryVisible = !inventoryVisible;
+				
+				if (!inventoryVisible) {
+					inv.stopDrag();
+				}
+				
 				System.out.println("inventoryVisible: " + inventoryVisible);
 			} // if
 			
-			if (e.getKeyCode() == KeyEvent.VK_Q) {
-				questLogVisible = !questLogVisible;
-				System.out.println("questLogVisible: " + questLogVisible);
-			} // if
 			
 		} // keyReleased
 

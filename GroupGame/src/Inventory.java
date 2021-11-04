@@ -177,6 +177,15 @@ public class Inventory extends Entity {
 		dragItem.swap(slots[slotIndex]);
 	} // stopDrag
 	
+	public void stopDrag() {
+		if (!isDragging) { return; }
+		isDragging = false;
+		
+		if (dragItem.getItem() != null) {
+			dragItem.backToPrevious();
+		}
+	}
+	
 	public void handleHover(MouseEvent e) {
 		int slotIndex = checkIfMouseOverSlot(e);
 		

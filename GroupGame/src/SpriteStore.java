@@ -22,7 +22,7 @@ public class SpriteStore {
 
 	// returns the sprite associated with the String passed in
 	public Sprite getSprite(String ref) {
-
+		
 		// if the sprite is already in the HashMap, return it
 		if (sprites.get(ref) != null) {
 			return (Sprite) sprites.get(ref);

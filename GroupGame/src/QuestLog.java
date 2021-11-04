@@ -53,7 +53,6 @@ public class QuestLog { // rename to QuestManager?
 		questStore.get(questID).complete();
 		removeQuestItemsFromInventory(questID);
 		
-		
 		storeRewardInInventory(questID);
 		currentQuests.remove(questID);
 		
@@ -83,8 +82,11 @@ public class QuestLog { // rename to QuestManager?
 		} // if
 	} // removeQuestItemsFromInventory
 	
-	private void storeRewardInInventory(String questID) { // what if inventory is full??
+	private void storeRewardInInventory(String questID) {
+		
+		// check if quest is already completed or has no rewards
 		if (!questStore.get(questID).getIsCompleted()) { return; }
+		if (questStore.get(questID).getRewards() == null) { return; }
 		
 		HashMap<String, Integer> rewards = questStore.get(questID).getRewards();
 		Set<String> rewardSet = questStore.get(questID).getRewards().keySet();
@@ -112,28 +114,18 @@ public class QuestLog { // rename to QuestManager?
 	
 	public void draw(Graphics g) {
 		
-		// draw title background
-		g.setColor(Color.ORANGE);
-		g.fillRect(x, y, width, height);
-		g.setColor(Color.BLACK);
-		g.drawRect(x, y, width, height);
-		
-		// draw title
-		g.setColor(Color.BLACK);
-		g.drawString("Quest Log", x + 15, y + 30); // can change
-		
 		// draw text (current quests)
 		for (int i = 0; i < currentQuests.size(); i++) {
 			
 			// draw background
 			g.setColor(Color.ORANGE);
-			g.fillRect(x - 15, y + height * (i + 1), width + 30, height);
+			g.fillRect(x, y + height * i, width + 30, height);
 			g.setColor(Color.BLACK);
-			g.drawRect(x - 15, y + height * (i + 1), width + 30, height);
+			g.drawRect(x, y + height * i, width + 30, height);
 			
 			// draw current quest text
 			g.setColor(Color.BLACK);
-			g.drawString(questStore.get(currentQuests.get(i)).getName(), x + 15, y + (height + 30) * (i + 1));
+			g.drawString(questStore.get(currentQuests.get(i)).getName(), x, y + 30 + height * i);
 		} // for
 		
 	} // draw

@@ -26,10 +26,7 @@ public class Movable extends Entity {
 		this.dx = dx;
 		this.dy = dy;
 		
-		Point isoPoint = toIso((int) x, (int) y);
-		
-		screenPosX = isoPoint.x - Camera.getX();
-		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
+
 		
 		// these should be in their respective classes, but are here rn to look at
 		
@@ -144,8 +141,8 @@ public class Movable extends Entity {
 	
 	public void drawHitbox(Graphics g) {
 		
-		g.setColor(Color.red);
-		g.fillRect(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+//		g.setColor(Color.red);
+//		g.fillRect(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
 	}
 	
 } // Movable
