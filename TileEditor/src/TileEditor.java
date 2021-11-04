@@ -135,6 +135,8 @@ public class TileEditor extends Canvas {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 	};
+	
+	private int [][] obstacles = new int[map.length][map[0].length];
 
 	private int tileMax = 290;
 	private int tileMin = -5;
@@ -192,6 +194,8 @@ public class TileEditor extends Canvas {
 		MouseMotion mouseMotion = new MouseMotion();
 		addMouseMotionListener(mouseMotion);
 		addMouseListener(mouseMotion);
+		
+		addMouseWheelListener(new MouseWheelHandler());
 
 		// create buffer strategy to take advantage of accelerated graphics
 		createBufferStrategy(2);
@@ -208,10 +212,11 @@ public class TileEditor extends Canvas {
 	} // Game
 
 	private void initTiles() {
+		
 		// initiate tiles
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
-				tiles.add(new Tile(j, i, map[i][j], this));
+				tiles.add(new Tile(j, i, map[i][j], obstacles[i][j], this));
 			} // for
 		} // for
 	}
@@ -465,7 +470,7 @@ public class TileEditor extends Canvas {
 			} // if
 			
 			if (copyingTile) {
-				currentTileNum = tiles.get(tileY * columns + tileX).getSpriteNum();
+				currentTileNum = tiles.get(tileY * columns + tileX).getSpriteNum(currentTileNum);
 				System.out.println("Copied! currentTile: " + currentTileNum);
 				return;
 			}
@@ -509,6 +514,20 @@ public class TileEditor extends Canvas {
 		}
 	} // MouseMotion
 
+	private class MouseWheelHandler implements MouseWheelListener {
+
+		@Override
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			currentTileNum -= e.getWheelRotation();
+			if (currentTileNum > tileMax) {
+				currentTileNum = tileMax;
+			} else if (currentTileNum < tileMin) {
+				currentTileNum = tileMin;
+			}
+			
+		}
+		
+	}
 	
 	public Point toCart(int isoX, int isoY) {
 		int cartX = (2 * isoY + isoX) / 2;
@@ -533,11 +552,19 @@ public class TileEditor extends Canvas {
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
-				tempMap[i][j] = tiles.get(i * columns + j).getSpriteNum();
+				tempMap[i][j] = tiles.get(i * columns + j).getSpriteNum(0);
 			} // for
 		} // for
 
-		writeArrayToFile("map.txt", tempMap);
+		writeArrayToFile("map0.txt", tempMap);
+		
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				tempMap[i][j] = tiles.get(i * columns + j).getSpriteNum(1);
+			} // for
+		} // for
+		
+		writeArrayToFile("map1.txt", tempMap);
 	}
 
 	// writes the array a to fileName, one array element per line in the file

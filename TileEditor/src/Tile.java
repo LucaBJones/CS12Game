@@ -12,7 +12,8 @@ public class Tile {
 	protected double x;
 	protected double y;
 
-	private int currentSpriteNum;
+	private int layer0Num;
+	private int layer1Num;
 
 	TileEditor game;
 
@@ -24,12 +25,13 @@ public class Tile {
 		game = g;
 	} // constructor
 	
-	public Tile(int xTile, int yTile, int num, TileEditor g) {
+	public Tile(int xTile, int yTile, int layer0, int layer1, TileEditor g) {
 		x = xTile * TILE_LENGTH;
 		y = yTile * TILE_LENGTH;
 		game = g;
-		currentSpriteNum = num;
-		setSprite(currentSpriteNum, 0);
+		layer0Num = layer0;
+		layer1Num = layer1;
+		setSprite(layer0Num, 0);
 	}
 
 	public void updatePosition(int xTile, int yTile) {
@@ -99,11 +101,11 @@ public class Tile {
 			sprites[currentLayer] = (SpriteStore.get()).getSprite("images/obs" + n + ".png");
 		}
 		
-		currentSpriteNum = n;
+		layer0Num = n;
 	}
 
-	public int getSpriteNum() {
-		return currentSpriteNum;
+	public int getSpriteNum(int layer) {
+		return (layer == 0) ? layer0Num : layer1Num;
 	}
 
 } // Tile
