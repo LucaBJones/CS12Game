@@ -8,6 +8,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferStrategy;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -134,6 +136,8 @@ public class TileEditor extends Canvas {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 	};
 
+	private int tileMax = 290;
+	private int tileMin = -5;
 
 	private int rows = map.length;
 	private int columns = map[0].length;
@@ -149,7 +153,6 @@ public class TileEditor extends Canvas {
 	private boolean settingColumns = false;
 	private boolean settingRows = false;
 	
-	private boolean changingTile = false;
 	private String currentText = "";
 	
 	private boolean copyingTile = false;
@@ -262,8 +265,12 @@ public class TileEditor extends Canvas {
 			} // for
 
 			g.setColor(Color.white);
+			g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 1.5f));
+			
 			g.drawString("Current Tile: " + currentTileNum, 20, 30);
 			g.drawString("Current Layer: " + currentLayer + " (e to toggle)", 20, 50);
+			
+			g.setFont(g.getFont().deriveFont(g.getFont().getSize() / 1.5f));
 			g.drawString("Rows: " + rows, 20, 70);
 			g.drawString("Columns: " + columns, 20, 90);
 			
@@ -299,12 +306,6 @@ public class TileEditor extends Canvas {
 				addColumn();
 			} // if
 			
-			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				if (changingTile) { return; }
-				changingTile = true;
-				System.out.print("Type in tile num: ");
-			} // if
-			
 			if (e.getKeyCode() == KeyEvent.VK_ALT) {
 				copyingTile = true;
 			}
@@ -322,14 +323,19 @@ public class TileEditor extends Canvas {
 			}
 			
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				if (!changingTile) { return; }
+				if (currentText.isEmpty()) { return; }
 				
 				currentTileNum = Integer.parseInt(currentText);
-				if (currentTileNum > 289) {sysoutreturn;}
+				
+				if (currentTileNum > tileMax || currentTileNum < tileMin) {
+					currentTileNum = 0;
+					System.out.println("Tile not found.");
+				}
+				
 				System.out.println();
 				System.out.println("currentTile: " + currentTileNum);
-				changingTile = false;
 				
+				// reset
 				currentText = "";
 			}
 
@@ -355,12 +361,10 @@ public class TileEditor extends Canvas {
 		} // keyReleased
 
 		public void keyTyped(KeyEvent e) {
-			if (changingTile) {
-				if ((e.getKeyChar() + "").toString().matches("[0-9]") || (e.getKeyChar() + "").toString().matches("-")) {
-					currentText += "" + e.getKeyChar();
-					System.out.print(e.getKeyChar());
-				}	
-			}
+			if ((e.getKeyChar() + "").toString().matches("[0-9]") || (e.getKeyChar() + "").toString().matches("-")) {
+				currentText += "" + e.getKeyChar();
+				System.out.print(e.getKeyChar());
+			}	
 			
 			
 		} // keyTyped
@@ -505,6 +509,7 @@ public class TileEditor extends Canvas {
 		}
 	} // MouseMotion
 
+	
 	public Point toCart(int isoX, int isoY) {
 		int cartX = (2 * isoY + isoX) / 2;
 		int cartY = (2 * isoY - isoX) / 2;
