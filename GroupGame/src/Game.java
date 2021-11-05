@@ -3,15 +3,21 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.awt.Image;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -39,9 +45,10 @@ public class Game extends Canvas {
 		};
 	
 	private static Tile[][] tileMap = new Tile[map.length][map[0].length]; // array or arrayList?
-	private static ArrayList<Entity> entityArray = new ArrayList<Entity>();
+	private static ArrayList<Entity> entities = new ArrayList<Entity>();
 	private static ArrayList<Attack> attacks = new ArrayList<Attack>();
 	private static ArrayList<Character> characters = new ArrayList<Character>();
+	private static ArrayList<NPC> npcs = new ArrayList<NPC>(); // temp?
 	
 	private Character player;
 	private Inventory inv;
@@ -61,10 +68,12 @@ public class Game extends Canvas {
 	private boolean melee = false;
 	private static int speed = 300;
 	
-	private boolean instructions = false;
-	private boolean credits = false;
-	private boolean returnToMenu = false;
-	private int screen = 0; // 0 for menu, 1 for instructions, 2 for credits, 3 for win, 4 for game over
+	private int screen = 0; // 0 for menu, 1 for instructions, 2 for credits, 3 for win, 4 for game over, 5 for start game
+	private Image menu;
+	private Image credits;
+	private Image instructions;
+	private Image gameOver;
+	private Image win;
 	
 	private int horizontalDirection = 0; 	// stores direction for projectiles // we could use the direction enum for this
 	private int verticalDirection = 1;		// values: -1, 0, 1 
@@ -101,8 +110,8 @@ public class Game extends Canvas {
 		frame.pack();
 		frame.setResizable(false); // can change
 		frame.setVisible(true);
-		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
-		
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
+	
 		
 		// create buffer strategy to take advantage of accelerated graphics
 		createBufferStrategy(2);
@@ -121,7 +130,16 @@ public class Game extends Canvas {
 		addMouseMotionListener(mouseMotion);
 		addMouseListener(mouseMotion);
 		
+		// Create Image Object
+        Toolkit tk = Toolkit.getDefaultToolkit();
+		
 		// start the game
+		menu = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/menu.png"));
+		credits = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/credits.png"));
+		instructions = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/instructions.png"));
+		gameOver = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/gameover.png"));
+		win = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/win.png"));
+		initEntities();
 		gameLoop();
 		
 	} // Game
@@ -134,7 +152,7 @@ public class Game extends Canvas {
 			for (int j = 0; j < map[i].length; j++) {
 				boolean b = (map[i][j] > 1);
 				tileMap[i][j] = new Tile("images/tile" + map[i][j] + ".png", 60 * j, 60 *i, b);
-				entityArray.add(tileMap[i][j]);
+				entities.add(tileMap[i][j]);
 			} // for
 		} // for
 		
@@ -142,11 +160,18 @@ public class Game extends Canvas {
 		player = new Character("animations/player/walk_w0.png", 0, 0, 0, 0, true);
 		Camera.center(player);
 		Character enemy = new Character("images/char_sw.png", 180, 180, 0, 0, false);
-		entityArray.add(enemy);
+		entities.add(enemy);
 		characters.add(enemy);
-		entityArray.add(player);
+		entities.add(player);
 		characters.add(player);
 		System.out.println(enemy.getHitBox());
+		
+		
+		// temp?
+		npcs.add(new NPC("intro", "animations/player/walk_w0.png", 400, 400));
+		npcs.add(new NPC("chief2", "animations/player/walk_w3.png", 500, 400));
+		entities.addAll(npcs);
+		
 		
 		// create inventory and tooltip
 		inv = new Inventory(3); // size of inventory
@@ -158,7 +183,7 @@ public class Game extends Canvas {
 		initDialogue();
 		questLog.setDialogue(dialogue); // important... and probably not good
 		
-		dialogue.start("q1Start"); // uncomment to display example dialogue
+//		dialogue.start("q1Start"); // uncomment to display example dialogue
 		
 	} // initEntities
 
@@ -249,8 +274,8 @@ public class Game extends Canvas {
 		new DialogueNode("q1Complete2", "", "That’ll be useful on your journey.", null, dialogue);
 		
 		// random smalltalk
-		new DialogueNode("chief2", "", "What are you still doing here?", null, dialogue);
-		new DialogueNode("chief2", "", "Have you defeated the demon lord yet?", null, dialogue);
+		new DialogueNode("chief2", "", "What are you still doing here?", new String[] {"chief2_1"}, dialogue);
+		new DialogueNode("chief2_1", "", "Have you defeated the demon lord yet?", null, dialogue);
 		
 		
 		//---------------------------------
@@ -375,110 +400,35 @@ public class Game extends Canvas {
 			g.setColor(Color.gray);
 			g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
 
-			
-			// show the menu
-			if (screen == 0) {
-				// show menu text
-				g.setColor(Color.BLACK);
-				g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 2f)); // temp
-				g.drawString("[A] View instructions", 200, 200);
-				g.drawString("[C] View credits", 200, 300);
-				g.drawString("[ENTER] Start", 200, 400);
-				returnToMenu = false;
+			if (screen != 5) {
+				// show the menu
+				if (screen == 0) {
+					System.out.println("drawing menu");
+					g.drawImage(menu, 0, 0, null);
+				} // if
 				
-				if (instructions) {
-					screen = 1;
-				} else if (credits) {
-					screen = 2;
-				} else if (gameIsRunning) {
-					initEntities();
-					screen = 5;
-				} else {
-					g.dispose();
-					strategy.show();
-					continue;
-				}
-			} // if
-			
-			// show instructions
-			if (screen == 1) {
 				// show instructions
-				g.setColor(Color.BLACK);
-				g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 2f)); // temp
-				g.drawString("Use the arrow keys to move.", 200, 200);
-				g.drawString("Press [X] for long-range attack. Costs mana.", 200, 250);
-				g.drawString("Press [Z] for short-range attack. Costs stamina.", 200, 300);
-				g.drawString("Press [T] to talk to NPCs and advance dialogue.", 200, 350);
-				g.drawString("Press [I] to open your inventory.", 200, 400);
-				g.drawString("Press [Q] to view quests.", 200, 450);
-				g.drawString("[A]: return to menu", 200, 550);
-				
-				credits = false;
-				gameIsRunning = false;
-				
-				if (!instructions) {
-					screen = 0;
-				}
-				g.dispose();
-				strategy.show();
-				continue;
-			} // if
-			
-			// show credits
-			if (screen == 2) {
+				if (screen == 1) {
+					g.drawImage(instructions, 0, 0, null);
+				} // if
 				// show credits
-				g.setColor(Color.BLACK);
-				g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 2f)); // temp
-				g.drawString("Developers: ", 200, 200);
-				g.drawString("Rosanna Jiang", 200, 250);
-				g.drawString("Luca Buscaglia Jones", 200, 300);
-				g.drawString("Samuel Li", 200, 350);
-				
-				instructions = false;
-				gameIsRunning = false;
-				if (!credits) {
-					screen = 0;
+				else if (screen == 2) {
+					g.drawImage(credits, 0, 0, null);
 				}
+				else if (screen == 3) {
+					g.drawImage(win, 0, 0, null);
+					
+				}
+				else if (screen == 4) {
+					g.drawImage(gameOver, 0, 0, null);
+					
+				}
+				
 				g.dispose();
 				strategy.show();
 				continue;
+				
 			} // if
-			
-			if (screen == 3) {
-				// show "you won" text
-				String message = "YOU WIN!";
-				g.setColor(Color.black);
-				g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
-				g.setColor(Color.white);
-		        g.setFont(new Font("Purisa" , Font.BOLD, 35));
-				g.drawString(message, (Camera.getWidth() - g.getFontMetrics().stringWidth(message))/ 2, Camera.getHeight() / 2);
-				g.drawString("Press M to return to menu", (Camera.getWidth() - g.getFontMetrics().stringWidth(message)) / 2, Camera.getHeight() / 2 + 100);
-				
-				if (returnToMenu) {
-					screen = 0;
-				}
-				g.dispose();
-				strategy.show();
-				continue;
-			}
-			
-			if (screen == 4) {
-				// show "you died" text
-				String message = "GAME OVER";
-				g.setColor(Color.black);
-				g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
-				g.setColor(Color.white);
-		        g.setFont(new Font("Purisa" , Font.BOLD, 35));
-				g.drawString(message, (Camera.getWidth() - g.getFontMetrics().stringWidth(message)) / 2, Camera.getHeight() / 2);
-				g.drawString("Press M to return to menu", (Camera.getWidth() - g.getFontMetrics().stringWidth(message)) / 2, Camera.getHeight() / 2 + 100);
-				
-				if (returnToMenu) {
-					screen = 0;
-				}
-				g.dispose();
-				strategy.show();
-				continue;
-			}
 			
 			Camera.center(player);
 			
@@ -492,7 +442,7 @@ public class Game extends Canvas {
 			ArrayList<Attack> tempAttacks = (ArrayList<Attack>) attacks.clone();
 			
 			// draw the entities
-			for (Entity e : entityArray) {
+			for (Entity e : entities) {
 				e.draw(g);
 			} // for
 			
@@ -526,13 +476,6 @@ public class Game extends Canvas {
 				player.animation.update(delta);
 			}
 			
-			// updates projectile sprites
-			for (int i = 0; i < attacks.size(); i++) {
-				if (attacks.get(i).animation != null) {
-					attacks.get(i).animation.update(delta);
-				}
-			} // for
-			
 			// moves projectiles 
 			for (Attack a : tempAttacks) {
 				a.move(delta);
@@ -551,10 +494,8 @@ public class Game extends Canvas {
 				Attack p = startAttack(1000, player);
 				if (p != null) {
 					attacks.add(p);
-					entityArray.add(p);
+					entities.add(p);
 					player.getMana().decrement(10);
-					p.setAnimation();
-					p.animation.start();
 				} // if
 				//System.out.println("shot");
 			} // if
@@ -564,10 +505,8 @@ public class Game extends Canvas {
 				Attack m = startAttack(100, player);
 				if (m != null) {
 					attacks.add(m);
-					entityArray.add(m);
+					entities.add(m);
 					player.getStamina().decrement(10);
-					m.setAnimation();
-					m.animation.start();
 				} // if
 			} // if
 			
@@ -585,13 +524,13 @@ public class Game extends Canvas {
 			} // if
 			
 			if (player.getHp().getValue() <= 0) {
-				entityArray.clear();
+				entities.clear();
 				gameIsRunning = false;
 				screen = 4;
 			}
 			
 			if (noEnemies(characters)) {
-				entityArray.clear();
+				entities.clear();
 				gameIsRunning = false;
 				screen = 3;
 			}
@@ -815,6 +754,15 @@ public class Game extends Canvas {
 		enemy.move(delta);
 	} // handleEnemyMovement
 	
+	private void tryToStartDialogue() {
+		for (NPC n : npcs) {
+			if (n.withinRange((int) player.x, (int) player.y)) {
+				System.out.println("within range");
+				dialogue.start(n.getDialogue());
+			}
+		}
+	}
+	
 	// move?
 	// create an attack
 	private Attack startAttack(int range, Character shooter) { // do we still need shooter?
@@ -833,13 +781,13 @@ public class Game extends Canvas {
 		xSpawn = (int) (player.getX() + INIT_DIST * horizontalDirection *  diagonal);
 		ySpawn = (int) (player.getY() - Entity.TILE_LENGTH + INIT_DIST * verticalDirection * diagonal);		
 		
-		return new Attack("animations/projectile/shot_s1.png", xSpawn * 60, ySpawn * 60, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range, shooter, shooter.getDirection());
+		return new Attack("images/projectiles/shot_" + shooter.getDirection().getDirection() + ".png", xSpawn * 60, ySpawn * 60, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range, shooter);
 
 	} // spawnProjectile
 	
 	// remove an entity from the game
 	public static void removeEntity(Entity e) {
-		entityArray.remove(e);
+		entities.remove(e);
 		if (e instanceof Attack) {
 			attacks.remove(e);
 		} else if (e instanceof Character) {
@@ -908,6 +856,10 @@ public class Game extends Canvas {
 			if (e.getKeyCode() == KeyEvent.VK_3) {
 				System.out.println("completing quest 1");
 			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_4) {
+				tryToStartDialogue();
+			} // if
 			// --------------------------------------------------------
 			
 			// temp
@@ -955,19 +907,31 @@ public class Game extends Canvas {
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_A) {
-				instructions = !instructions;
+				if (screen == 0) {
+					screen = 1;
+				} else if (screen == 1) {
+					screen = 0;
+				}
 			}
 			
 			if (e.getKeyCode() == KeyEvent.VK_C) {
-				credits = !credits;
+				if (screen == 0) {
+					screen = 2;
+				} else if (screen == 2) {
+					screen = 0;
+				}
 			}
 			
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				gameIsRunning = true;
+				if (screen == 0) {
+					screen = 5;
+				}
 			}
 			
 			if (e.getKeyCode() == KeyEvent.VK_M) {
-				returnToMenu = true;
+				if (screen == 3 || screen == 4) {
+					screen = 0;
+				}
 			}
 			
 		} // keyReleased

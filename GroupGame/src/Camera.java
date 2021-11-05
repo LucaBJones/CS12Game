@@ -6,8 +6,8 @@ public class Camera {
 	private static int x = 0;
 	private static int y = 0;
 
-	private static int w = 750; // camera width
-	private static int h = 750; // camera height
+	private static int w = 1920; // camera width
+	private static int h = 1080; // camera height
 
 	public static int getX() {
 		return x;
