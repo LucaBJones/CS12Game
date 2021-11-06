@@ -29,7 +29,6 @@ public class Animation {
 		this.min = min;
 		
 		for (int i = min; i < max; i++) {
-			System.out.println("i " + i);
 			frames.add((SpriteStore.get()).getSprite(prefix + i + suffix));
 			System.out.println(prefix + i + suffix);
 		} // for
@@ -61,8 +60,6 @@ public class Animation {
 	public void update(long delta) {
 		if (!isPlaying) { return; }
 		counter += delta; // use delta?
-		
-		System.out.println("counter: " + counter);
 		
 		if (counter > delayBetweenFrames) {
 			counter = 0;

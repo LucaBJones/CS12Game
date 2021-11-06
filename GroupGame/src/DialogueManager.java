@@ -27,6 +27,9 @@ public class DialogueManager {
 	private int choiceWidth;
 	private int choiceHeight;
 	
+	private int speakerWidth = 350;
+	private int speakerHeight = 76;
+	
 	private int xPadding;
 	private int yPadding;
 	
@@ -40,6 +43,10 @@ public class DialogueManager {
 	
 	private QuestLog questLog;
 	private Game game;
+	
+	private Sprite dialogueBox;
+	private Sprite speakerBox;
+	private Sprite choiceBox;
 	
 	public DialogueManager(QuestLog log, Game g) {
 		currentDialogueID = null;
@@ -61,19 +68,26 @@ public class DialogueManager {
             } // actionPerformed
         });
 		timer.setInitialDelay(0);
-		
 		// can change
-		xPadding = 10;
-		yPadding = 10;
+		xPadding = (int) (Camera.getWidth() * 0.1);
+		yPadding = (int) (Camera.getHeight() * 0.01);
 		
-		dialogueWidth = Camera.getWidth() - 2 * xPadding;
-		dialogueHeight = (int) (Camera.getHeight() * 0.2);
+		dialogueWidth = (int) (Camera.getWidth() * 0.78);
+		dialogueHeight = (int) (Camera.getHeight() * 0.27);
 		
-		x = 10;
-		y = Camera.getHeight() - dialogueHeight - yPadding;
+		x = 215;
+		y = (int) (Camera.getHeight() * 0.9 - dialogueHeight);
 		
-		choiceWidth = (int) (Camera.getWidth() * 0.3);
-		choiceHeight = (int) (Camera.getHeight() * 0.08);
+		choiceWidth = (int) (Camera.getWidth() * 0.263);
+		choiceHeight = (int) (Camera.getHeight() * 0.117);
+		
+		speakerWidth = 350;  
+		speakerHeight = 76;  
+		
+		dialogueBox = SpriteStore.get().getSprite("ui/dialogueBox.png");
+		speakerBox = SpriteStore.get().getSprite("ui/speakerBox.png");
+		choiceBox = SpriteStore.get().getSprite("ui/choiceBox.png");
+		
 	} // DialogueManager
 	
 	// store dialogue node into dialogueStore
@@ -202,7 +216,7 @@ public class DialogueManager {
 	} // choose
 	
 	// handles clicking on a choice
-	public void handleClick(MouseEvent e) {
+	public void handleClick(MouseEvent e) { // does not work!!!
 		if (!isDisplaying) { return; }
 		
 		if (currentChoiceNodes == null || currentChoiceNodes.length == 0) { return; }
@@ -244,23 +258,26 @@ public class DialogueManager {
 	public void draw(Graphics g) {
 		if (!dialogueStore.containsKey(currentDialogueID) || !isDisplaying) { return; }
 		
-		// draw background (use sprites?)
-		g.setColor(Color.LIGHT_GRAY);
-		g.fillRect((int) x, (int) y, dialogueWidth, dialogueHeight);
+		
+		// check if there is a speaker
+//		if (!dialogueStore.get(currentDialogueID).getSpeaker().isEmpty()) {
+			
+			// draw speaker background
+			speakerBox.draw(g, x + 20, y - speakerHeight + 20, speakerWidth, speakerHeight);
+		
+			// display speaker
+			g.setFont(g.getFont().deriveFont(24)); // temp
+			g.setColor(Color.white);
+			g.drawString(dialogueStore.get(currentDialogueID).getSpeaker(), (int) x + 10, (int) y - 30);
+//		} // if
+		
+		dialogueBox.draw(g, x, y, dialogueWidth, dialogueHeight);
+		System.out.println("drawing dialogue");
 
 		// draw dialogue text
-		g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 2f)); // temp
-		g.setColor(Color.black);
-		g.drawString(displayText, (int) x + 30, (int) y + 40); // can change
-	
-		// display speaker background
-		g.setColor(Color.LIGHT_GRAY);
-		g.fillRect((int) x , (int) y - 50, 160, 40);
-		
-		// display speaker
-		g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 0.6f)); // temp
-		g.setColor(Color.BLACK);
-		g.drawString(dialogueStore.get(currentDialogueID).getSpeaker(), (int) x + 10, (int) y - 30);
+		g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 3f)); // temp
+		g.setColor(Color.white);
+		g.drawString(displayText, (int) x + 30, (int) y + 80); // can change
 		
 		// draw choices if there are any
 		if (waitingForChoice) {
@@ -277,10 +294,11 @@ public class DialogueManager {
 			// draw background
 			g.setColor(Color.LIGHT_GRAY);
 			g.fillRect(choiceX, choiceY, choiceWidth, choiceHeight);
+			choiceBox.draw(g, choiceX, choiceY, choiceWidth, choiceHeight);
 			
 			// draw text
 			g.setColor(Color.black);
-			g.drawString(dialogueStore.get(currentChoiceNodes[i]).getChoiceText(), choiceX + 10, choiceY + 20); // idk why we need to add more to the y... but it works...
+			g.drawString(dialogueStore.get(currentChoiceNodes[i]).getChoiceText(), choiceX + 10, choiceY + 20);
 		} // for
 		
 	} // drawChoices

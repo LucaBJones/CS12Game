@@ -62,12 +62,11 @@ public class Attack extends Movable {
 			
 			if (hitBox.intersects(c.getHitBox()) && !c.equals(shooter)) {
 				c.getHp().decrement(10);
+				
 				if (c.getHp().getValue() <= 0) {
-					Game.removeEntity(c);
+					c.kill();
 				} // if
-				System.out.println(this.getHitBox());
-				System.out.println(c.getHitBox());
-				//System.out.println("intersects");
+				
 				return true;
 			} // if
 			
