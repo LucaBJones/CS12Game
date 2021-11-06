@@ -56,6 +56,7 @@ public class Game extends Canvas {
 	
 	private static Tooltip tooltip;
 	private DialogueManager dialogue;
+	private boolean isTalking = false;
 	
 	private QuestLog questLog;
 	
@@ -66,14 +67,20 @@ public class Game extends Canvas {
 	private boolean rightPressed = false;
 	private boolean shotFired = false;
 	private boolean melee = false;
-	private static int speed = 300;
+	private boolean isRunning = false;
+	
+	private int walkSpeed = 200;
+	private int runSpeed = 400;
+	private int currentSpeed = 200;
 	
 	private int screen = 0; // 0 for menu, 1 for instructions, 2 for credits, 3 for win, 4 for game over, 5 for start game
+	
 	private Image menu;
 	private Image credits;
 	private Image instructions;
 	private Image gameOver;
 	private Image win;
+	private Image icon;
 	
 	private int horizontalDirection = 0; 	// stores direction for projectiles // we could use the direction enum for this
 	private int verticalDirection = 1;		// values: -1, 0, 1 
@@ -83,7 +90,10 @@ public class Game extends Canvas {
     private long firingInterval = 300; // interval between shots (ms)
     
     private long lastRegen = 0; // time stamina was last regenerated
-    private long regenInterval = 500; // interval between stamina regen
+    private long regenInterval = 5000; // interval between stamina regen
+    
+    private long lastStaminaConsumption = 0;
+    private long staminaConsumeInterval = 400;
     
     private long lastDamage = 0;
     private long damageInterval = 500;
@@ -133,12 +143,17 @@ public class Game extends Canvas {
 		// Create Image Object
         Toolkit tk = Toolkit.getDefaultToolkit();
 		
-		// start the game
+		// init screen backgrounds
 		menu = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/menu.png"));
 		credits = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/credits.png"));
 		instructions = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/instructions.png"));
 		gameOver = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/gameover.png"));
 		win = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/win.png"));
+		
+		// init UI images
+		icon = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("ui/icon.png"));
+		
+		// start the game
 		initEntities();
 		gameLoop();
 		
@@ -169,7 +184,7 @@ public class Game extends Canvas {
 		
 		// temp?
 		npcs.add(new NPC("intro", "animations/player/walk_w0.png", 400, 400));
-		npcs.add(new NPC("chief2", "animations/player/walk_w3.png", 500, 400));
+//		npcs.add(new NPC("chief2", "animations/player/walk_w3.png", 500, 400));
 		entities.addAll(npcs);
 		
 		
@@ -197,45 +212,7 @@ public class Game extends Canvas {
 	
 	private void initDialogue() {
 		// temp, example dialogue
-		dialogue = new DialogueManager(questLog);
-		
-//		new DialogueNode("1", "NPC1", "Hello, my name is...", new String[] {"2"}, dialogue);
-//		
-//		new DialogueNode("2", "NPC1", "Wait! Don't leave, let me finish first...", new String[] {"3"}, dialogue);
-//		
-//		new DialogueNode("3", "NPC1", "Hey!!!", new String[] {"4", "5"}, dialogue);
-//		
-//		DialogueNode d4 = new DialogueNode("4", "NPC1", "How dare you!", null, dialogue);
-//		d4.setChoiceText("Leave me alone...");
-//		
-//		DialogueNode d5 = new DialogueNode("5", "NPC1", "Yes!!! I am!!!!", new String[] {"6"}, dialogue);
-//		d5.setChoiceText("What? Are you talking to me?");
-//		
-//		new DialogueNode("6", "NPC1", "I just wanted to ask... Do you have any apples?", new String[] {"7", "8", "9"}, dialogue);
-//		
-//		DialogueNode d7 = new DialogueNode("7", "NPC1", "Really? That'd be great!", null, dialogue);
-//		d7.setChoiceText("I can go find some for you.");
-//		d7.setQuestToUnlock("q1");
-//		
-//		DialogueNode d8 = new DialogueNode("8", "NPC1", "Oh.. Sorry to bother you...", null, dialogue);
-//		d8.setChoiceText("No.");
-//		
-//		DialogueNode d9 = new DialogueNode("9", "NPC1", "What? Really? You have apples?", new String[] {"10"}, dialogue);
-//		d9.setChoiceText("Here are some apples");
-//		d9.setChoicePrerequisite("q1", 0); // -1 = locked, 0 = unlocked, 1 = completed
-//		
-//		new CompleteQuestNode("10", "NPC1", // id and speaker
-//				"q1", // questID
-//				"Thank you so much! Here. I'll give you a coin in return.", "11",  // text and next node if quest is complete
-//				"You said you had apples... Where are they?", "12", // text and next node if quest is incomplete
-//				"13", // next node if inv is full
-//				dialogue);
-//		
-//		new DialogueNode("13", "NPC1", "Is your bag full? That's fine, just come back whenever you're ready. I'll give you the coin then.", null, dialogue);
-//		
-//		new DialogueNode("11", "NPC1", "Thanks again.", null, dialogue);
-//		new DialogueNode("12", "NPC1", "Come back when you actually get some.", null, dialogue);
-//	
+		dialogue = new DialogueManager(questLog, this);
 	
 		// Opening/intro dialogue
 		new DialogueNode("intro", "", "Hey, you. You’re finally awake.", new String[] {"introChoice1", "introChoice2"}, dialogue);
@@ -400,10 +377,12 @@ public class Game extends Canvas {
 			g.setColor(Color.gray);
 			g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
 
+			
+			
 			if (screen != 5) {
+				
 				// show the menu
 				if (screen == 0) {
-					System.out.println("drawing menu");
 					g.drawImage(menu, 0, 0, null);
 				} // if
 				
@@ -411,23 +390,26 @@ public class Game extends Canvas {
 				if (screen == 1) {
 					g.drawImage(instructions, 0, 0, null);
 				} // if
+				
 				// show credits
 				else if (screen == 2) {
 					g.drawImage(credits, 0, 0, null);
-				}
+				} // else if
+				
+				// show win screen
 				else if (screen == 3) {
 					g.drawImage(win, 0, 0, null);
 					
-				}
+				} // else if
+				
+				// show game over screen
 				else if (screen == 4) {
 					g.drawImage(gameOver, 0, 0, null);
-					
-				}
+				} // else if
 				
 				g.dispose();
 				strategy.show();
 				continue;
-				
 			} // if
 			
 			Camera.center(player);
@@ -471,10 +453,16 @@ public class Game extends Canvas {
 			questLog.draw(g);
 			
 			
+			// draw player icon
+			g.drawImage(icon, 0, 0, null);
+			
 			// temp
-			if (player.animation != null) {
-				player.animation.update(delta);
-			}
+			for (Character c : characters) {
+				if (c.animation != null) {
+					c.animation.update(delta);
+				} // if
+			} // for
+			
 			
 			// moves projectiles 
 			for (Attack a : tempAttacks) {
@@ -519,21 +507,35 @@ public class Game extends Canvas {
 			
 			// regenerate stamina
 			if ((System.currentTimeMillis() - lastRegen) > regenInterval) {
-				player.getStamina().increment(1);
+				player.getStamina().increment((int) (delta));
 				lastRegen = System.currentTimeMillis();
 			} // if
+			
+			// consume stamina if running
+			if (isRunning) {
+				if ((System.currentTimeMillis() - lastStaminaConsumption) > staminaConsumeInterval) {
+					player.getStamina().decrement((int) (delta));
+					lastStaminaConsumption = System.currentTimeMillis();
+				} // if
+				
+				if (player.getStamina().getValue() <= 0) {
+					isRunning = false;
+					currentSpeed = walkSpeed;
+				}
+			} // if
+			
 			
 			if (player.getHp().getValue() <= 0) {
 				entities.clear();
 				gameIsRunning = false;
 				screen = 4;
-			}
+			} // if
 			
-			if (noEnemies(characters)) {
+			if (noEnemies()) {
 				entities.clear();
 				gameIsRunning = false;
 				screen = 3;
-			}
+			} // if
 			
 			// clear graphics and flip buffer
 			g.dispose();
@@ -545,6 +547,8 @@ public class Game extends Canvas {
 
 	private void handlePlayerMovement(long delta) {
 		
+		if (isTalking) { return; } // what if enemy followed over?
+		
 		// reset speed
 		player.setXVelocity(0);
 		player.setYVelocity(0);
@@ -553,23 +557,20 @@ public class Game extends Canvas {
 		if (upPressed && !downPressed) {
 			
 			if (leftPressed && !rightPressed) {
-				player.setXVelocity( -1 * speed);
-//				player.setSprite("images/char_nw.png");
+				player.setXVelocity( -1 * currentSpeed);
 				horizontalDirection = -1;
 				verticalDirection = 0;
 			
 				player.setDirection(Direction.NW);
 			} else if (rightPressed && !leftPressed) {
-				player.setYVelocity(-1 * speed);
-//				player.setSprite("images/char_ne.png");
+				player.setYVelocity(-1 * currentSpeed);
 				horizontalDirection = 0;
 				verticalDirection = -1;
 				
 				player.setDirection(Direction.NE);
 			} else {
-				player.setXVelocity(-1 * speed);
-				player.setYVelocity(-1 * speed);
-//				player.setSprite("images/char_n.png");
+				player.setXVelocity(-1 * currentSpeed);
+				player.setYVelocity(-1 * currentSpeed);
 				horizontalDirection = -1;
 				verticalDirection = -1;
 				
@@ -579,16 +580,14 @@ public class Game extends Canvas {
 		} else if (leftPressed && !rightPressed) {
 			
 			if (downPressed && !upPressed) {
-				player.setYVelocity(speed);
-//				player.setSprite("images/char_sw.png");
+				player.setYVelocity(currentSpeed);
 				horizontalDirection = 0;
 				verticalDirection = 1;
 				
 				player.setDirection(Direction.SW);
 			} else {
-				player.setXVelocity((int)(-1 * speed * 0.7));
-				player.setYVelocity((int)(speed * 0.7));
-//				player.setSprite("images/char_w.png");
+				player.setXVelocity((int)(-1 * currentSpeed * 0.7));
+				player.setYVelocity((int)(currentSpeed * 0.7));
 				horizontalDirection = -1;
 				verticalDirection = 1;
 				
@@ -597,16 +596,14 @@ public class Game extends Canvas {
 			
 		} else if (downPressed && !upPressed) {
 			if (rightPressed && !leftPressed) {
-				player.setXVelocity(speed);
-//				player.setSprite("images/char_se.png");
+				player.setXVelocity(currentSpeed);
 				horizontalDirection = 1;
 				verticalDirection = 0;
 				
 				player.setDirection(Direction.SE);
 			} else {
-				player.setXVelocity(speed);
-				player.setYVelocity(speed);
-//				player.setSprite("images/char_s.png");
+				player.setXVelocity(currentSpeed);
+				player.setYVelocity(currentSpeed);
 				horizontalDirection = 1;
 				verticalDirection = 1;
 				
@@ -614,9 +611,8 @@ public class Game extends Canvas {
 			} // else
 			
 		} else if (rightPressed && !leftPressed) {
-			player.setXVelocity((int)(speed * 0.7));
-			player.setYVelocity((int)(-1 * speed * 0.7));
-//			player.setSprite("images/char_e.png");
+			player.setXVelocity((int)(currentSpeed * 0.7));
+			player.setYVelocity((int)(-1 * currentSpeed * 0.7));
 			horizontalDirection = 1;
 			verticalDirection = -1;
 			
@@ -754,14 +750,70 @@ public class Game extends Canvas {
 		enemy.move(delta);
 	} // handleEnemyMovement
 	
-	private void tryToStartDialogue() {
+	private boolean tryToStartDialogue() {
+		if (isTalking) { return false; }
+		
 		for (NPC n : npcs) {
 			if (n.withinRange((int) player.x, (int) player.y)) {
 				System.out.println("within range");
 				dialogue.start(n.getDialogue());
-			}
-		}
+				isTalking = true;
+				return true;
+			} // if
+		} // for
+		
+		return false;
+	} // tryToStartDialogue
+	
+	public void stopTalking() {
+		isTalking = false;
 	}
+	
+	private void handleMenuClick(MouseEvent e) {
+		int x = 700;
+		int y = 150;
+		int buttonWidth = 520;
+		int buttonHeight = 210;
+		int padding = 50;
+		
+		// if currently on menu screen
+		if (screen == 0) {
+			y = 150;
+			
+			// check if within horizontal bounds of button
+			if (!(e.getX() > x && e.getX() < x + buttonWidth)) { return; }
+			
+			// start game
+			if (e.getY() > y && e.getY() < y + buttonHeight) {
+				screen = 5;
+			} // if
+			
+			// instructions screen
+			if (e.getY() > y + buttonHeight + padding && e.getY() < y + 2 * buttonHeight + padding) {
+				screen = 1;
+			} // if
+			
+			// credits screen
+			if (e.getY() > y + 2 * buttonHeight + 2 * padding && e.getY() < y + 3 * buttonHeight + 2 * padding) {
+				screen = 2;
+			} // if
+		} // if
+		
+		// if currently on game lost or won screen
+		if (screen == 3 || screen == 4) {
+			y = 620;
+			
+			// check if within horizontal bounds of button
+			if (!(e.getX() > x && e.getX() < x + buttonWidth)) { return; }
+			
+			// return to menu
+			if (e.getY() > y && e.getY() < y + buttonHeight) {
+				screen = 0;
+			} // if
+			
+		} // if
+		
+	} // handleMenuClick
 	
 	// move?
 	// create an attack
@@ -822,75 +874,62 @@ public class Game extends Canvas {
 			
 			if (e.getKeyCode() == KeyEvent.VK_X) {
 				shotFired = true;
-				//System.out.println("Pressed: space");
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { // should we have this?
 				System.exit(0);
 			} // if
 			
-			if (e.getKeyCode() == KeyEvent.VK_Z) {
-				melee = true;
-			} // if
+//			if (e.getKeyCode() == KeyEvent.VK_Z) {
+//				melee = true;
+//			} // if
 			
-			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-				player.getHp().decrement(10);
-				player.getMana().increment(100);
-			}
+//			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+//				player.getHp().decrement(10);
+//				player.getMana().increment(100);
+//			}
+			
+			if (e.getKeyCode() == KeyEvent.VK_SHIFT) { // should we have this?
+				if (player.getStamina().getValue() <= 0) { return; }
+				isRunning = true;
+				currentSpeed = runSpeed;
+			} // if
 
 		} // keyPressed
 
 		public void keyReleased(KeyEvent e) {
-
-			// temp, for testing-------------------------------
-			if (e.getKeyCode() == KeyEvent.VK_1) {
-				inv.addItem("apple", 1);
-				System.out.println("added 1 apple to inv");
-			} // if
 			
-			if (e.getKeyCode() == KeyEvent.VK_2) {
-				questLog.unlock("q1");
-				System.out.println("unlocked quest 1");
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_3) {
-				System.out.println("completing quest 1");
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_4) {
-				tryToStartDialogue();
-			} // if
-			// --------------------------------------------------------
-			
-			// temp
-			if (e.getKeyCode() == KeyEvent.VK_T) {
-				dialogue.update();
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+				
+				// check if npc is in range and start dialogue
+				// if just started dialogue, don't update dialogue
+				if (tryToStartDialogue()) { return; }
+				
+				// update dialogue
+				if (isTalking) {
+					dialogue.update();
+				} // if
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
-				//System.out.println("Released: w or up");
 				upPressed = false;
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
-				//System.out.println("Released: a or left");
 				leftPressed = false;
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
-				//System.out.println("Released: s or down");
 				downPressed = false;
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				//System.out.println("Released: d or right");
 				rightPressed = false;
 			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_X) {
 				shotFired = false;
-				//System.out.println("Released: space");
-			}
+			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_Z) {
 				melee = false;
@@ -901,7 +940,7 @@ public class Game extends Canvas {
 				
 				if (!inventoryVisible) {
 					inv.stopDrag();
-				}
+				} // if
 				
 				System.out.println("inventoryVisible: " + inventoryVisible);
 			} // if
@@ -911,28 +950,33 @@ public class Game extends Canvas {
 					screen = 1;
 				} else if (screen == 1) {
 					screen = 0;
-				}
-			}
+				} // else if
+			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_C) {
 				if (screen == 0) {
 					screen = 2;
 				} else if (screen == 2) {
 					screen = 0;
-				}
-			}
+				} // else if
+			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				if (screen == 0) {
 					screen = 5;
-				}
-			}
+				} // if
+			} // if
 			
 			if (e.getKeyCode() == KeyEvent.VK_M) {
 				if (screen == 3 || screen == 4) {
 					screen = 0;
-				}
-			}
+				} // if
+			} // if
+			
+			if (e.getKeyCode() == KeyEvent.VK_SHIFT) { // should we have this?
+				isRunning = false;
+				currentSpeed = walkSpeed;
+			} // if
 			
 		} // keyReleased
 
@@ -965,7 +1009,12 @@ public class Game extends Canvas {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			dialogue.handleClick(e);
+			if (screen <= 4) {
+				handleMenuClick(e);
+			}
+			if (isTalking) {
+				dialogue.handleClick(e);
+			}
 		}
 
 		@Override
@@ -1003,8 +1052,8 @@ public class Game extends Canvas {
 		return characters;
 	}
 	
-	public boolean noEnemies(ArrayList<Character> chars) {
-		for (Character c : chars) {
+	private boolean noEnemies() {
+		for (Character c : characters) {
 			if (!c.isPlayer()) {
 				return false;
 			}

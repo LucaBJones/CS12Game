@@ -39,8 +39,9 @@ public class DialogueManager {
 	private int index;
 	
 	private QuestLog questLog;
+	private Game game;
 	
-	public DialogueManager(QuestLog log) {
+	public DialogueManager(QuestLog log, Game g) {
 		currentDialogueID = null;
 		currentChoice = -1;
 		isDisplaying = false;
@@ -49,6 +50,7 @@ public class DialogueManager {
 		displayText = "";
 		
 		questLog = log;
+		game = g;
 		
 		textSpeed = 30; // can change, lower num is faster
 		index = 0;
@@ -58,6 +60,7 @@ public class DialogueManager {
                 animateText();
             } // actionPerformed
         });
+		timer.setInitialDelay(0);
 		
 		// can change
 		xPadding = 10;
@@ -84,6 +87,7 @@ public class DialogueManager {
 		waitingForChoice = false;
 		textIsAnimating = true;
 		currentDialogueID = id;
+		displayText = "";
 		
 		timer.start();
 	} // start
@@ -97,6 +101,7 @@ public class DialogueManager {
 			return;
 		} // if
 		
+		System.out.println("displayText: " + displayText);
 		displayText += dialogueStore.get(currentDialogueID).getText().charAt(index);
 		index++;
 	} // updateText
@@ -120,6 +125,8 @@ public class DialogueManager {
 		// check if there is any more dialogue
 		if (current.getNext() == null) { 
 			isDisplaying = false;
+			game.stopTalking();
+			System.out.println("hello?");
 			return; 
 		} // if
 		
@@ -131,7 +138,7 @@ public class DialogueManager {
 				temp.add(str);
 			} else if (questLog.get(prerequisiteQuest).getStatus() == dialogueStore.get(str).getPrerequisiteStatus()) {
 				temp.add(str);
-			}
+			} // else if
 			
 		} // for
 		

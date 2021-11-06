@@ -72,7 +72,6 @@ public class Entity {
 	} // draw
 	
 	public void setSprite(String r) {
-		System.out.println("r: " + r);
 		sprite = (SpriteStore.get()).getSprite(r);
 	} // setSprite
 	

@@ -39,7 +39,7 @@ public class Animation {
 		
 		currentFrame = min;
 		counter = 0;
-		delayBetweenFrames = 100;
+		delayBetweenFrames = 130;
 		
 		isPlaying = false;
 		entity = e;
@@ -60,7 +60,9 @@ public class Animation {
 	// update animation
 	public void update(long delta) {
 		if (!isPlaying) { return; }
-		counter++; // use delta?
+		counter += delta; // use delta?
+		
+		System.out.println("counter: " + counter);
 		
 		if (counter > delayBetweenFrames) {
 			counter = 0;

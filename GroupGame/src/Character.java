@@ -33,11 +33,11 @@ public class Character extends Movable {
 		
 		// set up status bars
 		if (isPlayer) {
-			hp = new Bar(10, 10, 100, Color.DARK_GRAY, Color.RED);
-			stamina = new Bar(10, 30, 100, Color.DARK_GRAY, Color.GREEN);
-			mana = new Bar(10, 50, 100, Color.DARK_GRAY, Color.BLUE);
+			hp = new Bar(220, 50, 100, Color.DARK_GRAY, Color.RED, 700, 35);
+			stamina = new Bar(235, 100, 100, Color.DARK_GRAY, Color.GREEN, 600, 28);
+			mana = new Bar(235, 140, 100, Color.DARK_GRAY, Color.BLUE, 600, 28);
 		} else {
-			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, Color.DARK_GRAY, Color.RED);
+			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, Color.DARK_GRAY, Color.RED, 100, 10);
 		} // else
 		
 		animation = walk_s; // temp
