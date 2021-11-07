@@ -50,6 +50,7 @@ public class Game extends Canvas {
 	private static ArrayList<Attack> attacks = new ArrayList<Attack>();
 	private static ArrayList<Character> characters = new ArrayList<Character>();
 	private static ArrayList<NPC> npcs = new ArrayList<NPC>(); // temp?
+	private static ArrayList<Entity> items = new ArrayList<Entity>();
 	
 	private Character player;
 	private Inventory inv;
@@ -531,6 +532,13 @@ public class Game extends Canvas {
 				} // if
 			} // for
 			
+			for (Entity i : items) {
+				if (player.onItem(i)) {
+					removeEntity(i);
+					inv.addItem(getName(), currentSpeed);
+				}
+			}
+			
 			// regenerate stamina
 			if ((System.currentTimeMillis() - lastStaminaRegen) > staminaRegenInterval) {
 				player.getStamina().increment(10);
@@ -828,6 +836,7 @@ public class Game extends Canvas {
 	// remove an entity from the game
 	public static void removeEntity(Entity e) {
 		entities.remove(e);
+		items.remove(e);
 		if (e instanceof Attack) {
 			attacks.remove(e);
 		} else if (e instanceof Character) {

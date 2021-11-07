@@ -20,7 +20,7 @@ public class Animation {
 	
 	private int min;
 	
-	public Animation(Entity e, String prefix, String suffix, int min, int max) { // temp
+	public Animation(Entity e, String prefix, String suffix, int min, int max, int frameDelay) { // temp
 		this.frames = new ArrayList<Sprite>();
 		
 		this.prefix = prefix;
@@ -28,7 +28,7 @@ public class Animation {
 		
 		this.min = min;
 		
-		for (int i = min; i < max; i++) {
+		for (int i = min; i <= max; i++) {
 			frames.add((SpriteStore.get()).getSprite(prefix + i + suffix));
 			System.out.println(prefix + i + suffix);
 		} // for
@@ -38,7 +38,7 @@ public class Animation {
 		
 		currentFrame = min;
 		counter = 0;
-		delayBetweenFrames = 130;
+		delayBetweenFrames = frameDelay;
 		
 		isPlaying = false;
 		entity = e;
@@ -65,7 +65,7 @@ public class Animation {
 			counter = 0;
 			
 			currentFrame++;
-			if (currentFrame > totalFrames - 1) {
+			if (currentFrame > totalFrames + min - 1) { // ? is this right?
 				currentFrame = min;
 			}
 		} // if
