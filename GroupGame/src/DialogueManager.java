@@ -48,7 +48,7 @@ public class DialogueManager {
 	private Sprite speakerBox;
 	private Sprite choiceBox;
 	
-	private Color textColor;
+	
 	
 	public DialogueManager(QuestLog log, Game g) {
 		currentDialogueID = null;
@@ -89,8 +89,6 @@ public class DialogueManager {
 		dialogueBox = SpriteStore.get().getSprite("ui/dialogueBox.png");
 		speakerBox = SpriteStore.get().getSprite("ui/speakerBox.png");
 		choiceBox = SpriteStore.get().getSprite("ui/choiceBox.png");
-		
-		textColor = new Color(183,183,183);
 	} // DialogueManager
 	
 	// store dialogue node into dialogueStore
@@ -263,7 +261,7 @@ public class DialogueManager {
 		
 		// set font and text color
 		g.setFont(Game.getDidactGothic().deriveFont(28f)); // temp
-		g.setColor(textColor);
+		g.setColor(Game.getTextColor());
 		
 		// check if there is a speaker
 		if (!dialogueStore.get(currentDialogueID).getSpeaker().isEmpty()) {
@@ -279,7 +277,7 @@ public class DialogueManager {
 		System.out.println("drawing dialogue");
 
 		// draw dialogue text
-		g.drawString(displayText, (int) x + 50, (int) y + 80); // can change
+		drawString(g, displayText, (int) x + 50, (int) y + 50); // can change
 		
 		// draw choices if there are any
 		if (waitingForChoice) {
@@ -302,5 +300,14 @@ public class DialogueManager {
 		} // for
 		
 	} // drawChoices
+	
+	// draw multi-line Strings, author: John Evans
+    private void drawString(Graphics g, String text, int x, int y) {
+
+        // draws each line on a new line
+        for (String line : text.split("\n")) {
+            g.drawString(line, x, y += g.getFontMetrics().getHeight());
+        } // for
+    } // drawString
 	
 } // DialogueManager

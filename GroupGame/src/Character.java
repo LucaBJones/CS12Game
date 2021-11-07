@@ -13,8 +13,8 @@ public class Character extends Movable {
 	private Bar stamina;
 	private Bar mana;
 	
-	private boolean isPlayer;
-	private String id;
+	private int charType; // -1 = player, 0 = skeleton, 1 = boss
+	private String id; // used?
 	
 	// walking animations, is there a better way to do this?
 	private Animation walk_s;
@@ -26,19 +26,28 @@ public class Character extends Movable {
 	private Animation walk_e;
 	private Animation walk_w;
 	
+	private Animation run_s;
+	private Animation run_se;
+	private Animation run_sw;
+	private Animation run_n;
+	private Animation run_ne;
+	private Animation run_nw;
+	private Animation run_e;
+	private Animation run_w;
+	
 	private Animation idle_s;
 	private Animation idle_n;
 	private Animation idle_e;
 	private Animation idle_w;
 	
 	// constructor
-	public Character(String r, int xPos, int yPos, int dx, int dy, boolean isPlayer) {
+	public Character(String r, int xPos, int yPos, int dx, int dy, int charType) {
 		super(r, xPos, yPos, dx, dy); // double or int for speed?
 
-		this.isPlayer = isPlayer;
+		this.charType = charType;
 		
 		// set up status bars
-		if (isPlayer) {
+		if (charType == -1) {
 			hp = new Bar(220, 50, 100, Color.DARK_GRAY, Color.RED, 700, 35);
 			stamina = new Bar(235, 100, 100, Color.DARK_GRAY, Color.GREEN, 600, 28);
 			mana = new Bar(235, 140, 100, Color.DARK_GRAY, Color.BLUE, 600, 28);
@@ -53,42 +62,55 @@ public class Character extends Movable {
 			walk_e  = new Animation(this, "animations/player/walk_e", ".png", 0, 7, 130);
 			walk_w  = new Animation(this, "animations/player/walk_w", ".png", 0, 7, 130);
 			
-			idle_s = new Animation(this, "animations/player/idle_s", ".png", 1, 3, 500);
-			idle_n = new Animation(this, "animations/player/idle_n", ".png", 1, 3, 500);
-			idle_e = new Animation(this, "animations/player/idle_e", ".png", 1, 3, 500);
-			idle_w = new Animation(this, "animations/player/idle_w", ".png", 1, 3, 500);
+			run_s  = new Animation(this, "animations/player/run_s", ".png", 1, 8, 130); 
+			run_se = new Animation(this, "animations/player/run_se", ".png", 1, 8, 130);
+			run_sw = new Animation(this, "animations/player/run_sw", ".png", 1, 8, 130);
+			run_n  = new Animation(this, "animations/player/run_n", ".png", 1, 8, 130); 
+			run_ne = new Animation(this, "animations/player/run_ne", ".png", 1, 8, 130);
+			run_nw = new Animation(this, "animations/player/run_nw", ".png", 1, 8, 130);
+			run_e  = new Animation(this, "animations/player/run_e", ".png", 1, 8, 130); 
+			run_w  = new Animation(this, "animations/player/run_w", ".png", 1, 8, 130); 
 			
+			idle_s = new Animation(this, "animations/player/idle_s", ".png", 1, 1, 500);
+			idle_n = new Animation(this, "animations/player/idle_n", ".png", 1, 1, 500);
+			idle_e = new Animation(this, "animations/player/idle_e", ".png", 1, 1, 500);
+			idle_w = new Animation(this, "animations/player/idle_w", ".png", 1, 1, 500);
+			
+//			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, TILE_LENGTH, TILE_LENGTH);
 		} else {
 			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, Color.DARK_GRAY, Color.RED, 100, 10);
 			
-			// setup enemy animations
-			walk_s  = new Animation(this, "animations/enemy/walk_s", ".png", 1, 8, 130); 
-			walk_se = new Animation(this, "animations/enemy/walk_se", ".png", 1, 8, 130); 
-			walk_sw = new Animation(this, "animations/enemy/walk_sw", ".png", 1, 8, 130); 
-			walk_n  = new Animation(this, "animations/enemy/walk_n", ".png", 1, 8, 130);  
-			walk_ne = new Animation(this, "animations/enemy/walk_ne", ".png", 1, 8, 130); 
-			walk_nw = new Animation(this, "animations/enemy/walk_nw", ".png", 1, 8, 130); 
-			walk_e  = new Animation(this, "animations/enemy/walk_e", ".png", 1, 8, 130);  
-			walk_w  = new Animation(this, "animations/enemy/walk_w", ".png", 1, 8, 130);  
+			String name = (charType == 1) ? "boss" : "enemy";
 			
-			idle_s = new Animation(this, "animations/player/idle_s", ".png", 1, 3, 130); // currently using player anims
-			idle_n = new Animation(this, "animations/player/idle_n", ".png", 1, 3, 130);
-			idle_e = new Animation(this, "animations/player/idle_e", ".png", 1, 3, 130);
-			idle_w = new Animation(this, "animations/player/idle_w", ".png", 1, 3, 130);
-				
+			// setup enemy animations
+			walk_s  = new Animation(this, "animations/" + name + "/walk_s", ".png", 1, 8, 130); 
+			walk_se = new Animation(this, "animations/" + name + "/walk_se", ".png", 1, 8, 130); 
+			walk_sw = new Animation(this, "animations/" + name + "/walk_sw", ".png", 1, 8, 130); 
+			walk_n  = new Animation(this, "animations/" + name + "/walk_n", ".png", 1, 8, 130);  
+			walk_ne = new Animation(this, "animations/" + name + "/walk_ne", ".png", 1, 8, 130); 
+			walk_nw = new Animation(this, "animations/" + name + "/walk_nw", ".png", 1, 8, 130); 
+			walk_e  = new Animation(this, "animations/" + name + "/walk_e", ".png", 1, 8, 130);  
+			walk_w  = new Animation(this, "animations/" + name + "/walk_w", ".png", 1, 8, 130);  
+			
+			idle_s = new Animation(this, "animations/" + name + "/idle_s", ".png", 0, 0, 130);
+			idle_n = new Animation(this, "animations/" + name + "/idle_n", ".png", 0, 0, 130);
+			idle_e = new Animation(this, "animations/" + name + "/idle_e", ".png", 0, 0, 130);
+			idle_w = new Animation(this, "animations/" + name + "/idle_w", ".png", 0, 0, 130);
+			
+//			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, sprite.getWidth(), TILE_LENGTH);
 		} // else
 		
 		animation = walk_s; // temp
 		direction = Direction.S; // temp
 		
-		
+		hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, sprite.getWidth(), TILE_LENGTH);
 	} // Player
 	
 	@Override
 	public void move(long delta) {
 		super.move(delta);
 		
-		if (!isPlayer) {
+		if (charType != -1) {
 			hp.updatePosition((int) x, (int) y - sprite.getHeight() - 20);
 			//System.out.println("hp bar of non-player");
 		} // if
@@ -152,6 +174,44 @@ public class Character extends Movable {
 		} // switch
 	} // setWalkAnimation
 	
+	public void setRunAnimation() { // temp
+		switch (direction) {
+			case S: 
+				animation = run_s;
+				break;
+				
+			case SE:
+				animation = run_se;
+				break;
+				
+			case SW:
+				animation = run_sw;
+				break;
+				
+			case N:
+				animation = run_n;
+				break;
+				
+			case NE:
+				animation = run_ne;
+				break;
+				
+			case NW:
+				animation = run_nw;
+				break;
+				
+			case E:
+				animation = run_e;
+				break;
+				
+			case W:
+				animation = run_w; 
+				break;
+			default:
+				//System.out.println("unimplemented animation");
+		} // switch
+	} // setRunAnimation
+	
 	public void setIdleAnimation() { 
 		switch (direction) {
 			case S: 
@@ -181,7 +241,7 @@ public class Character extends Movable {
 	@Override
 	public void draw(Graphics g) {
 		super.draw(g);
-		if (isPlayer) {
+		if (charType == -1) {
 			hp.draw(g);
 			stamina.draw(g);
 			mana.draw(g);
@@ -189,10 +249,13 @@ public class Character extends Movable {
 			hp.drawInIso(g, this);
 		} // else
 		
+		g.setColor(Color.red);
+		g.drawRect(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+		
 	} // draw
 	
 	public boolean isPlayer() {
-		return isPlayer;
+		return charType == -1;
 	}
 	
 	public void kill() {
@@ -203,7 +266,7 @@ public class Character extends Movable {
 	
 	public boolean playerCollision(ArrayList<Character> characters) {
 		
-		if (isPlayer) {
+		if (charType == -1) {
 			for (Character c : characters) {
 				
 				if (hitBox.intersects(c.getHitBox()) && !c.isPlayer()) {
@@ -216,14 +279,14 @@ public class Character extends Movable {
 		return false;
 	}
 	
-	public boolean onItem(Entity item) {
+	public boolean onItem(PickupItem item) {
 		
-		if (isPlayer) {
+		if (charType == -1) {
 			Rectangle itemHitbox = new Rectangle(item.screenPosX, item.screenPosY, item.sprite.getWidth(), item.sprite.getHeight());
 			if (hitBox.intersects(itemHitbox)) {
 				return true;
-			}
-		}
+			} // if
+		} // if
 		return false;
 	}
 

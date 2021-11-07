@@ -30,9 +30,7 @@ public class Movable extends Entity {
 		
 		// these should be in their respective classes, but are here rn to look at
 		
-		if (this instanceof Character) {
-			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, sprite.getWidth(), TILE_LENGTH);
-		} else {
+		if (!(this instanceof Character)) {
 			hitBox = new Rectangle(screenPosX, screenPosY, sprite.getWidth(), sprite.getHeight());
 		}
 		
@@ -47,11 +45,21 @@ public class Movable extends Entity {
 		
 		Point[] p = getCorners();
 		
+		if (this instanceof Character) {
+			updateDirection();
+			((Character) this).setWalkAnimation();
+			animation.start();
+		}
 		// check if the entity will be out of bounds after movement
 		// if so don't move it
 		if (isOutOfBounds(p)) {
 			x -= dx * delta / 1000;
 			y -= dy * delta / 1000;
+			
+			if (this instanceof Character) {
+				((Character) this).setIdleAnimation();
+				animation.start();
+			}
 		} // if
 		Point isoPoint = toIso((int) x, (int) y);
 		screenPosX = isoPoint.x - Camera.getX();

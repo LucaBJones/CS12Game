@@ -47,7 +47,7 @@ public class Tooltip {
 		// draw text
 		g.setColor(Color.black);
 		g.drawString(title, x + 10, y + 15);
-		g.drawString(description, x + 10, y + 35);
+		drawString(g, description, x + 10, y + 35);
 	} // draw
 	
 	// position the tooltip relative to the values passed in
@@ -103,5 +103,14 @@ public class Tooltip {
 		this.title = title;
 		this.description = description;
 	}
+	
+	// draw multi-line Strings, author: John Evans
+    private void drawString(Graphics g, String text, int x, int y) {
+
+        // draws each line on a new line
+        for (String line : text.split("\n")) {
+            g.drawString(line, x, y += g.getFontMetrics().getHeight());
+        } // for
+    } // drawString
 	
 } // Tooltip

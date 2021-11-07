@@ -95,7 +95,8 @@ public class InventorySlot extends Entity {
 
 			// display number of items
 			if (numberOfItems > 0) {
-				g.setColor(Color.BLACK);
+				g.setColor(Game.getTextColor());
+				g.setFont(Game.getMedievalSharp().deriveFont(20f));
 				g.drawString(numberOfItems + "", xPos + length - 20, yPos + length - 15);
 			} // if
 

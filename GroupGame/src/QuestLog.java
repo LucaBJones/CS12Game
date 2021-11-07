@@ -116,18 +116,20 @@ public class QuestLog { // rename to QuestManager?
 		
 		// draw text (current quests)
 		for (int i = 0; i < currentQuests.size(); i++) {
+			String displayText = questStore.get(currentQuests.get(i)).getName();
 			
 			// draw background
-			g.setColor(Color.ORANGE);
+			g.setColor(Color.black);
 			g.fillRect(x, y + height * i, width + 30, height);
-			g.setColor(Color.BLACK);
-			g.drawRect(x, y + height * i, width + 30, height);
 			
 			// draw current quest text
-			g.setColor(Color.BLACK);
-			g.drawString(questStore.get(currentQuests.get(i)).getName(), x, y + 30 + height * i);
+			g.setColor(Game.getTextColor());
+			g.setFont(Game.getMedievalSharp().deriveFont(32f));
+			g.drawString(displayText, x + (width - g.getFontMetrics().stringWidth(displayText)) / 2, y + 30 + (height - g.getFontMetrics().getHeight()) / 2);
+			
 		} // for
 		
 	} // draw
+
 	
 } // QuestLog

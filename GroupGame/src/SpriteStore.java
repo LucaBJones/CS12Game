@@ -39,6 +39,7 @@ public class SpriteStore {
 			return (Sprite) sprites.get(ref);
 		} // if
 
+		System.out.println("ref: " + ref);
 		// else, load the image into the HashMap
 		BufferedImage sourceImage = null;
 
