@@ -89,8 +89,10 @@ public class Game extends Canvas {
 	private long lastFire = 0; // time last shot fired
     private long firingInterval = 300; // interval between shots (ms)
     
-    private long lastRegen = 0; // time stamina was last regenerated
-    private long regenInterval = 5000; // interval between stamina regen
+    private long lastStaminaRegen = 0; // time stamina was last regenerated
+    private long staminaRegenInterval = 2000; // interval between stamina regen
+    private long lastManaRegen = 0;
+    private long manaRegenInterval = 3000;
     
     private long lastStaminaConsumption = 0;
     private long staminaConsumeInterval = 400;
@@ -120,7 +122,7 @@ public class Game extends Canvas {
 		frame.pack();
 		frame.setResizable(false); // can change
 		frame.setVisible(true);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
+		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
 	
 		
 		// create buffer strategy to take advantage of accelerated graphics
@@ -488,16 +490,6 @@ public class Game extends Canvas {
 				//System.out.println("shot");
 			} // if
 			
-			// short range attack
-			if (melee && !shotFired && player.getStamina().getValue() > 10) {
-				Attack m = startAttack(100, player);
-				if (m != null) {
-					attacks.add(m);
-					entities.add(m);
-					player.getStamina().decrement(10);
-				} // if
-			} // if
-			
 			// check for attacks hitting characters
 			for (Attack a : tempAttacks) {
 				if(a.collidesWith(characters, g)) {
@@ -506,22 +498,27 @@ public class Game extends Canvas {
 			} // for
 			
 			// regenerate stamina
-			if ((System.currentTimeMillis() - lastRegen) > regenInterval) {
-				player.getStamina().increment((int) (delta));
-				lastRegen = System.currentTimeMillis();
+			if ((System.currentTimeMillis() - lastStaminaRegen) > staminaRegenInterval) {
+				player.getStamina().increment(10);
+				lastStaminaRegen = System.currentTimeMillis();
+			} // if
+			
+			// regenerate mana
+			if ((System.currentTimeMillis() - lastManaRegen) > manaRegenInterval) {
+				player.getMana().increment(10);
+				lastManaRegen = System.currentTimeMillis();
 			} // if
 			
 			// consume stamina if running
-			if (isRunning) {
-				if ((System.currentTimeMillis() - lastStaminaConsumption) > staminaConsumeInterval) {
-					player.getStamina().decrement((int) (delta));
-					lastStaminaConsumption = System.currentTimeMillis();
-				} // if
-				
+			if (isRunning && (leftPressed || upPressed || downPressed || rightPressed)) {
 				if (player.getStamina().getValue() <= 0) {
 					isRunning = false;
 					currentSpeed = walkSpeed;
-				}
+				} else if ((System.currentTimeMillis() - lastStaminaConsumption) > staminaConsumeInterval) {
+					player.getStamina().decrement(10);
+					lastStaminaConsumption = System.currentTimeMillis();
+				} // if
+				
 			} // if
 			
 			
@@ -635,114 +632,20 @@ public class Game extends Canvas {
 		// if on screen 
 		// do we want off screen characters to move?
 		if(enemy.getScreenPosX() > 0 - 100 && enemy.getScreenPosX() < Camera.getWidth() + 100 && enemy.getScreenPosY() > 0 - 100 && enemy.getScreenPosY() < Camera.getHeight() + 100) {
-			/*
-			// path finding
-			// the algorith should find the tile the player is closest to being on
-			// it doesn't matter if a player is on multiple tiles 
-			ArrayList<Node> open = new ArrayList<Node>();
-			ArrayList<Node> closed = new ArrayList<Node>();
 			
-			//this doesnt work yet if != 0
-			
-			// end Node (player location tile)
-			int playerTileX = 1;// (int) player.getScreenPosX() / 60;
-			int playerTileY = 1; // (int) player.getScreenPosY() / 60;
-			Node end = new Node(playerTileX, playerTileY);
-			
-			// start node
-			System.out.println((int) enemy.screenPosX / 60 + " : " + (int) enemy.screenPosY / 60);
-			Node start = new Node((int) enemy.screenPosX / 60, (int) enemy.screenPosY / 60, end);
-			
-			// add start to open
-			open.add(start);
-			
-			
-			 * do {
-				
-				// current = node in open with min f cost
-				Node current = getMinFCost(open);
-				
-				// set the neighbours of this node
-				for(int i = -1; i < 2; i ++) {
-					for(int j = -1; j < 2; j ++) {
-						if(i != 0 && j !=0){
-							current.addNeighbour(new Node(current.getY() + i, current.getX() + j, end, current));
-						}
-					} // for
-				} // for
-				
-				// remove current from open
-				open.remove(current);
-				
-				// add current to closed
-				closed.add(current);
-				
-				//if current == target node: return
-				if(current.getX() == end.getX() && current.getY() == end.getY()) {
-					System.out.println("break");
-					break;
-				} // if
-				
-				// for each neighbour of current:
-				for(Node neighbour : current.getNeighbours()) {
-					
-					//if neigh is not traversable || neighbor is in closed: continue
-					// 60 = TILE_LENGTH
-					try {
-						if (!tileMap[neighbour.getY()][neighbour.getX()].getIsPassable() || closed.contains(neighbour)) {
-							continue;
-						} // if
-					} catch (ArrayIndexOutOfBoundsException e) {
-						
-						continue;
-						
-					} // catch
-					
-					//if new gCost of neighbor < old gCost || neigh !in closed
-					if (current.getGCost() + (int) Math.pow((Math.pow(neighbour.getX() - current.getX(), 2) + Math.pow(neighbour.getX() - current.getY(), 2)), 0.5) < neighbour.getGCost() || !closed.contains(neighbour)) {
-						
-						// set fCost of neigh
-						neighbour.setFCost(neighbour.getGCost() + neighbour.getHCost());
-						neighbour.setGCost(current.getGCost() + (int) Math.pow((Math.pow(neighbour.getX() - current.getX(), 2) + Math.pow(neighbour.getX() - current.getY(), 2)), 0.5));
-						neighbour.setHCost((int) Math.pow((Math.pow(neighbour.getX() - end.getX(), 2) + Math.pow(neighbour.getY() - end.getY(), 2)), 0.5));
-						
-						// set parent of neighbor to current
-						neighbour.setParent(current);
-						
-						// if neigh !in open
-						if (!open.contains(neighbour)) {
-							
-							// add neigh to open
-							open.add(neighbour);
-							
-						} // if
-							
-					} // if
-					
-				} // for
-				System.out.println("finding path...");
-			} while(true);
-			 
-			
-			//Node goal = getMinFCost(start.getNeighbours());
-			//System.out.println(getMinFCost(start.getNeighbours()).getX() + " | " + getMinFCost(start.getNeighbours()).getX());
-			*/
 			
 			int XDirection = (int) (player.getX() - enemy.getX());
 			int YDirection = (int) (player.getY() - enemy.getY());
-			
-//			System.out.println(XDirection);
-//			System.out.println(YDirection);
 			
 			// probably some enemy direction
 			// decide the direction
 			enemy.setXVelocity( XDirection);
 			enemy.setYVelocity( YDirection);
-//			enemy.setSprite("images/char_s.png");
 			
 		} // if
 		
 		// animation
+		enemy.updateDirection();
 		enemy.setWalkAnimation();
 		enemy.animation.start();
 			
@@ -799,6 +702,23 @@ public class Game extends Canvas {
 			} // if
 		} // if
 		
+		// if currently on instructions or credits
+		if (screen == 1 || screen == 2) {
+			y = 870;
+			x = 750;
+			buttonWidth = 420;
+			buttonHeight = 180;
+			
+			// check if within horizontal bounds of button
+			if (!(e.getX() > x && e.getX() < x + buttonWidth)) { return; }
+			
+			// return to menu
+			if (e.getY() > y && e.getY() < y + buttonHeight) {
+				screen = 0;
+			} // if
+			
+		} // if
+		
 		// if currently on game lost or won screen
 		if (screen == 3 || screen == 4) {
 			y = 620;
@@ -852,130 +772,97 @@ public class Game extends Canvas {
 
 		public void keyPressed(KeyEvent e) {
 
-			if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
-				//System.out.println("Pressed: w or up");
-				upPressed = true;
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
-				//System.out.println("Pressed: a or left");
-				leftPressed = true;
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
-				//System.out.println("Pressed: s or down");
-				downPressed = true;
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				//System.out.println("Pressed: d or right");
-				rightPressed = true;
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_X) {
-				shotFired = true;
-			} // if
-			
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { // should we have this?
 				System.exit(0);
 			} // if
 			
-//			if (e.getKeyCode() == KeyEvent.VK_Z) {
-//				melee = true;
-//			} // if
-			
-//			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-//				player.getHp().decrement(10);
-//				player.getMana().increment(100);
-//			}
-			
-			if (e.getKeyCode() == KeyEvent.VK_SHIFT) { // should we have this?
-				if (player.getStamina().getValue() <= 0) { return; }
-				isRunning = true;
-				currentSpeed = runSpeed;
+			if (screen == 5) {
+				if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
+					//System.out.println("Pressed: w or up");
+					upPressed = true;
+				} // if
+				
+				if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
+					//System.out.println("Pressed: a or left");
+					leftPressed = true;
+				} // if
+				
+				if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
+					//System.out.println("Pressed: s or down");
+					downPressed = true;
+				} // if
+				
+				if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					//System.out.println("Pressed: d or right");
+					rightPressed = true;
+				} // if
+				
+				if (e.getKeyCode() == KeyEvent.VK_X) {
+					shotFired = true;
+				} // if
+				
+				if (e.getKeyCode() == KeyEvent.VK_SHIFT) { // should we have this?
+					if (player.getStamina().getValue() <= 0) { return; }
+					isRunning = true;
+					currentSpeed = runSpeed;
+				} // if
 			} // if
 
 		} // keyPressed
 
 		public void keyReleased(KeyEvent e) {
 			
-			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				
-				// check if npc is in range and start dialogue
-				// if just started dialogue, don't update dialogue
-				if (tryToStartDialogue()) { return; }
-				
-				// update dialogue
-				if (isTalking) {
-					dialogue.update();
-				} // if
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
-				upPressed = false;
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
-				leftPressed = false;
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
-				downPressed = false;
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				rightPressed = false;
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_X) {
-				shotFired = false;
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_Z) {
-				melee = false;
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_I) {
-				inventoryVisible = !inventoryVisible;
-				
-				if (!inventoryVisible) {
-					inv.stopDrag();
+			if (screen == 5) {
+				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+					
+					// check if npc is in range and start dialogue
+					// if just started dialogue, don't update dialogue
+					if (tryToStartDialogue()) { return; }
+					
+					// update dialogue
+					if (isTalking) {
+						dialogue.update();
+					} // if
 				} // if
 				
-				System.out.println("inventoryVisible: " + inventoryVisible);
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_A) {
-				if (screen == 0) {
-					screen = 1;
-				} else if (screen == 1) {
-					screen = 0;
-				} // else if
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_C) {
-				if (screen == 0) {
-					screen = 2;
-				} else if (screen == 2) {
-					screen = 0;
-				} // else if
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				if (screen == 0) {
-					screen = 5;
+				if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
+					upPressed = false;
 				} // if
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_M) {
-				if (screen == 3 || screen == 4) {
-					screen = 0;
+				
+				if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
+					leftPressed = false;
 				} // if
-			} // if
-			
-			if (e.getKeyCode() == KeyEvent.VK_SHIFT) { // should we have this?
-				isRunning = false;
-				currentSpeed = walkSpeed;
+				
+				if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
+					downPressed = false;
+				} // if
+				
+				if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					rightPressed = false;
+				} // if
+				
+				if (e.getKeyCode() == KeyEvent.VK_X) {
+					shotFired = false;
+				} // if
+				
+				if (e.getKeyCode() == KeyEvent.VK_Z) {
+					melee = false;
+				} // if
+				
+				if (e.getKeyCode() == KeyEvent.VK_I) {
+					inventoryVisible = !inventoryVisible;
+					
+					if (!inventoryVisible) {
+						inv.stopDrag();
+					} // if
+					
+					System.out.println("inventoryVisible: " + inventoryVisible);
+				} // if
+				
+				if (e.getKeyCode() == KeyEvent.VK_SHIFT) { // should we have this?
+					isRunning = false;
+					currentSpeed = walkSpeed;
+				} // if
 			} // if
 			
 		} // keyReleased
@@ -1044,13 +931,16 @@ public class Game extends Canvas {
 		return tileMap;
 	}
 	
+	
 	public static Tooltip getTooltip() {
 		return tooltip;
 	}
 	
+	
 	public static ArrayList<Character> getCharacters() {
 		return characters;
 	}
+	
 	
 	private boolean noEnemies() {
 		for (Character c : characters) {

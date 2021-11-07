@@ -141,8 +141,36 @@ public class Movable extends Entity {
 	
 	public void drawHitbox(Graphics g) {
 		
-//		g.setColor(Color.red);
-//		g.fillRect(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
 	}
+	
+	// return the direction an entity is moving
+	// if not moving in a cardinal direction (N, NE, etc.), round to the nearest one
+	public void updateDirection() {
+		if (dy / dx <= 0.414 && dy / dx >= -0.414) {
+			if (dx >= 0) {
+				direction = Direction.SE;
+			} else {
+				direction = Direction.NW;
+			}
+		} else if (dy / dx >= 0.414 && dy / dx <= 2.414) {
+			if (dx >= 0) {
+				direction = Direction.S;
+			} else {
+				direction = Direction.N;
+			}
+		} else if (dy / dx >= 2.414 || dy / dx <= -2.414) {
+			if (dy >= 0) {
+				direction = Direction.SW;
+			} else {
+				direction = Direction.NE;
+			}
+		} else {
+			if (dx < 0) {
+				direction = Direction.W;
+			} else {
+				direction = Direction.E;
+			}
+		} // if
+	} // direction
 	
 } // Movable

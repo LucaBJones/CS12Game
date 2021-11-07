@@ -8,7 +8,7 @@ public class NPC extends Entity {
 		super(sprite, xPos, yPos);
 		
 		dialogueID = dialogue;
-		range = 2;
+		range = 60;
 	}
 	
 	public String getDialogue() {

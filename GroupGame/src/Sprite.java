@@ -32,5 +32,10 @@ public class Sprite {
 	public void draw(Graphics g, int x, int y) {
 		g.drawImage(image, x, y, null);
 	} // draw
+	
+	// draw the sprite in the graphics object provided at location (x,y) with a size of (width x height)
+	public void draw(Graphics g, int x, int y, int width, int height) {
+		g.drawImage(image, x, y, x + width, y + height, 0, 0, image.getWidth(null), image.getHeight(null), null);
+	} // draw
 
 } // Sprite
