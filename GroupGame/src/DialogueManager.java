@@ -137,11 +137,12 @@ public class DialogueManager {
 			return;
 		} // if
 		
+		System.out.println("next: " + current.getNext());
+		
 		// check if there is any more dialogue
-		if (current.getNext() == null) { 
+		if (current.getNext() == null) {
 			isDisplaying = false;
 			game.stopTalking();
-			System.out.println("hello?");
 			return; 
 		} // if
 		
@@ -274,7 +275,6 @@ public class DialogueManager {
 		} // if
 		
 		dialogueBox.draw(g, x, y, dialogueWidth, dialogueHeight);
-		System.out.println("drawing dialogue");
 
 		// draw dialogue text
 		drawString(g, displayText, (int) x + 50, (int) y + 50); // can change
@@ -306,7 +306,7 @@ public class DialogueManager {
 
         // draws each line on a new line
         for (String line : text.split("\n")) {
-            g.drawString(line, x, y += g.getFontMetrics().getHeight());
+            g.drawString(line, x, y += g.getFontMetrics().getHeight() + 10);
         } // for
     } // drawString
 	

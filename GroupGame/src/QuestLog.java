@@ -17,6 +17,8 @@ public class QuestLog { // rename to QuestManager?
 	private int width;
 	private int height;
 	
+	private Sprite questBox;
+	
 	public QuestLog(Inventory i) {
 		inv = i;
 		dialogue = null;
@@ -24,8 +26,10 @@ public class QuestLog { // rename to QuestManager?
 		// can change
 		width = (int) (Camera.getWidth() * 0.24);
 		height = (int) (Camera.getHeight() * 0.108);
-		x = Camera.getWidth() - width - 50;
-		y = 20;
+		x = (int) (Camera.getWidth() * 0.025);
+		y = (int) (Camera.getHeight() * 0.92) - height;
+		
+		questBox = SpriteStore.get().getSprite("ui/quest.png");
 	} // QuestLog
 	
 	public void setDialogue(DialogueManager d) { // must be called in Game after initialising, else nullpointerexceptions...
@@ -119,8 +123,7 @@ public class QuestLog { // rename to QuestManager?
 			String displayText = questStore.get(currentQuests.get(i)).getName();
 			
 			// draw background
-			g.setColor(Color.black);
-			g.fillRect(x, y + height * i, width + 30, height);
+			questBox.draw(g, x, y, width, height);
 			
 			// draw current quest text
 			g.setColor(Game.getTextColor());

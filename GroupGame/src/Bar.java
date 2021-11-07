@@ -12,17 +12,15 @@ public class Bar extends Entity {
 	private int currentValue;   // how much the bar is currently filled
 	private int maxValue;       // how much the bar is filled when full
 	private Color bgColor;      // colour used for empty part of bar
-	private Color fgColor;      // colour used for filled part of bar
-	private Color frameColor;
+	
+	private Sprite frame;
 
 	// constructor
-	Bar(int xPixel, int yPixel, int max, Color bg, Color fg, int width, int height) {
+	Bar(int xPixel, int yPixel, int max, String frameRef, String barRef, int width, int height) {
 		maxValue = max;
 		currentValue = maxValue;
 		
-		bgColor = bg;
-		fgColor = fg;
-		frameColor = new Color(135, 116, 104); // needed?
+		bgColor = Color.DARK_GRAY;
 		
 		x = xPixel;
 		y = yPixel;
@@ -30,12 +28,10 @@ public class Bar extends Entity {
 		barWidth = width;
 		barHeight = height;
 		
+		frame = SpriteStore.get().getSprite(frameRef);
+		sprite = SpriteStore.get().getSprite(barRef);
+		
 	} // Bar
-
-	// set color of bar
-	public void setForeground(Color c) {
-		fgColor = c;
-	} // setColor
 
 	// set maxValue
 	public void setMaxValue(int max) {
@@ -67,34 +63,37 @@ public class Bar extends Entity {
 	@Override
 	public void draw(Graphics g) {
 		double percent = (double) currentValue / maxValue;
+	
+		// draw bar foreground
+		sprite.draw(g, (int) x, (int) y, barWidth, barHeight);
 		
 		// draw bar background
 		g.setColor(bgColor);
-		g.fillRect((int) x, (int) y, barWidth, barHeight);
-	
-		// draw bar foreground
-		g.setColor(fgColor);
-		g.fillRect((int) x, (int) y, (int) (barWidth * percent), barHeight);
+		g.fillRect((int) (x + barWidth * percent), (int) y + 5, (int) (barWidth * (1 - percent)), barHeight - 10);
 		
 		// draw frame
-		g.setColor(frameColor);
-		g.drawRect((int) x, (int) y, barWidth, barHeight);
+		frame.draw(g, (int) x, (int) y, barWidth, barHeight);
 		
 	} // draw
 	
 	public void drawInIso(Graphics g, Character c) {
 		double percent = (double) currentValue / maxValue;
 		
-		// do these need to be variables?
+		// calculate position
 		int barPosX = c.getScreenPosX() - (barWidth - c.sprite.getWidth()) / 2;
 		int barPosY = c.getScreenPosY() - yOffset;
 		
+		// draw background
 		g.setColor(bgColor);
 		g.fillRect(barPosX, barPosY, barWidth, barHeight);
 
-		g.setColor(fgColor);
+		// draw foreground
+		g.setColor(new Color(160, 20, 5));
 		g.fillRect(barPosX, barPosY, (int) (barWidth * percent), barHeight);
-	}
+		
+		// draw frame
+		frame.draw(g, barPosX, barPosY, barWidth, barHeight);
+	} // drawInIso
 	
 
 } // Bar

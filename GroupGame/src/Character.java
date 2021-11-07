@@ -48,9 +48,9 @@ public class Character extends Movable {
 		
 		// set up status bars
 		if (charType == -1) {
-			hp = new Bar(220, 50, 100, Color.DARK_GRAY, Color.RED, 700, 35);
-			stamina = new Bar(235, 100, 100, Color.DARK_GRAY, Color.GREEN, 600, 28);
-			mana = new Bar(235, 140, 100, Color.DARK_GRAY, Color.BLUE, 600, 28);
+			hp = new Bar(210, 50, 100, "ui/frame1.png", "ui/hpBar.png", 700, 35);
+			stamina = new Bar(225, 100, 100, "ui/frame2.png", "ui/staminaBar.png", 600, 28);
+			mana = new Bar(225, 140, 100, "ui/frame2.png", "ui/manaBar.png", 600, 28);
 			
 			// setup player animations
 			walk_s  = new Animation(this, "animations/player/walk_s", ".png", 0, 7, 130);
@@ -76,9 +76,11 @@ public class Character extends Movable {
 			idle_e = new Animation(this, "animations/player/idle_e", ".png", 1, 1, 500);
 			idle_w = new Animation(this, "animations/player/idle_w", ".png", 1, 1, 500);
 			
-//			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, TILE_LENGTH, TILE_LENGTH);
+			
+			// fix this**** (fix moving of hitbox too)
+			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, TILE_LENGTH, TILE_LENGTH);
 		} else {
-			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, Color.DARK_GRAY, Color.RED, 100, 10);
+			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, "ui/frame2.png", "ui/hpBar.png", 100, 10);
 			
 			String name = (charType == 1) ? "boss" : "enemy";
 			
@@ -97,13 +99,12 @@ public class Character extends Movable {
 			idle_e = new Animation(this, "animations/" + name + "/idle_e", ".png", 0, 0, 130);
 			idle_w = new Animation(this, "animations/" + name + "/idle_w", ".png", 0, 0, 130);
 			
-//			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, sprite.getWidth(), TILE_LENGTH);
+			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, sprite.getWidth(), TILE_LENGTH);
 		} // else
 		
 		animation = walk_s; // temp
 		direction = Direction.S; // temp
 		
-		hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, sprite.getWidth(), TILE_LENGTH);
 	} // Player
 	
 	@Override
@@ -117,6 +118,7 @@ public class Character extends Movable {
 		
 		if (dx == 0 && dy == 0) {
 			setIdleAnimation();
+			animation.start();
 		}
 	} // move
 
@@ -169,6 +171,7 @@ public class Character extends Movable {
 			case W:
 				animation = walk_w; 
 				break;
+				
 			default:
 				//System.out.println("unimplemented animation");
 		} // switch
@@ -231,10 +234,8 @@ public class Character extends Movable {
 				break;
 				
 			default:
-				System.out.println("unimplemented animation");
+				System.out.println("unimplemented animation: " + direction.getDirection());
 		} // switch
-		
-		animation.start();
 	} // setIdleAnimation
 	
 	// draw the player with its health, stamina, and mana bars

@@ -83,6 +83,12 @@ public class Inventory extends Entity {
 		} // for
 	} // removeItem
 	
+	// removes the specifies amount of items from the specified slot
+	public void removeItem(int slotID, int n) {
+		if (slots[slotID].getItem() == null || slots[slotID].getItem().isEmpty()) { return; }
+		slots[slotID].removeItem(n);
+	} // removeItem
+	
 	// returns whether the inventory has the item with the id passed in
 	public boolean contains(String id, int n) { // check for multiple of item not implemented yet
 		int count = 0;
@@ -225,5 +231,19 @@ public class Inventory extends Entity {
 	
 	public static int getPadding() {
 		return padding;
+	}
+
+	public void handleClick(MouseEvent e, Character player) {
+		int slotID = checkIfMouseOverSlot(e);
+		
+		// if mouse is not over a slot, return
+		if (slotID < 0) { return; }
+		
+		// use the item
+		InventoryItem.getItem(slots[slotID].getItem()).use(player);
+		
+		// remove the item from inventory
+		slots[slotID].removeItem(1);
+		
 	}
 } // Inventory

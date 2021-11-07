@@ -424,17 +424,19 @@ public class Game extends Canvas {
 		} // for
 		
 		// create characters
-		player = new Character("animations/player/idle_w1.png", 25 * 60, 90 * 60, 0, 0, -1);
+		player = new Character("animations/player/idle_w1.png", 30 * 60, 60 * 60, 0, 0, -1);
 		characters.add(player);
 		Camera.center(player);
 		
 		// create enemies
-		characters.add(new Character("animations/player/walk_w0.png", 180, 180, 0, 0, 0));
+		characters.add(new Character("animations/player/walk_w0.png", 40 * 60, 80 * 60, 0, 0, 0));
 		
 		// create boss
-//		characters.add(new Character("animations/boss/idle_s0.png", 180, 180, 0, 0, 1));
+//		characters.add(new Character("animations/boss/idle_s0.png", 30 * 60, 85 * 60, 0, 0, 1));
 		
-		npcs.add(new NPC("intro", "images/npc/npc_s.png", 400, 400));
+		// create npcs
+		npcs.add(new NPC("npc1", "images/npc/npc_s.png", 25 * 60,  90 * 60));
+		npcs.add(new NPC("q3Start", "images/npc/npc_s.png", 35 * 60, 60 * 60));
 		
 		// add all characters and npcs to entities
 		entities.addAll(characters);
@@ -456,13 +458,13 @@ public class Game extends Canvas {
 	private void initItems() {
 
 		// items
-		new InventoryItem("apple", "images/projectiles/shot_s.png", "Apple", "A juicy red apple. \nLooks tasty. \nEat to replenish health.");
-		new InventoryItem("key", "images/projectiles/shot_s.png", "Key", "Key to the demon’s lair.");
+		new InventoryItem("apple", "images/items/apple.png", "Apple", "A juicy red apple. \nLooks tasty. \nEat to replenish health.", "increment_stamina", 20);
+		new InventoryItem("axe", "images/items/axe.png", "Axe", "Key to the demon’s lair.", "", 0);
 		
 		
 		// pickup items (with position in world)
-		items.add(new PickupItem("images/projectiles/shot_s.png", "apple", 3, 600, 600));
-		items.add(new PickupItem("images/projectiles/shot_s.png", "key", 5, 300, 700));
+		items.add(new PickupItem("images/items/apple.png", "apple", 5, 30 * 60, 70 * 60));
+		items.add(new PickupItem("images/items/axe.png", "axe", 5, 35 * 60, 70 * 60));
 		
 		entities.addAll(items);
 	} // initItems
@@ -472,7 +474,8 @@ public class Game extends Canvas {
 		dialogue = new DialogueManager(questLog, this);
 	
 		// Opening/intro dialogue
-		new DialogueNode("intro", "", "Hey, you. You’re finally awake.", new String[] {"introChoice1", "introChoice2"}, dialogue);
+		DialogueNode npc1 = new DialogueNode("npc1", "", "Hey.", new String[] {"chief"}, dialogue);
+		new DialogueNode("chief", "", "You’re finally awake.", new String[] {"introChoice1", "introChoice2", "q1InProgress", "q1Complete", "chief2"}, dialogue);
 		
 		DialogueNode introChoice1 = new DialogueNode("introChoice1", "", "You don’t remember? Hmph. Some hunter you are.", new String[] {"intro2"}, dialogue);
 		introChoice1.setChoiceText("... What? Where am I?");
@@ -485,7 +488,7 @@ public class Game extends Canvas {
 		DialogueNode introChoice3 = new DialogueNode("introChoice3", "", "No memory, huh. Interesting. ", new String[] {"intro3"}, dialogue);
 		introChoice3.setChoiceText("The what now?");
 		
-		new DialogueNode("intro3", "", "You are a hunter, but since you’ve lost your memory, \nI shall assign you a task to determine if you are worthy.", new String[] {"q1Start"}, dialogue);
+		new DialogueNode("intro3", "", "You are a hunter, but since you’ve lost your memory, I shall assign you a task to determine if you are worthy.", new String[] {"q1Start"}, dialogue);
 		
 		// Starting Village Quests
 		
@@ -495,22 +498,22 @@ public class Game extends Canvas {
 		new DialogueNode("q1Start", "", "Anyways, you look like you haven’t eaten in days.", new String[] {"q1Start2"}, dialogue);
 		new DialogueNode("q1Start2", "", "There are some apples in the orchard east of here.", new String[] {"q1Start3"}, dialogue);
 		new DialogueNode("q1Start3", "", "Go collect some - you’ll need the energy.", new String[] {"q1Start4"}, dialogue);
-		DialogueNode q1Start = new DialogueNode("q1Start4", "", "When you’ve done that, we can talk about your quest.", null, dialogue);
+		DialogueNode q1Start = new DialogueNode("q1Start4", "", "When you’ve done that, we can talk about your next quest.", null, dialogue);
 		q1Start.setQuestToUnlock("q1");
 		
 		// dialogue when quest 1 is in progress
-		new DialogueNode("chief", "", "Hello there.", new String[] {"q1InProgress", "q1Complete", "chief2"}, dialogue);
-		DialogueNode q1InProgress = new DialogueNode("q1InProgress", "", "Come back when you’ve gotten some apples. They’re in the orchard to the east.", null, dialogue);
+		DialogueNode q1InProgress = new DialogueNode("q1InProgress", "Chief", "Come back when you’ve gotten some apples. They’re in the orchard to the east.", null, dialogue);
 		q1InProgress.setChoicePrerequisite("q1", 0);
 		
+		// dialogue when handing in quest 1
+		new CompleteQuestNode("q1HandIn", "Chief", "q1", "Good job.", "q2Start", "You don't seem to have gotten enough apples yet.", "q1InProgress", "Your bag seems to be full. You can come back later for your reward.", dialogue);
+//		String id, String speaker, String questToComplete, String completedText, String completedNextID, String incompleteText, String incompleteNextID, String pendingRewardNextID, DialogueManager dialogue) {
+		
+		
 		// dialogue when quest 1 is complete
-		new DialogueNode("q1Complete", "", "Eating food will replenish your health.", new String[] {"q1Complete2"}, dialogue);
-		new DialogueNode("q1Complete2", "", "That’ll be useful on your journey.", null, dialogue);
-		
-		// random smalltalk
-		new DialogueNode("chief2", "", "What are you still doing here?", new String[] {"chief2_1"}, dialogue);
-		new DialogueNode("chief2_1", "", "Have you defeated the demon lord yet?", null, dialogue);
-		
+		DialogueNode q1Complete = new DialogueNode("q1Complete", "Chief", "Eating food will replenish your health.", new String[] {"q1Complete2"}, dialogue);
+		new DialogueNode("q1Complete2", "Chief", "That’ll be useful on your journey.", null, dialogue);
+		q1Complete.setChoicePrerequisite("q1", 1);
 		
 		//---------------------------------
 		// Second quest: Kill a few enemies
@@ -603,21 +606,47 @@ public class Game extends Canvas {
 					questLog);
 		
 		// Quest 2: Kill the Stray Enemies
-		
+		HashMap<String, Integer> obj2 = new HashMap<String, Integer>();
+		obj1.put("coin", 5); // change
+			
+		new Quest(	"q2",				
+					"Slay Enemies", 	
+					obj2, 				
+					null, 				
+					questLog);
 		
 		// Quest 3: Kill the Surrounding Enemies
-		
+		HashMap<String, Integer> obj3 = new HashMap<String, Integer>();
+		obj1.put("coin", 5); // change
+			
+		new Quest(	"q3",				
+					"Slay More Enemies", 	
+					obj3, 				
+					null, 				
+					questLog);
 		
 		// Quest 4: Find the Key
+		HashMap<String, Integer> obj4 = new HashMap<String, Integer>();
+		obj1.put("key", 1);
 		
-		new Quest(	"q1",				
-					"Find the Key", 	
+		new Quest(	"q4",				
+					"Find the Key", // axe?	
+					obj1, 				
+					null, 				
+					questLog);
+		
+		// Quest 5: Defeat Demon Lord
+		HashMap<String, Integer> obj5 = new HashMap<String, Integer>();
+		obj1.put("apple", 1);
+		
+		new Quest(	"q5",				
+					"Defeat Demon Lord", 	
 					obj1, 				
 					null, 				
 					questLog);
 		
 		
-	}
+	} // initQuests
 		
 	private void gameLoop() {
 		
@@ -712,8 +741,9 @@ public class Game extends Canvas {
 			dialogue.draw(g);
 			
 			// draw the quest log
-			questLog.draw(g);
-			
+			if (!isTalking) {
+				questLog.draw(g);
+			}
 			
 			// draw player icon
 			g.drawImage(icon, 0, 0, null);
@@ -725,6 +755,11 @@ public class Game extends Canvas {
 				} // if
 			} // for
 			
+			for (NPC n : npcs) {
+				if (n.animation != null) {
+					n.animation.update(delta);
+				} // if
+			} // for
 			
 			for (PickupItem i : tempItems) {
 				if (player.onItem(i)) {
@@ -941,11 +976,18 @@ public class Game extends Canvas {
 	private boolean tryToStartDialogue() {
 		if (isTalking) { return false; }
 		
+		// check if is in range with any npc
 		for (NPC n : npcs) {
 			if (n.withinRange((int) player.x, (int) player.y)) {
-				System.out.println("within range");
+
+				// start dialogue
 				dialogue.start(n.getDialogue());
 				isTalking = true;
+				
+				// close inventory
+				inventoryVisible = false;
+				inv.stopDrag();
+				
 				return true;
 			} // if
 		} // for
@@ -1148,18 +1190,22 @@ public class Game extends Canvas {
 				
 				if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
 					upPressed = false;
+					player.setDirection(Direction.N);
 				} // if
 				
 				if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
 					leftPressed = false;
+					player.setDirection(Direction.W);
 				} // if
 				
 				if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
 					downPressed = false;
+					player.setDirection(Direction.S);
 				} // if
 				
 				if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					rightPressed = false;
+					player.setDirection(Direction.E);
 				} // if
 				
 				if (e.getKeyCode() == KeyEvent.VK_X) {
@@ -1219,11 +1265,14 @@ public class Game extends Canvas {
 		public void mouseClicked(MouseEvent e) {
 			if (screen <= 4) {
 				handleMenuClick(e);
-			}
-			if (isTalking) {
+			} else if (isTalking) {
 				dialogue.handleClick(e);
-			}
-		}
+			} else if (inventoryVisible) {
+				inv.handleClick(e, player);
+			} // else if
+			
+			
+		} // mouseClicked
 
 		@Override
 		public void mouseEntered(MouseEvent e) {

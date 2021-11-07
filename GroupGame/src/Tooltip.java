@@ -15,6 +15,8 @@ public class Tooltip {
 	private String description;
 	private Color background;
 	
+	private Sprite box;
+	
 	public Tooltip() { // needed?
 		x = 0;
 		y = 0;
@@ -23,8 +25,10 @@ public class Tooltip {
 		description = "";
 		background = Color.LIGHT_GRAY;
 		
-		width = 150; // temp
-		height = 80; // temp
+		width = (int) (Camera.getWidth() * 0.2);
+		height = (int) (Camera.getHeight() * 0.24);
+		
+		box = SpriteStore.get().getSprite("ui/tooltip.png");
 	} // Tooltip
 	
 	public Tooltip(String t, String d, int xPos, int yPos) { // needed?
@@ -43,11 +47,15 @@ public class Tooltip {
 		g.setColor(background);
 		g.fillRect(x, y, width, height); // change to calc width/height of background 
 											//depending on length of text
+		box.draw(g, x, y, width, height);
 		
 		// draw text
-		g.setColor(Color.black);
-		g.drawString(title, x + 10, y + 15);
-		drawString(g, description, x + 10, y + 35);
+		g.setColor(Game.getTextColor());
+		g.setFont(Game.getMedievalSharp().deriveFont(32f));
+		g.drawString(title, x + (width - g.getFontMetrics().stringWidth(title)) / 2, y + 65);
+		
+		g.setFont(Game.getMedievalSharp().deriveFont(22f));
+		drawString(g, description, x + 10, y + 95);
 	} // draw
 	
 	// position the tooltip relative to the values passed in
@@ -109,7 +117,7 @@ public class Tooltip {
 
         // draws each line on a new line
         for (String line : text.split("\n")) {
-            g.drawString(line, x, y += g.getFontMetrics().getHeight());
+            g.drawString(line, x + (width - g.getFontMetrics().stringWidth(line)) / 2, y += g.getFontMetrics().getHeight());
         } // for
     } // drawString
 	

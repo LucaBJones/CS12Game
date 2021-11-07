@@ -71,6 +71,19 @@ public class Entity {
 
 	} // draw
 	
+	// draws the sprite to the screen relative to camera position
+		public void draw(Graphics g, int xOffset, int yOffset) {	
+			Point isoPoint = toIso((int) x, (int) y);
+			
+			screenPosX = isoPoint.x - Camera.getX();
+			screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
+			
+			if (sprite != null) { // needed?
+				sprite.draw(g, screenPosX + xOffset, screenPosY + yOffset);
+			}
+
+		} // draw
+	
 	public void setSprite(String r) {
 		sprite = (SpriteStore.get()).getSprite(r);
 	} // setSprite
