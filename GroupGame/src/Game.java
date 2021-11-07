@@ -770,7 +770,8 @@ public class Game extends Canvas {
 		isTalking = false;
 		
 		lastFire = 0; 
-		lastRegen = 0;
+		lastStaminaRegen = 0;
+		lastManaRegen = 0;
 		lastStaminaConsumption = 0;
 		lastDamage = 0;
 		
