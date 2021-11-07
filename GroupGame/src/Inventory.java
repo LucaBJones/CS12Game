@@ -5,8 +5,7 @@ import java.awt.event.MouseEvent;
 // stores all the player's current items
 public class Inventory extends Entity {
 
-	private static final int X_PADDING = 100; 		// temp for placing inv on screen
-	private static final int Y_PADDING = 100; 
+	private static int padding = (int) (Camera.getHeight() * 0.029); 		// temp for placing inv on screen
 	
 	private DragItem dragItem; 						// stores item being dragged
 	private boolean isDragging = false; 			// whether player is dragging an item
@@ -17,15 +16,28 @@ public class Inventory extends Entity {
 	private int size;								// size of inventory
 	private InventorySlot[] slots;					// slots in the inventory
 	
+	private static int invWidth;
+	private static int invHeight;
+	
+	private Sprite sprite;
+	
 	// constructor
 	public Inventory(int n) {
 		size = n;
 		slots = new InventorySlot[size];
 		dragItem = new DragItem();
 		
+		invWidth = (int) (Camera.getWidth() * 0.125);
+		invHeight = (int) (Camera.getHeight() * 0.64);
+		
+		x = Camera.getWidth() * 0.8;
+		y = (Camera.getHeight() - invHeight) / 2;
+		
+		sprite = SpriteStore.get().getSprite("ui/inventory.png");
+		
 		// create new inventory slots
 		for (int i = 0; i < slots.length; i++) {
-			slots[i] = new InventorySlot(200 + X_PADDING, 120 - Y_PADDING, i); // use vars
+			slots[i] = new InventorySlot((int) x, (int) y, i); // use vars
 		} // for
 	} // Inventory
 	
@@ -98,23 +110,14 @@ public class Inventory extends Entity {
 	// draw Inventory
 	@Override
 	public void draw(Graphics g) {
-		g.setColor(Color.white);
-		g.fillRect(200, 120 - Y_PADDING, 300, 100); // use vars
-
+		sprite.draw(g, (int) x, (int) y, invWidth, invHeight);
+		
 		drawSlots(g);
 		
 		if (dragItem != null && dragItem.getNumber() > 0) {
 			dragItem.draw(g);
 		} // if
 	} // draw
-	
-	public static int getXPadding() {
-		return X_PADDING;
-	} // getXPadding
-
-	public static int getYPadding() {
-		return Y_PADDING;
-	} // getYPadding
 	
 	// handle mouse drag
 	public void handleDrag(MouseEvent e) {
@@ -147,8 +150,8 @@ public class Inventory extends Entity {
 		
 		// go through slots and check if mouse event occurred inside bounds of slot
 		for (int i = 0; i < slots.length; i++) {
-			if (e.getX() > slots[i].x && e.getX() < slots[i].x + slots[i].getWidth()
-					&& e.getY() > slots[i].y && e.getY() < slots[i].y + slots[i].getWidth()) {
+			if (e.getX() > slots[i].x && e.getX() < slots[i].x + slots[i].getLength()
+					&& e.getY() > slots[i].y && e.getY() < slots[i].y + slots[i].getLength()) {
 				return i;
 			} // if
 		} // for
@@ -214,5 +217,13 @@ public class Inventory extends Entity {
 		
 		return -1;
 	} // int
+
 	
+	public static int getWidth() {
+		return invWidth;
+	}
+	
+	public static int getPadding() {
+		return padding;
+	}
 } // Inventory

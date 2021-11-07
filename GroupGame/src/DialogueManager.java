@@ -48,6 +48,8 @@ public class DialogueManager {
 	private Sprite speakerBox;
 	private Sprite choiceBox;
 	
+	private Color textColor;
+	
 	public DialogueManager(QuestLog log, Game g) {
 		currentDialogueID = null;
 		currentChoice = -1;
@@ -59,7 +61,7 @@ public class DialogueManager {
 		questLog = log;
 		game = g;
 		
-		textSpeed = 30; // can change, lower num is faster
+		textSpeed = 20; // can change, lower num is faster
 		index = 0;
 		
 		timer = new Timer(textSpeed, new ActionListener() {
@@ -88,6 +90,7 @@ public class DialogueManager {
 		speakerBox = SpriteStore.get().getSprite("ui/speakerBox.png");
 		choiceBox = SpriteStore.get().getSprite("ui/choiceBox.png");
 		
+		textColor = new Color(183,183,183);
 	} // DialogueManager
 	
 	// store dialogue node into dialogueStore
@@ -258,26 +261,25 @@ public class DialogueManager {
 	public void draw(Graphics g) {
 		if (!dialogueStore.containsKey(currentDialogueID) || !isDisplaying) { return; }
 		
+		// set font and text color
+		g.setFont(Game.getDidactGothic().deriveFont(28f)); // temp
+		g.setColor(textColor);
 		
 		// check if there is a speaker
-//		if (!dialogueStore.get(currentDialogueID).getSpeaker().isEmpty()) {
+		if (!dialogueStore.get(currentDialogueID).getSpeaker().isEmpty()) {
 			
 			// draw speaker background
 			speakerBox.draw(g, x + 20, y - speakerHeight + 20, speakerWidth, speakerHeight);
 		
 			// display speaker
-			g.setFont(g.getFont().deriveFont(24)); // temp
-			g.setColor(Color.white);
-			g.drawString(dialogueStore.get(currentDialogueID).getSpeaker(), (int) x + 10, (int) y - 30);
-//		} // if
+			g.drawString(dialogueStore.get(currentDialogueID).getSpeaker(), (int) x + 50, (int) y - 10);
+		} // if
 		
 		dialogueBox.draw(g, x, y, dialogueWidth, dialogueHeight);
 		System.out.println("drawing dialogue");
 
 		// draw dialogue text
-		g.setFont(g.getFont().deriveFont(g.getFont().getSize() * 3f)); // temp
-		g.setColor(Color.white);
-		g.drawString(displayText, (int) x + 30, (int) y + 80); // can change
+		g.drawString(displayText, (int) x + 50, (int) y + 80); // can change
 		
 		// draw choices if there are any
 		if (waitingForChoice) {
@@ -292,13 +294,11 @@ public class DialogueManager {
 			int choiceY = (int) y - (choiceHeight) * (i + 1) - ((i + 1) * yPadding);
 			
 			// draw background
-			g.setColor(Color.LIGHT_GRAY);
-			g.fillRect(choiceX, choiceY, choiceWidth, choiceHeight);
 			choiceBox.draw(g, choiceX, choiceY, choiceWidth, choiceHeight);
 			
 			// draw text
-			g.setColor(Color.black);
-			g.drawString(dialogueStore.get(currentChoiceNodes[i]).getChoiceText(), choiceX + 10, choiceY + 20);
+			g.setColor(Color.LIGHT_GRAY);
+			g.drawString(dialogueStore.get(currentChoiceNodes[i]).getChoiceText(), choiceX + 20, choiceY + 60);
 		} // for
 		
 	} // drawChoices

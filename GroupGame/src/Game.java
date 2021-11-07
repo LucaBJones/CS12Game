@@ -14,6 +14,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.Image;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -82,6 +83,9 @@ public class Game extends Canvas {
 	private Image win;
 	private Image icon;
 	
+	private static Font medievalSharp32;
+	private static Font didactGothic28;
+	
 	private int horizontalDirection = 0; 	// stores direction for projectiles // we could use the direction enum for this
 	private int verticalDirection = 1;		// values: -1, 0, 1 
 	private int projectileSpeed = 1000; 	// may want to change this later in the game as power up or something
@@ -123,11 +127,9 @@ public class Game extends Canvas {
 		frame.pack();
 		frame.setResizable(false); // can change
 		frame.setVisible(true);
-		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
 	
 		setBounds((frame.getWidth() - Camera.getWidth()) / 2, (frame.getHeight() - Camera.getHeight()) / 2, Camera.getWidth(), Camera.getHeight());
-		
-		System.out.println("frameW: " + frame.getWidth());
 		
 		// create buffer strategy to take advantage of accelerated graphics
 		createBufferStrategy(2);
@@ -156,9 +158,37 @@ public class Game extends Canvas {
 		gameOver = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/gameover.png"));
 		win = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/win.png"));
 		
-		// init UI images
+		// init icon image
 		icon = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("ui/icon.png"));
 		
+		// load didact Gothic font
+        File f = new File(Game.class.getResource("fonts/didactGothic.ttf").getFile());
+        FileInputStream in = null;
+        
+        try {
+        	if (f.exists()) {
+        		in = new FileInputStream(f);
+        		Font didactGothic = Font.createFont(Font.TRUETYPE_FONT, in);
+        		didactGothic28 = didactGothic.deriveFont(28f);
+        	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        } // catch
+        
+        
+        // load medieval sharp font
+        f = new File("fonts/medievalSharp.ttf");
+        
+        try {
+        	if (f.exists()) {
+        		in = new FileInputStream(f);
+                Font medievalSharp = Font.createFont(Font.TRUETYPE_FONT, in);
+                medievalSharp32 = medievalSharp.deriveFont(32f);
+        	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        } // catch
+
 		// start the game
 		initEntities();
 		gameLoop();
@@ -195,7 +225,7 @@ public class Game extends Canvas {
 		
 		
 		// create inventory and tooltip
-		inv = new Inventory(3); // size of inventory
+		inv = new Inventory(4); // size of inventory
 		tooltip = new Tooltip();
 
 		questLog = new QuestLog(inv);
@@ -380,21 +410,6 @@ public class Game extends Canvas {
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.gray);
 			g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
-
-			// temp
-			g.setColor(Color.red);
-			
-			
-			int x = (int) (Camera.getWidth() * 0.8);
-			int y = (int) (Camera.getHeight() - 690) / 2;
-			int invWidth = 240;
-			int invHeight = 690;
-			int slotLength = (int) (y * 0.5);
-			
-			g.drawRect(x, y, invWidth, invHeight);
-			
-			g.setColor(Color.blue);
-			g.drawRect(x, y, slotLength, slotLength);
 			
 			if (screen != 5) {
 				
@@ -778,6 +793,7 @@ public class Game extends Canvas {
 		inventoryVisible = false; 
 		
 		// clear quests?
+		// clear inv?
 		
 		entities.clear();
 		attacks.clear();
@@ -1003,4 +1019,7 @@ public class Game extends Canvas {
 		return true;
 	}
 	
+	public static Font getDidactGothic() {
+		return didactGothic28;
+	}
 } // Game

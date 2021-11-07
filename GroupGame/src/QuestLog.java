@@ -22,8 +22,8 @@ public class QuestLog { // rename to QuestManager?
 		dialogue = null;
 		
 		// can change
-		width = 100;
-		height = 50;
+		width = (int) (Camera.getWidth() * 0.24);
+		height = (int) (Camera.getHeight() * 0.108);
 		x = Camera.getWidth() - width - 50;
 		y = 20;
 	} // QuestLog
