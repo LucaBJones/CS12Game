@@ -30,8 +30,7 @@ public class Game extends Canvas {
 
 	private boolean gameIsRunning = false;
 	
-	private static int[][] map = {
-			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+	private static int[][] map = {{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
@@ -103,9 +102,9 @@ public class Game extends Canvas {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 301, -1, 298, 1, 58, 4, 4, 4, 4, 4, 4, 4, 4, 60, 1, 1, 1, 1, 1, 1, 1, 1, 1, 42, 1, 62, 62, 56, 4, 4, 4, 4, 4, 4, 305, -1, -1, -1, -1, -1, -1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 301, -1, 298, 1, 58, 4, 4, 4, 4, 4, 4, 4, 4, 60, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 58, 4, 4, 4, 4, 4, 4, 312, 303, 303, 303, 303, 303, 303},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 301, -1, 298, 1, 42, 62, 62, 62, 62, 62, 62, 62, 62, 53, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 42, 62, 62, 62, 56, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 301, -1, 292, 300, 297, 1, 294, 300, 300, 300, 300, 300, 297, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 58, 4, 4, 4, 4, 4, 4, 4, 4, 4},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 301, -1, 292, 300, 297, 1, 1, 294, 300, 300, 300, 300, 297, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 58, 4, 4, 4, 4, 4, 4, 4, 4, 4},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 301, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 298, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 42, 62, 62, 62, 62, 62, 62, 62, 62, 62},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 296, 299, 299, 299, 295, 1, 296, 299, 293, -1, -1, -1, 292, 300, 300, 300, 300, 300, 297, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 296, 299, 299, 299, 295, 1, 1, 296, 293, -1, -1, -1, 292, 300, 300, 300, 300, 300, 297, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 43, 64, 64, 44, 296, 299, 293, -1, -1, -1, -1, -1, -1, -1, 298, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 58, 4, 4, 60, 1, 1, 301, -1, -1, -1, -1, -1, -1, -1, 292, 300, 300, 300, 297, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 58, 4, 4, 60, 1, 1, 296, 299, 299, 299, 299, 299, 293, -1, -1, -1, -1, -1, 298, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -140,7 +139,7 @@ public class Game extends Canvas {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		};
+	};
 	
 	private static int[][] obstacles = { 
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -216,7 +215,7 @@ public class Game extends Canvas {
 			{0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 2, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 2, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 45, 46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 2, 1, 1, 1, 2, 0, 1, 1, 1, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1},
@@ -412,7 +411,7 @@ public class Game extends Canvas {
 		// initialize tiles
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
-				boolean b = (map[i][j] > 0 && obstacles[i][j] == 0 ) || obstacles[i][j] == 44;
+				boolean b = (map[i][j] > 0 && obstacles[i][j] == 0 ) || obstacles[i][j] == 45 || obstacles[i][j] == 46;
 				String obstacleRef = null;
 				
 				if (obstacles[i][j] > 0) {
@@ -465,7 +464,7 @@ public class Game extends Canvas {
 
 		// items
 		new InventoryItem("apple", "images/items/apple.png", "Apple", "A juicy red apple. \nLooks tasty. \nEat to replenish health.", "increment_stamina", 20);
-		new InventoryItem("axe", "images/items/axe.png", "Axe", "Key to the demon’s lair.", "", 0);
+		new InventoryItem("axe", "images/items/axe.png", "Axe", "Key to the demonÂ’s lair.", "", 0);
 		
 		
 		// pickup items (with position in world)
@@ -481,35 +480,35 @@ public class Game extends Canvas {
 	
 		// Opening/intro dialogue
 		new DialogueNode("npc1", "Chief", "Hey.", new String[] {"intro", "q1HandIn", "q1InProgress", "q1Complete", "q2InProgress", "q2HandIn"}, dialogue);
-		DialogueNode intro = new DialogueNode("intro", "", "You’re finally awake.", new String[] {"introChoice1", "introChoice2"}, dialogue);
+		DialogueNode intro = new DialogueNode("intro", "", "YouÂ’re finally awake.", new String[] {"introChoice1", "introChoice2"}, dialogue);
 		intro.setChoiceText("Hello.");
 		intro.setChoicePrerequisite("q1", -1);
 		
-		DialogueNode introChoice1 = new DialogueNode("introChoice1", "Chief", "You don’t remember? Hmph. Some hunter you are.", new String[] {"intro2"}, dialogue);
+		DialogueNode introChoice1 = new DialogueNode("introChoice1", "Chief", "You donÂ’t remember? Hmph. Some hunter you are.", new String[] {"intro2"}, dialogue);
 		introChoice1.setChoiceText("... What? Where am I?");
 		
-		DialogueNode introChoice2 = new DialogueNode("introChoice2", "Chief", "I am the chief of this town. Don’t you remember me?", new String[] {"intro2"}, dialogue);
+		DialogueNode introChoice2 = new DialogueNode("introChoice2", "Chief", "I am the chief of this town. DonÂ’t you remember me?", new String[] {"intro2"}, dialogue);
 		introChoice2.setChoiceText("Who are you?");
 		
-		new DialogueNode("intro2", "Chief", "You’re the one who’s meant to take down the demon lord up north.", new String[] {"introChoice3"}, dialogue);
+		new DialogueNode("intro2", "Chief", "YouÂ’re the one whoÂ’s meant to take down the demon lord up north.", new String[] {"introChoice3"}, dialogue);
 		
 		DialogueNode introChoice3 = new DialogueNode("introChoice3", "Chief", "No memory, huh. Interesting. ", new String[] {"intro3"}, dialogue);
 		introChoice3.setChoiceText("The what now?");
 		
-		new DialogueNode("intro3", "Chief", "You are a hunter, but since you’ve lost your memory, I shall assign you a task to determine if you are worthy.", new String[] {"q1Start"}, dialogue);
+		new DialogueNode("intro3", "Chief", "You are a hunter, but since youÂ’ve lost your memory, I shall assign you a task to determine if you are worthy.", new String[] {"q1Start"}, dialogue);
 		
 		
 		//----------------------------
 		// First Quest: Collect Apples
 		//----------------------------
-		new DialogueNode("q1Start", "Chief", "Anyways, you look like you haven’t eaten in days.", new String[] {"q1Start2"}, dialogue);
+		new DialogueNode("q1Start", "Chief", "Anyways, you look like you havenÂ’t eaten in days.", new String[] {"q1Start2"}, dialogue);
 		new DialogueNode("q1Start2", "Chief", "There are some apples in the orchard east of here.", new String[] {"q1Start3"}, dialogue);
-		new DialogueNode("q1Start3", "Chief", "Go collect some - you’ll need the energy.", new String[] {"q1Start4"}, dialogue);
-		DialogueNode q1Start = new DialogueNode("q1Start4", "Chief", "When you’ve done that, we can talk about your next quest.", null, dialogue);
+		new DialogueNode("q1Start3", "Chief", "Go collect some - youÂ’ll need the energy.", new String[] {"q1Start4"}, dialogue);
+		DialogueNode q1Start = new DialogueNode("q1Start4", "Chief", "When youÂ’ve done that, we can talk about your next quest.", null, dialogue);
 		q1Start.setQuestToUnlock("q1");
 		
 		// dialogue when quest 1 is in progress
-		DialogueNode q1InProgress = new DialogueNode("q1InProgress", "Chief", "Come back when you’ve gotten some apples. They’re in the orchard to the east.", null, dialogue);
+		DialogueNode q1InProgress = new DialogueNode("q1InProgress", "Chief", "Come back when youÂ’ve gotten some apples. TheyÂ’re in the orchard to the east.", null, dialogue);
 		q1InProgress.setChoiceText("What did you want again?");
 		q1InProgress.setChoicePrerequisite("q1", 0);
 		
@@ -524,13 +523,13 @@ public class Game extends Canvas {
 		DialogueNode q1Complete = new DialogueNode("q1Complete", "Chief", "Eating food will replenish your health.", new String[] {"q1Complete2"}, dialogue);
 		q1Complete.setChoiceText("Hello again.");
 		q1Complete.setChoicePrerequisite("q1", 1);
-		new DialogueNode("q1Complete2", "Chief", "That’ll be useful on your journey.", null, dialogue);
+		new DialogueNode("q1Complete2", "Chief", "ThatÂ’ll be useful on your journey.", null, dialogue);
 		
 		
 		//---------------------------------
 		// Second quest: Kill a few enemies
 		//---------------------------------
-		DialogueNode q2Start = new DialogueNode("q2Start", "Chief", "Now that you’ve proven to be at least competent, I believe that I can trust you to protect the village \nfrom the enemies in the west.", null, dialogue);
+		DialogueNode q2Start = new DialogueNode("q2Start", "Chief", "Now that youÂ’ve proven to be at least competent, I believe that I can trust you to protect the village \nfrom the enemies in the west.", null, dialogue);
 		q2Start.setQuestToUnlock("q2");
 		
 		// during quest 2
@@ -545,10 +544,10 @@ public class Game extends Canvas {
 		
 		// quest 2 complete
 		new DialogueNode("q2Complete", "Chief", "So you can fight.", new String[] {"q2Complete2"}, dialogue);
-		new DialogueNode("q2Complete2", "Chief", "Good. I suppose you’ve truly proven yourself.", new String[] {"q2Complete3"}, dialogue);
+		new DialogueNode("q2Complete2", "Chief", "Good. I suppose youÂ’ve truly proven yourself.", new String[] {"q2Complete3"}, dialogue);
 		new DialogueNode("q2Complete3", "Chief", "Take the road north until you reach the next village.", new String[] {"q2Complete4"}, dialogue);
-		new DialogueNode("q2Complete4", "Chief", "The chief there will help you—", new String[] {"q2Complete5"}, dialogue);
-		new DialogueNode("q2Complete5", "Chief", "if he’s alive, that is.", null, dialogue);
+		new DialogueNode("q2Complete4", "Chief", "The chief there will help youÂ—", new String[] {"q2Complete5"}, dialogue);
+		new DialogueNode("q2Complete5", "Chief", "if heÂ’s alive, that is.", null, dialogue);
 		
 		// quest 2 after completion
 		new DialogueNode("q2AfterComplete", "Chief", "Take care, hunter.", null, dialogue);
@@ -560,7 +559,7 @@ public class Game extends Canvas {
 		// Intro Dialogue
 		new DialogueNode("npc2", "Chief2", "Hello.", new String[] {"northIntro", "q3InProgress", "q3HandIn", "q4InProgress", "q4HandIn", "q4AfterComplete"}, dialogue);
 		
-		DialogueNode northIntro = new DialogueNode("northIntro", "Chief2", "Are you the hunter? It’s about time you got here.", new String[] {"northIntro2"}, dialogue);
+		DialogueNode northIntro = new DialogueNode("northIntro", "Chief2", "Are you the hunter? ItÂ’s about time you got here.", new String[] {"northIntro2"}, dialogue);
 		northIntro.setChoiceText("Hey.");
 		northIntro.setChoicePrerequisite("q3", -1);
 		
@@ -570,7 +569,7 @@ public class Game extends Canvas {
 		DialogueNode q3Start = new DialogueNode("q3Start", "Chief2", "There are enemies surrounding this village.", new String[] {"q3Start2"}, dialogue);
 		q3Start.setChoiceText("How can I help?");
 		
-		DialogueNode q3Start2 = new DialogueNode("q3Start2", "Chief2", "You’ll need to get rid of them before I grant you passage to the demon’s lair.", null, dialogue);
+		DialogueNode q3Start2 = new DialogueNode("q3Start2", "Chief2", "YouÂ’ll need to get rid of them before I grant you passage to the demonÂ’s lair.", null, dialogue);
 		q3Start2.setQuestToUnlock("q3");
 		
 		// quest 3 in progress
@@ -579,21 +578,21 @@ public class Game extends Canvas {
 		q3InProgress.setChoicePrerequisite("q3", 0);
 		
 		new DialogueNode("q3InProgress1", "Chief2", "The safety of this village is in your hands, brave hunter.", new String[] {"q3InProgress2"}, dialogue);
-		new DialogueNode("q3InProgress2", "Chief2", "Let me remind you that I will reward you with passage to the demon’s lair if you are to succeed.", null, dialogue);
+		new DialogueNode("q3InProgress2", "Chief2", "Let me remind you that I will reward you with passage to the demonÂ’s lair if you are to succeed.", null, dialogue);
 		
 		// quest 3 complete
 		DialogueNode q3HandIn = new DialogueNode("q3HandIn", "Chief2", "You've defeated the enemies already?", new String[] {"q3Complete"},dialogue);
 		q3HandIn.setChoiceText("I've killed the enemies.");
 		q3HandIn.setChoicePrerequisite("q3", 0);
 		new CompleteQuestNode("q3Complete", "Chief2", "q3", "Impressive.", "q3Complete2", "Please go and fight off the enemies. I will reward you once you have.", null, null, dialogue);
-		new DialogueNode("q3Complete2", "Chief2", "Perhaps you’ll be the first to come back alive from the demon lord’s home.", new String[] {"q4Start"}, dialogue);
+		new DialogueNode("q3Complete2", "Chief2", "Perhaps youÂ’ll be the first to come back alive from the demon lordÂ’s home.", new String[] {"q4Start"}, dialogue);
 		
 		//----------------------------
 		// Fourth Quest: Find the key
 		//----------------------------
 		
 		// quest 4 start
-		new DialogueNode("q4Start", "Chief2", "Now, you’ll need to get pass the trees up north.", new String[] {"q4_1"}, dialogue);
+		new DialogueNode("q4Start", "Chief2", "Now, youÂ’ll need to get pass the trees up north.", new String[] {"q4_1"}, dialogue);
 		new DialogueNode("q4_1", "Chief2", "Beyond the forest is the demon lord's lair.", new String[] {"q4_2"}, dialogue);
 		new DialogueNode("q4_2", "Chief2", "I remember we had a wooden axe somewhere...", new String[] {"q4Start2"}, dialogue);
 		
@@ -612,7 +611,7 @@ public class Game extends Canvas {
 		q4HandIn.setChoicePrerequisite("q4", 0);
 		
 		new CompleteQuestNode("q4HandIn2", "Chief2", "q4", "You found it!", "q4Complete2", "Where is it?", "q4InProgress2", null, dialogue);
-		new DialogueNode("q4Complete2", "Chief2", "Now you can pass through to the demon’s home.", new String[] {"q4AfterComplete"}, dialogue);
+		new DialogueNode("q4Complete2", "Chief2", "Now you can pass through to the demonÂ’s home.", new String[] {"q4AfterComplete"}, dialogue);
 		new DialogueNode("q4Complete2", "Chief2", "Wait here for a bit. I'll go chop down the tree.", new String[] {"q4AfterComplete"}, dialogue);
 		
 		// quest 4 after completion
@@ -626,11 +625,11 @@ public class Game extends Canvas {
 		
 		new DialogueNode("boss",  "Demon Lord", "Who dares enter my lair?", new String[] {"final2"}, dialogue);
 		new DialogueNode("final2", "Demon Lord", "Ah. Could you be the hunter?", new String[] {"final3"}, dialogue);
-		new DialogueNode("final3", "Demon Lord", "Do you know how many of your kind I’ve slain?", new String[] {"final4"}, dialogue);
+		new DialogueNode("final3", "Demon Lord", "Do you know how many of your kind IÂ’ve slain?", new String[] {"final4"}, dialogue);
 		new DialogueNode("final4", "Demon Lord", "Look around you.", new String[] {"final5"}, dialogue);
-		new DialogueNode("final5", "Demon Lord", "You walk on their bones—", new String[] {"final6"}, dialogue);
+		new DialogueNode("final5", "Demon Lord", "You walk on their bonesÂ—", new String[] {"final6"}, dialogue);
 		new DialogueNode("final6", "Demon Lord", "hundreds of skeletons, all killed by me.", new String[] {"final7"}, dialogue);
-		new DialogueNode("final7", "Demon Lord", "What would you think if I were to use those very hero’s remains to conjure an army and decimate the villages \nof this world?", new String[] {"final8"}, dialogue);
+		new DialogueNode("final7", "Demon Lord", "What would you think if I were to use those very heroÂ’s remains to conjure an army and decimate the villages \nof this world?", new String[] {"final8"}, dialogue);
 		new DialogueNode("final8", "Demon Lord", "HAHAHA!", null, dialogue);
 	}
 
