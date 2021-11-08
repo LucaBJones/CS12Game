@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -20,7 +19,7 @@ public class Character extends Movable {
 	private int charType; // -1 = player, 0 = skeleton, 1 = boss, 2 = krampus
 	private boolean isDead;
 	
-	// walking animations, is there a better way to do this?
+	// walking animations
 	private Animation walk_s;
 	private Animation walk_se;
 	private Animation walk_sw;
@@ -44,7 +43,6 @@ public class Character extends Movable {
 	private Animation idle_e;
 	private Animation idle_w;
 	
-	// constructor
 	public Character(String r, int xPos, int yPos, int dx, int dy, int charType) {
 		super(r, xPos, yPos, dx, dy); // double or int for speed?
 
@@ -80,9 +78,9 @@ public class Character extends Movable {
 			idle_e = new Animation(this, "animations/player/idle_e", ".png", 1, 1, 500, false);
 			idle_w = new Animation(this, "animations/player/idle_w", ".png", 1, 1, 500, false);
 			
-			
-			// fix this**** (fix moving of hitbox too)
+			// set player hitBox
 			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, 30, 30);
+			
 		} else if (charType == 0 || charType == 1) {
 			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, "ui/frame2.png", "ui/hpBar.png", 100, 10);
 			
@@ -101,7 +99,9 @@ public class Character extends Movable {
 			idle_e = new Animation(this, "animations/" + getName() + "/idle_e", ".png", 0, 0, 130, false);
 			idle_w = new Animation(this, "animations/" + getName() + "/idle_w", ".png", 0, 0, 130, false);
 			
+			// set enemy hitBox
 			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, sprite.getWidth(), TILE_LENGTH);
+		
 		} else {
 			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, "ui/frame2.png", "ui/hpBar.png", 100, 10);
 			
@@ -120,181 +120,163 @@ public class Character extends Movable {
 			idle_e = new Animation(this, "animations/" + getName() + "/walk_e", ".png", 0, 0, 130, false);
 			idle_w = new Animation(this, "animations/" + getName() + "/walk_w", ".png", 0, 0, 130, false);
 			
+			// set enemy hitBox
 			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight(), sprite.getWidth() / 2, TILE_LENGTH);
 			
-		}
+		} // else
 		
-		animation = idle_s; // temp
-		direction = Direction.S; // temp
+		animation = idle_s; 
+		direction = Direction.S;
 		isDead = false;
 		
-	} // Player
+	} // Character
 	
+	// moves character, moves hp bar, and updates animation
 	@Override
 	public void move(long delta) {
 		super.move(delta);
 		
 		if (charType != -1) {
 			hp.updatePosition((int) x, (int) y - sprite.getHeight() - 20);
-			//System.out.println("hp bar of non-player");
 		} // if
 		
 		if (dx == 0 && dy == 0) {
 			setIdleAnimation();
 			animation.start();
-		}
+		} // if
 	} // move
 
 	public Bar getHp() {
 		return hp;
-	}
+	} // getHp
 	
 	public Bar getMana() {
 		return mana;
-	}
+	} // getMana
 	
 	public Bar getStamina() {
 		return stamina;
-	}
+	} // getStamina
 	
 	public Direction getDirection() {
 		return direction;
-	}
+	} // getDirection
 	
-	public void setWalkAnimation() { // temp
+	// sets walk animation based on direction
+	public void setWalkAnimation() {
 		switch (direction) {
 			case S: 
 				animation = walk_s;
 				break;
-				
 			case SE:
 				animation = walk_se;
 				break;
-				
 			case SW:
 				animation = walk_sw;
 				break;
-				
 			case N:
 				animation = walk_n;
 				break;
-				
 			case NE:
 				animation = walk_ne;
 				break;
-				
 			case NW:
 				animation = walk_nw;
 				break;
-				
 			case E:
 				animation = walk_e;
 				break;
-				
 			case W:
 				animation = walk_w; 
 				break;
-				
 			default:
-				//System.out.println("unimplemented animation");
+				animation = walk_e;
+				break;
 		} // switch
 	} // setWalkAnimation
 	
-	public void setRunAnimation() { // temp
+	//sets run animation based on direction
+	public void setRunAnimation() {
 		switch (direction) {
 			case S: 
 				animation = run_s;
 				break;
-				
 			case SE:
 				animation = run_se;
 				break;
-				
 			case SW:
 				animation = run_sw;
 				break;
-				
 			case N:
 				animation = run_n;
 				break;
-				
 			case NE:
 				animation = run_ne;
 				break;
-				
 			case NW:
 				animation = run_nw;
 				break;
-				
 			case E:
 				animation = run_e;
 				break;
-				
 			case W:
 				animation = run_w; 
 				break;
 			default:
-				//System.out.println("unimplemented animation");
+				animation = run_e;
+				break;
 		} // switch
 	} // setRunAnimation
 	
+	// sets idle animation based on direction
 	public void setIdleAnimation() { 
 		switch (direction) {
 			case S: 
 				animation = idle_s;
 				break;
-				
 			case N:
 				animation = idle_n;
 				break;
-				
 			case E:
 				animation = idle_e;
 				break;
-				
 			case W:
 				animation = idle_w; 
 				break;
-				
 			default:
-//				System.out.println("unimplemented animation: " + direction.getDirection());
+				animation = idle_e;
+				break;
 		} // switch
+		
 		if (charType >= 0) {
 			switch (direction) {
 			case S: 
 				animation = idle_s;
 				break;
-				
 			case N:
 				animation = idle_n;
 				break;
-				
 			case E:
 				animation = idle_e;
 				break;
-				
 			case W:
 				animation = idle_w; 
 				break;
-			
 			case SW: 
 				animation = idle_s;
 				break;
-				
 			case NE:
 				animation = idle_n;
 				break;
-				
 			case SE:
 				animation = idle_e;
 				break;
-				
 			case NW:
 				animation = idle_w; 
 				break;
-				
 			default:
-//				System.out.println("unimplemented animation: " + direction.getDirection());
+				animation = idle_e;
+				break;
 			} // switch
 		} // if
 	} // setIdleAnimation
@@ -302,8 +284,9 @@ public class Character extends Movable {
 	private void setDeathAnimation() {
 		animation = new Animation(this, "animations/" + getName() + "/die_" + direction.getDirection(), ".png", 0, 2, 100, false);
 		animation.start();
-	}
+	} // setDeathAnimation
 
+	// get name of folder for specific animations
 	private String getName() {
 		String name = "";
 		
@@ -336,12 +319,11 @@ public class Character extends Movable {
 			if (isDead) { return; }
 			hp.drawInIso(g, this);
 		} // else
-		
 	} // draw
 	
 	public boolean isPlayer() {
 		return charType == -1;
-	}
+	} // isPlayer
 	
 	public void die() {
 		isDead = true;
@@ -350,7 +332,7 @@ public class Character extends Movable {
 		int currentNum = (killRecord.containsKey(getName())) ? killRecord.get(getName()) : 0;
 		killRecord.put(getName(), currentNum + 1);
 		
-		System.out.println("dead: " + charType);
+		// animate death
 		setDeathAnimation();
 
 		// if not player, remove after a while
@@ -386,27 +368,25 @@ public class Character extends Movable {
 			
 			timer.setRepeats(false);
 			timer.start();
-		}
+		} // else if
 		
-	} // kill
-
+	} // die
+	
+	// determines if the player collides with an enemy
 	public boolean playerCollision(ArrayList<Character> characters) {
-		
 		if (charType == -1) {
 			for (Character c : characters) {
-				
 				if (hitBox.intersects(c.getHitBox()) && !c.isPlayer()) {
-					takeDamage(10); // vars for amount of damage instead?
+					takeDamage(10);
 					return true;
 				} // if
-				
 			} // for
-		}
+		} // if
 		return false;
-	}
+	} // playerCollision
 	
+	// determines if the player on top of an item
 	public boolean onItem(PickupItem item) {
-		
 		if (charType == -1) {
 			Rectangle itemHitbox = new Rectangle(item.screenPosX, item.screenPosY, item.sprite.getWidth(), item.sprite.getHeight());
 			if (hitBox.intersects(itemHitbox)) {
@@ -414,25 +394,29 @@ public class Character extends Movable {
 			} // if
 		} // if
 		return false;
-	}
+	} // onItem
 	
+	// reduces hp of a character
 	public void takeDamage(int n) {
+		// checks if dead already
 		if (isDead) { return; }
 		
 		hp.decrement(n);
 		
+		// checks if going to be dead
 		if (hp.getValue() <= 0) {
 			die();
 		} // if
-	} //
+	} // takeDamage
 	
 	public boolean getIsDead() {
 		return isDead;
-	}
+	} // getIsDead
 	
+	// removes this character from the entities arrayList in Game
 	private void remove() {
 		Game.removeEntity(this);
-	}
+	} // remove
 
 	// returns the number a character that has been killed
 	// returns -1 if no death for that character has been recorded
@@ -444,4 +428,4 @@ public class Character extends Movable {
 		return -1;
 	} // getKills
 	
-} // Player
+} // Character
