@@ -9,18 +9,22 @@ public class Camera {
 	private static int w = 1920; // camera width
 	private static int h = 1080; // camera height
 
+	// returns horizontal position
 	public static int getX() {
 		return x;
 	} // getX
 
+	// returns vertical position
 	public static int getY() {
 		return y;
 	} // getY
 
+	// returns camera width
 	public static int getWidth() {
 		return w;
 	} // getWidth
 
+	// returns camera height
 	public static int getHeight() {
 		return h;
 	} // getHeight
