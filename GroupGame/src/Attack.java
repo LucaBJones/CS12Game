@@ -1,75 +1,66 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class Attack extends Movable {
 	
-	private double totalDistTravelled;
+	private double totalDistTravelled; 
 	private int maxDistance;
-	private Character shooter;
 	
-	// constructor
 	public Attack() {
 		totalDistTravelled = 0;
 		maxDistance = 1000;
-	} // Projectile
+	} // Attack
 	
-	// constructor
 	public Attack(String r, int xPos, int yPos, int dx, int dy, int range, Character shooter) {
-		super(r, xPos, yPos, dx, dy); // temp
+		super(r, xPos, yPos, dx, dy);
 		x /= TILE_LENGTH;
 		y /= TILE_LENGTH;
 
 		totalDistTravelled = 0;
 		maxDistance = range;
-		this.shooter = shooter;
-		System.out.println("string r: " + r);
-	} // Projectile
+	} // Attack
 	
-	// updates position of projectile
+	// updates position of the attack
 	public void move(long delta) {
 		x += dx * delta / 1000;
 		y += dy * delta / 1000;
 
-		//System.out.println("projectile location, x: " + x + ", y: " + y);
-		
 		totalDistTravelled += Math.pow(Math.pow(dx, 2) + Math.pow(dy, 2), 0.5) / 1000;
 		
 		Point[] p = getCorners();
 		
-		// check if the entity will be out of bounds after movement
-		// other condition for distance as well
+		// remove attack if it will be out of bounds after movement
 		if (isOutOfBounds(p) || totalDistTravelled > maxDistance) {
 			System.out.println(isOutOfBounds(p));
 			Game.removeEntity(this);
-
 			Game.spawnExplosion((int) x, (int) y);
 		} // if
 		
+		// convert position to isometric coordinates
 		Point isoPoint = toIso((int) x, (int) y);
 		screenPosX = isoPoint.x - Camera.getX();
 		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
 		
+		// move the attack's hitBox with it 
 		hitBox.setLocation(screenPosX, screenPosY);
 		
 	} // move
 	
-	// check if attack collides with a character
-	// decrements hp of character that was collided with
+	// checks if attack collides with a character
 	public boolean collidesWith(ArrayList<Character> characters, Graphics g){
-		//System.out.println("collides with");
 		for (Character c : characters) {
-			
-			if (hitBox.intersects(c.getHitBox()) && !c.equals(shooter)) {
+			if (hitBox.intersects(c.getHitBox())) {
+				
+				// decrements hp of character that was collided with
 				c.takeDamage(10);
 				Game.spawnExplosion((int) x, (int) y);
+				
 				return true;
 			} // if
-			
 		} // for
+		
 		return false;
 	} // collidesWith
 	
-}
+} // Attack
