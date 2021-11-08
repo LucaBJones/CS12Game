@@ -243,10 +243,13 @@ public class Inventory extends Entity {
 		if (slots[slotID].getItem() == null || slots[slotID].getItem().isEmpty()) { return; }
 		
 		// use the item
-		InventoryItem.getItem(slots[slotID].getItem()).use(player);
+		if (InventoryItem.getItem(slots[slotID].getItem()).use(player)) {
+			
+			// remove the item from inventory if item was successfully used
+			slots[slotID].removeItem(1);
+		} // if
 		
-		// remove the item from inventory
-		slots[slotID].removeItem(1);
+		
 	} // handleClick
 	
 } // Inventory

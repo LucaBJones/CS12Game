@@ -16,7 +16,7 @@ public class NPC extends Entity {
 		animation.start();
 		
 		dialogueID = dialogue;
-		range = 50;
+		range = 30;
 	}
 	
 	public String getDialogue() {

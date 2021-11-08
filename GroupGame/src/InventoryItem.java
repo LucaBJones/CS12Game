@@ -38,8 +38,8 @@ public class InventoryItem {
 		itemLookUp.put(id, this);
 	} // InventoryItem
 	
-	public void use(Character player) {
-		if (use.isEmpty()) { return; }
+	public boolean use(Character player) {
+		if (use.isEmpty()) { return false; }
 		
 		if (use.contains("hp")) {
 			if (use.contains("increment")) {
@@ -60,6 +60,8 @@ public class InventoryItem {
 				player.getStamina().decrement(useAmount);
 			} // else if
 		} // else if
+		
+		return true;
 	} // use
 	
 	// returns id of item

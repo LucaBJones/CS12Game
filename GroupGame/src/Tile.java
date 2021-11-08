@@ -26,6 +26,16 @@ public class Tile extends Entity {
 		return obstacle;
 	} // getObs
 	
+	public void removeObstacle() {
+		obstacle = null;
+		isPassable = true;
+	} // removeObstacle
+	
+	public void addObstacle(String ref) {
+		obstacle = SpriteStore.get().getSprite(ref);
+		isPassable = true;
+	} // removeObstacle
+	
 	@Override
 	public void draw(Graphics g) {
 		super.draw(g);

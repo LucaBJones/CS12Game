@@ -17,7 +17,7 @@ public class Character extends Movable {
 	private Bar stamina;
 	private Bar mana;
 	
-	private int charType; // -1 = player, 0 = skeleton, 1 = boss
+	private int charType; // -1 = player, 0 = skeleton, 1 = boss, 2 = krampus
 	private boolean isDead;
 	
 	// walking animations, is there a better way to do this?
@@ -52,9 +52,9 @@ public class Character extends Movable {
 		
 		// set up status bars
 		if (charType == -1) {
-			hp = new Bar(210, 50, 100, "ui/frame1.png", "ui/hpBar.png", 700, 35);
-			stamina = new Bar(225, 100, 100, "ui/frame2.png", "ui/staminaBar.png", 600, 28);
-			mana = new Bar(225, 140, 100, "ui/frame2.png", "ui/manaBar.png", 600, 28);
+			hp = new Bar(210, 50, 100000, "ui/frame1.png", "ui/hpBar.png", 700, 35);
+			stamina = new Bar(225, 100, 100000, "ui/frame2.png", "ui/staminaBar.png", 600, 28);
+			mana = new Bar(225, 140, 1000000, "ui/frame2.png", "ui/manaBar.png", 600, 28);
 			
 			// setup player animations
 			walk_s  = new Animation(this, "animations/player/walk_s", ".png", 0, 7, 130, true);
@@ -333,11 +333,9 @@ public class Character extends Movable {
 			stamina.draw(g);
 			mana.draw(g);
 		} else {
+			if (isDead) { return; }
 			hp.drawInIso(g, this);
 		} // else
-		
-		g.setColor(Color.red);
-		g.drawRect(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
 		
 	} // draw
 	
@@ -356,7 +354,7 @@ public class Character extends Movable {
 		setDeathAnimation();
 
 		// if not player, remove after a while
-		if (charType != -1) {
+		if (charType == 0 || charType == 2) {
 			Timer timer = new Timer(3000, new ActionListener() {
 
 				@Override
@@ -366,7 +364,29 @@ public class Character extends Movable {
 			});
 			
 			timer.start();
-		} // if
+		} else if (charType == -1) {
+			Timer timer = new Timer(2000, new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Game.gameOver();
+				} // actionPerformed
+			});
+			
+			timer.setRepeats(false);
+			timer.start();
+		} else if (charType == 1) {
+			Timer timer = new Timer(2000, new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Game.gameWon();
+				} // actionPerformed
+			});
+			
+			timer.setRepeats(false);
+			timer.start();
+		}
 		
 	} // kill
 

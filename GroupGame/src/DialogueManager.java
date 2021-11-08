@@ -142,6 +142,25 @@ public class DialogueManager {
 		
 		System.out.println("next: " + current.getNext());
 		
+		// handle special event after quest 4
+		if (currentDialogueID.equals("q4Complete3")) {
+			game.startFade();
+			
+			timer = new Timer(500, new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	            	game.removeObstacles();
+	            } // actionPerformed
+	        });
+			
+			timer.setRepeats(false);
+			timer.start();
+		} // if
+		
+		// handle special event after quest 2
+		if (currentDialogueID.equals("q2Complete5")) {
+			game.addBridge();
+		} // if
+		
 		// check if there is any more dialogue
 		if (current.getNext() == null) {
 			isDisplaying = false;
@@ -289,7 +308,7 @@ public class DialogueManager {
 		dialogueBox.draw(g, x, y, dialogueWidth, dialogueHeight);
 
 		// draw dialogue text
-		drawString(g, displayText, (int) x + 50, (int) y + 50); // can change
+		drawString(g, displayText, (int) x + 80, (int) y + 40); // can change
 		
 		// draw choices if there are any
 		if (waitingForChoice) {
@@ -308,7 +327,7 @@ public class DialogueManager {
 			
 			// draw text
 			g.setColor(Color.LIGHT_GRAY);
-			g.drawString(dialogueStore.get(currentChoiceNodes[i]).getChoiceText(), choiceX + 20, choiceY + 60);
+			g.drawString(dialogueStore.get(currentChoiceNodes[i]).getChoiceText(), choiceX + 40, choiceY + 70);
 		} // for
 		
 	} // drawChoices
