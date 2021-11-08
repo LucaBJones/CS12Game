@@ -22,6 +22,10 @@ public class Tile extends Entity {
 		return isPassable;
 	} // getIsOccupied
 	
+	public Sprite getObs() {
+		return obstacle;
+	} // getObs
+	
 	@Override
 	public void draw(Graphics g) {
 		super.draw(g);

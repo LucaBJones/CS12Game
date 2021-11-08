@@ -1,5 +1,3 @@
-import java.awt.Graphics;
-import java.awt.Point;
 import java.util.ArrayList;
 
 public class Animation {
@@ -13,6 +11,7 @@ public class Animation {
 	private int delayBetweenFrames;
 	
 	private boolean isPlaying;
+	private boolean loop;
 	
 	private Entity entity;
 	private String prefix;
@@ -20,13 +19,15 @@ public class Animation {
 	
 	private int min;
 	
-	public Animation(Entity e, String prefix, String suffix, int min, int max, int frameDelay) { // temp
+	
+	public Animation(Entity e, String prefix, String suffix, int min, int max, int frameDelay, boolean loop) { // temp
 		this.frames = new ArrayList<Sprite>();
 		
 		this.prefix = prefix;
 		this.suffix = suffix;
 		
 		this.min = min;
+		this.loop = loop;
 		
 		for (int i = min; i <= max; i++) {
 			frames.add((SpriteStore.get()).getSprite(prefix + i + suffix));
@@ -43,7 +44,7 @@ public class Animation {
 		isPlaying = false;
 		entity = e;
 		
-		//SpriteStore.get().addAnimation(prefix, this);
+//		SpriteStore.get().addAnimation(prefix, this);
 	} // Animation
 	
 	
@@ -61,13 +62,24 @@ public class Animation {
 		if (!isPlaying) { return; }
 		counter += delta; // use delta?
 		
+		// if is time to update frame
 		if (counter > delayBetweenFrames) {
 			counter = 0;
 			
+			// update to next frame
 			currentFrame++;
+			
+			// check if is at last frame
 			if (currentFrame > totalFrames + min - 1) { // ? is this right?
-				currentFrame = min;
-			}
+				
+				// loop animation
+				if (loop) {
+					currentFrame = min;
+				} else {
+					currentFrame = totalFrames + min - 1;
+					isPlaying = false;
+				} // else
+			} // if
 		} // if
 		
 		entity.setSprite(prefix + currentFrame + suffix);

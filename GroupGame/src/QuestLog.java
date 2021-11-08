@@ -44,7 +44,7 @@ public class QuestLog { // rename to QuestManager?
 	public Quest get(String id) {
 		return questStore.get(id);
 	}
-	
+
 	public void unlock(String questID) {
 		questStore.get(questID).unlock();
 		currentQuests.add(questID);
@@ -68,12 +68,28 @@ public class QuestLog { // rename to QuestManager?
 		HashMap<String, Integer> objectives = questStore.get(questID).getObjectives();
 		Set<String> keySet = objectives.keySet();
 		
+		
+		
 		for (String key : keySet) {
-			if (!inv.contains(key, objectives.get(key))) {
+			
+			
+			// if quest objectives are items, return if items are not in inventory
+			if (questStore.get(questID).getHasItemObjective() && !inv.contains(key, objectives.get(key))) {
+				System.out.println("canComplete: " + questID + ", false, : " + objectives.get(key) + " " + key);
+				return false;
+			} // if
+			
+			System.out.println("quest: " + questID + ", " + (!questStore.get(questID).getHasItemObjective()) + ", key: "  + key + ", " +  objectives.get(key) + ", current: " + Character.getKills(key));
+			
+			// if quest objective is number of kills, return if not if reached
+			if (!questStore.get(questID).getHasItemObjective() && Character.getKills(key) < objectives.get(key)) {
+				System.out.println("canComplete: " + questID + ", false, : " + objectives.get(key) + " " + key);
 				return false;
 			} // if
 		} // if
 		
+		
+		System.out.println("canComplete: " + questID + ", true ");
 		return true;
 	} // canComplete
 	

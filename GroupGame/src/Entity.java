@@ -88,9 +88,9 @@ public class Entity {
 		sprite = (SpriteStore.get()).getSprite(r);
 	} // setSprite
 	
-	public void setAnimation(String animID) { // temp
-		animation = SpriteStore.get().getAnimation(animID);
-	}
+//	public void setAnimation(String animID) { // temp
+//		animation = SpriteStore.get().getAnimation(animID);
+//	}
 	
 	public int getScreenPosX() {
 		return screenPosX;

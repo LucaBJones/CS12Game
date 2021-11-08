@@ -44,6 +44,8 @@ public class Attack extends Movable {
 		if (isOutOfBounds(p) || totalDistTravelled > maxDistance) {
 			System.out.println(isOutOfBounds(p));
 			Game.removeEntity(this);
+
+			Game.spawnExplosion((int) x, (int) y);
 		} // if
 		
 		Point isoPoint = toIso((int) x, (int) y);
@@ -61,12 +63,8 @@ public class Attack extends Movable {
 		for (Character c : characters) {
 			
 			if (hitBox.intersects(c.getHitBox()) && !c.equals(shooter)) {
-				c.getHp().decrement(10);
-				
-				if (c.getHp().getValue() <= 0) {
-					c.kill();
-				} // if
-				
+				c.takeDamage(10);
+				Game.spawnExplosion((int) x, (int) y);
 				return true;
 			} // if
 			

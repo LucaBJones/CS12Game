@@ -45,7 +45,7 @@ public class Movable extends Entity {
 		
 		Point[] p = getCorners();
 		
-		if (this instanceof Character) {
+		if (this instanceof Character && !((Character) this).getIsDead()) {
 			updateDirection();
 			((Character) this).setWalkAnimation();
 			animation.start();
@@ -56,7 +56,8 @@ public class Movable extends Entity {
 			x -= dx * delta / 1000;
 			y -= dy * delta / 1000;
 			
-			if (this instanceof Character) {
+			if (this instanceof Character && !((Character) this).getIsDead()) {
+				updateDirection();
 				((Character) this).setIdleAnimation();
 				animation.start();
 			}
@@ -66,7 +67,7 @@ public class Movable extends Entity {
 		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
 		
 		// moves hitBox with the movable
-		hitBox.setLocation(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH);
+		hitBox.setLocation((sprite.getWidth() - hitBox.width) / 2 + screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH);
 	} // move
 	
 	// returns true if any of the points are inside of an obstacle
@@ -84,7 +85,6 @@ public class Movable extends Entity {
 			// check if point is above or left of the map
 			// apparently y < 0 doesn't work
 			if (p[i].x < 0 || p[i].y < boundary) { 
-				System.out.println("help");
 				return true;
 			} // if
 			
@@ -93,9 +93,7 @@ public class Movable extends Entity {
 				//System.out.println(!tiles[(int) p[i].y / TILE_LENGTH][(int) p[i].x / TILE_LENGTH].getIsPassable());
 				// check if the tile the point is on is impassible
 				if (!tiles[(int) p[i].y / TILE_LENGTH][(int) p[i].x / TILE_LENGTH].getIsPassable()) {
-					
 					return true;
-					
 				} // if
 				
 			} catch (ArrayIndexOutOfBoundsException e) {

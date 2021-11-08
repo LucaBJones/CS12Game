@@ -69,7 +69,9 @@ public class DialogueManager {
                 animateText();
             } // actionPerformed
         });
+		
 		timer.setInitialDelay(0);
+		
 		// can change
 		xPadding = (int) (Camera.getWidth() * 0.1);
 		yPadding = (int) (Camera.getHeight() * 0.01);
@@ -103,6 +105,7 @@ public class DialogueManager {
 		textIsAnimating = true;
 		currentDialogueID = id;
 		displayText = "";
+		index = 0; // important
 		
 		timer.start();
 	} // start
@@ -149,6 +152,8 @@ public class DialogueManager {
 		// get the next dialogue nodes
 		// (only get the ones that the player meets the prerequisite for)
 		for (String str : current.getNext()) {
+			System.out.println("next?: " +  str);
+			if (str == null || str.isEmpty()) { continue; }
 			String prerequisiteQuest = dialogueStore.get(str).getPrerequisiteQuest();
 			if (prerequisiteQuest == null || prerequisiteQuest.isEmpty()) { // check if is null?
 				temp.add(str);
@@ -162,6 +167,13 @@ public class DialogueManager {
 		
 		for (int i = 0; i < next.length; i++) {
 			next[i] = temp.get(i);
+		}
+		
+		// check if there are any choices left
+		if (next.length == 0) { 
+			isDisplaying = false;
+			game.stopTalking();
+			return; 
 		}
 		
 		// check if current node is trying to complete a quest

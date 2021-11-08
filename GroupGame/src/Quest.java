@@ -2,20 +2,24 @@ import java.util.HashMap;
 
 public class Quest {
 
+	
 	private String id;
 	private String name;
 	
-	// should objectives and rewards be hashmaps?
+	private boolean hasItemObjective;
+
 	private HashMap<String, Integer> objectives;	// stores item id and num for each objective
 	private HashMap<String, Integer> rewards;		// stores item id and num of that item of rewards
 	
 	private int status; // -1 = locked, 0 = unlocked, 1 = complete, 2 = pending rewards
 	
-	public Quest(String id, String name, HashMap<String, Integer> objectives, HashMap<String, Integer> rewards, QuestLog log) {
+	public Quest(String id, String name, HashMap<String, Integer> objectives, boolean itemObjective, HashMap<String, Integer> rewards, QuestLog log) {
 		this.id = id;
 		this.name = name;
 		
 		this.objectives = objectives;
+		this.hasItemObjective = itemObjective;
+		
 		this.rewards = rewards;
 		
 		status = -1;
@@ -61,6 +65,10 @@ public class Quest {
 	
 	public void removeReward(String rewardID) {
 		rewards.remove(rewardID);
+	}
+	
+	public boolean getHasItemObjective() {
+		return hasItemObjective;
 	}
 	
 } // Quest

@@ -236,14 +236,17 @@ public class Inventory extends Entity {
 	public void handleClick(MouseEvent e, Character player) {
 		int slotID = checkIfMouseOverSlot(e);
 		
-		// if mouse is not over a slot, return
+		// check if mouse is over a slot
 		if (slotID < 0) { return; }
+		
+		// check if slot contains an item
+		if (slots[slotID].getItem() == null || slots[slotID].getItem().isEmpty()) { return; }
 		
 		// use the item
 		InventoryItem.getItem(slots[slotID].getItem()).use(player);
 		
 		// remove the item from inventory
 		slots[slotID].removeItem(1);
-		
-	}
+	} // handleClick
+	
 } // Inventory

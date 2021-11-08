@@ -1,12 +1,16 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Character extends Movable {
+import javax.swing.Timer;
 
-	private static HashMap<String, Integer> deaths = new HashMap<String, Integer>();
+public class Character extends Movable {
+	
+	private static HashMap<String, Integer> killRecord = new HashMap<String, Integer>();
 	
 	// health, stamina, and mana bars
 	private Bar hp;
@@ -14,7 +18,7 @@ public class Character extends Movable {
 	private Bar mana;
 	
 	private int charType; // -1 = player, 0 = skeleton, 1 = boss
-	private String id; // used?
+	private boolean isDead;
 	
 	// walking animations, is there a better way to do this?
 	private Animation walk_s;
@@ -53,57 +57,58 @@ public class Character extends Movable {
 			mana = new Bar(225, 140, 100, "ui/frame2.png", "ui/manaBar.png", 600, 28);
 			
 			// setup player animations
-			walk_s  = new Animation(this, "animations/player/walk_s", ".png", 0, 7, 130);
-			walk_se = new Animation(this, "animations/player/walk_se", ".png", 0, 7, 130);
-			walk_sw = new Animation(this, "animations/player/walk_sw", ".png", 0, 7, 130);
-			walk_n  = new Animation(this, "animations/player/walk_n", ".png", 0, 7, 130);
-			walk_ne = new Animation(this, "animations/player/walk_ne", ".png", 0, 7, 130);
-			walk_nw = new Animation(this, "animations/player/walk_nw", ".png", 0, 7, 130);
-			walk_e  = new Animation(this, "animations/player/walk_e", ".png", 0, 7, 130);
-			walk_w  = new Animation(this, "animations/player/walk_w", ".png", 0, 7, 130);
+			walk_s  = new Animation(this, "animations/player/walk_s", ".png", 0, 7, 130, true);
+			walk_se = new Animation(this, "animations/player/walk_se", ".png", 0, 7, 130, true);
+			walk_sw = new Animation(this, "animations/player/walk_sw", ".png", 0, 7, 130, true);
+			walk_n  = new Animation(this, "animations/player/walk_n", ".png", 0, 7, 130, true);
+			walk_ne = new Animation(this, "animations/player/walk_ne", ".png", 0, 7, 130, true);
+			walk_nw = new Animation(this, "animations/player/walk_nw", ".png", 0, 7, 130, true);
+			walk_e  = new Animation(this, "animations/player/walk_e", ".png", 0, 7, 130, true);
+			walk_w  = new Animation(this, "animations/player/walk_w", ".png", 0, 7, 130, true);
 			
-			run_s  = new Animation(this, "animations/player/run_s", ".png", 1, 8, 130); 
-			run_se = new Animation(this, "animations/player/run_se", ".png", 1, 8, 130);
-			run_sw = new Animation(this, "animations/player/run_sw", ".png", 1, 8, 130);
-			run_n  = new Animation(this, "animations/player/run_n", ".png", 1, 8, 130); 
-			run_ne = new Animation(this, "animations/player/run_ne", ".png", 1, 8, 130);
-			run_nw = new Animation(this, "animations/player/run_nw", ".png", 1, 8, 130);
-			run_e  = new Animation(this, "animations/player/run_e", ".png", 1, 8, 130); 
-			run_w  = new Animation(this, "animations/player/run_w", ".png", 1, 8, 130); 
+			run_s  = new Animation(this, "animations/player/run_s", ".png", 1, 8, 130, true); 
+			run_se = new Animation(this, "animations/player/run_se", ".png", 1, 8, 130, true);
+			run_sw = new Animation(this, "animations/player/run_sw", ".png", 1, 8, 130, true);
+			run_n  = new Animation(this, "animations/player/run_n", ".png", 1, 8, 130, true); 
+			run_ne = new Animation(this, "animations/player/run_ne", ".png", 1, 8, 130, true);
+			run_nw = new Animation(this, "animations/player/run_nw", ".png", 1, 8, 130, true);
+			run_e  = new Animation(this, "animations/player/run_e", ".png", 1, 8, 130, true); 
+			run_w  = new Animation(this, "animations/player/run_w", ".png", 1, 8, 130, true); 
 			
-			idle_s = new Animation(this, "animations/player/idle_s", ".png", 1, 1, 500);
-			idle_n = new Animation(this, "animations/player/idle_n", ".png", 1, 1, 500);
-			idle_e = new Animation(this, "animations/player/idle_e", ".png", 1, 1, 500);
-			idle_w = new Animation(this, "animations/player/idle_w", ".png", 1, 1, 500);
+			idle_s = new Animation(this, "animations/player/idle_s", ".png", 1, 1, 500, false);
+			idle_n = new Animation(this, "animations/player/idle_n", ".png", 1, 1, 500, false);
+			idle_e = new Animation(this, "animations/player/idle_e", ".png", 1, 1, 500, false);
+			idle_w = new Animation(this, "animations/player/idle_w", ".png", 1, 1, 500, false);
 			
 			
 			// fix this**** (fix moving of hitbox too)
-			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, TILE_LENGTH, TILE_LENGTH);
+			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, 30, 30);
 		} else {
 			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, "ui/frame2.png", "ui/hpBar.png", 100, 10);
 			
 			String name = (charType == 1) ? "boss" : "enemy";
 			
 			// setup enemy animations
-			walk_s  = new Animation(this, "animations/" + name + "/walk_s", ".png", 1, 8, 130); 
-			walk_se = new Animation(this, "animations/" + name + "/walk_se", ".png", 1, 8, 130); 
-			walk_sw = new Animation(this, "animations/" + name + "/walk_sw", ".png", 1, 8, 130); 
-			walk_n  = new Animation(this, "animations/" + name + "/walk_n", ".png", 1, 8, 130);  
-			walk_ne = new Animation(this, "animations/" + name + "/walk_ne", ".png", 1, 8, 130); 
-			walk_nw = new Animation(this, "animations/" + name + "/walk_nw", ".png", 1, 8, 130); 
-			walk_e  = new Animation(this, "animations/" + name + "/walk_e", ".png", 1, 8, 130);  
-			walk_w  = new Animation(this, "animations/" + name + "/walk_w", ".png", 1, 8, 130);  
+			walk_s  = new Animation(this, "animations/" + name + "/walk_s", ".png", 1, 8, 130, true); 
+			walk_se = new Animation(this, "animations/" + name + "/walk_se", ".png", 1, 8, 130, true); 
+			walk_sw = new Animation(this, "animations/" + name + "/walk_sw", ".png", 1, 8, 130, true); 
+			walk_n  = new Animation(this, "animations/" + name + "/walk_n", ".png", 1, 8, 130, true);  
+			walk_ne = new Animation(this, "animations/" + name + "/walk_ne", ".png", 1, 8, 130, true); 
+			walk_nw = new Animation(this, "animations/" + name + "/walk_nw", ".png", 1, 8, 130, true); 
+			walk_e  = new Animation(this, "animations/" + name + "/walk_e", ".png", 1, 8, 130, true);  
+			walk_w  = new Animation(this, "animations/" + name + "/walk_w", ".png", 1, 8, 130, true);  
 			
-			idle_s = new Animation(this, "animations/" + name + "/idle_s", ".png", 0, 0, 130);
-			idle_n = new Animation(this, "animations/" + name + "/idle_n", ".png", 0, 0, 130);
-			idle_e = new Animation(this, "animations/" + name + "/idle_e", ".png", 0, 0, 130);
-			idle_w = new Animation(this, "animations/" + name + "/idle_w", ".png", 0, 0, 130);
+			idle_s = new Animation(this, "animations/" + name + "/idle_s", ".png", 0, 0, 130, false);
+			idle_n = new Animation(this, "animations/" + name + "/idle_n", ".png", 0, 0, 130, false);
+			idle_e = new Animation(this, "animations/" + name + "/idle_e", ".png", 0, 0, 130, false);
+			idle_w = new Animation(this, "animations/" + name + "/idle_w", ".png", 0, 0, 130, false);
 			
 			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, sprite.getWidth(), TILE_LENGTH);
 		} // else
 		
-		animation = walk_s; // temp
+		animation = idle_s; // temp
 		direction = Direction.S; // temp
+		isDead = false;
 		
 	} // Player
 	
@@ -234,9 +239,31 @@ public class Character extends Movable {
 				break;
 				
 			default:
-				System.out.println("unimplemented animation: " + direction.getDirection());
+//				System.out.println("unimplemented animation: " + direction.getDirection());
 		} // switch
 	} // setIdleAnimation
+	
+	private void setDeathAnimation() {
+		animation = new Animation(this, "animations/" + getName() + "/die_" + direction.getDirection(), ".png", 0, 2, 100, false);
+		animation.start();
+	}
+
+	private String getName() {
+		String name = "";
+		
+		switch (charType) {
+			case -1:
+				name = "player";
+				break;
+			case 1: 
+				name = "boss";
+				break;
+			default:
+				name = "enemy";
+		} // switch
+		
+		return name;
+	} // getName
 	
 	// draw the player with its health, stamina, and mana bars
 	@Override
@@ -259,19 +286,38 @@ public class Character extends Movable {
 		return charType == -1;
 	}
 	
-	public void kill() {
-		int currentNum = (deaths.containsKey(id)) ? deaths.get(id) : 0;
-		deaths.put(id, currentNum + 1);
-		Game.removeEntity(this);
+	public void die() {
+		isDead = true;
+		
+		// record death
+		int currentNum = (killRecord.containsKey(getName())) ? killRecord.get(getName()) : 0;
+		killRecord.put(getName(), currentNum + 1);
+		
+		System.out.println("dead: " + charType);
+		setDeathAnimation();
+
+		// if not player, remove after a while
+		if (charType != -1) {
+			Timer timer = new Timer(3000, new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					remove();
+				} // actionPerformed
+			});
+			
+			timer.start();
+		} // if
+		
 	} // kill
-	
+
 	public boolean playerCollision(ArrayList<Character> characters) {
 		
 		if (charType == -1) {
 			for (Character c : characters) {
 				
 				if (hitBox.intersects(c.getHitBox()) && !c.isPlayer()) {
-					hp.decrement(10);
+					takeDamage(10); // vars for amount of damage instead?
 					return true;
 				} // if
 				
@@ -290,5 +336,34 @@ public class Character extends Movable {
 		} // if
 		return false;
 	}
+	
+	public void takeDamage(int n) {
+		if (isDead) { return; }
+		
+		hp.decrement(n);
+		
+		if (hp.getValue() <= 0) {
+			die();
+		} // if
+	} //
 
+	
+	public boolean getIsDead() {
+		return isDead;
+	}
+	
+	private void remove() {
+		Game.removeEntity(this);
+	}
+
+	// returns the number a character that has been killed
+	// returns -1 if no death for that character has been recorded
+	public static int getKills(String characterName) {
+		if (killRecord.containsKey(characterName)) {
+			return killRecord.get(characterName);
+		} // if
+		
+		return -1;
+	} // getKills
+	
 } // Player

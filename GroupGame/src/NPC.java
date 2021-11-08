@@ -12,7 +12,7 @@ public class NPC extends Entity {
 		super(sprite, xPos, yPos);
 		
 		character = SpriteStore.get().getSprite(sprite);
-		animation = new Animation(this, "animations/emotes/", ".png", 0, 3, 700);
+		animation = new Animation(this, "animations/emotes/", ".png", 0, 3, 700, true);
 		animation.start();
 		
 		dialogueID = dialogue;

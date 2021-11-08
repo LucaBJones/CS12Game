@@ -23,13 +23,19 @@ public class SpriteStore {
 		return spriteStore;
 	} // get
 	
-	public void addAnimation(String ref, Animation anim) {
-		animations.put(ref, anim);
-	}
-	
-	public Animation getAnimation(String ref) {
-		return animations.get(ref);
-	}
+//	public Animation getAnimation(String prefix) {
+//		
+//		// return animation if already stored
+//		if (animations.get(prefix) != null) {
+//			return animations.get(prefix);
+//		} // if
+//		
+//		// create new animation and return
+//		Animation anim = new Animation();
+//		animations.put(prefix, anim);
+//		return anim;
+//		
+//	}
 
 	// returns the sprite associated with the String passed in
 	public Sprite getSprite(String ref) {
