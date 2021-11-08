@@ -4,7 +4,7 @@ import java.awt.Point;
 public class NPC extends Entity {
 
 	String dialogueID;
-	int range;			// how far from the npc the player can be to start a conversation
+	int range; // how far from the npc the player can be to start a conversation
 	
 	Sprite character;
 	
@@ -29,6 +29,7 @@ public class NPC extends Entity {
 		return playerX - x < range && playerY - y < range;
 	} // withinRange
 	
+	// draws the NPC and it's emotes
 	@Override
 	public void draw(Graphics g) {
 		
@@ -43,4 +44,5 @@ public class NPC extends Entity {
 		// draw npc
 		character.draw(g, screenPosX, screenPosY);
 	} // draw
+	
 } // NPC
