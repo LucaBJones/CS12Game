@@ -9,9 +9,7 @@ public class Inventory extends Entity {
 	private DragItem dragItem; 			// stores item being dragged
 	private boolean isDragging = false; 		// whether player is dragging an item
 	private static int hoveringSlotIndex = -1; 	// index of the slot the player is hovering over
-														// -1 if not hovering over a slot
-														// rename?
-	
+			
 	private int size;		// size of inventory
 	private InventorySlot[] slots;	// slots in the inventory
 	
