@@ -5,7 +5,6 @@ import javax.swing.Timer;
 
 public class Explosion extends Entity {
 
-	
 	public Explosion(int xPos, int yPos, int lifeTime) {
 		int num = (Math.random() > 0.5) ? 1 : 0;
 		
