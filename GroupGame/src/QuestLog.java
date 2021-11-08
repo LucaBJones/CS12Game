@@ -1,16 +1,15 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-public class QuestLog { // rename to QuestManager?
+public class QuestLog {
 	
 	private HashMap<String, Quest> questStore = new HashMap<String, Quest>();	
 	private ArrayList<String> currentQuests = new ArrayList<String>();
 	
 	private Inventory inv;
-	private DialogueManager dialogue; // probably shouldn't have this here... but idk how to do it otherwise
+	private DialogueManager dialogue;
 	
 	private int x;
 	private int y;
@@ -23,7 +22,7 @@ public class QuestLog { // rename to QuestManager?
 		inv = i;
 		dialogue = null;
 		
-		// can change
+		// set positioning
 		width = (int) (Camera.getWidth() * 0.24);
 		height = (int) (Camera.getHeight() * 0.108);
 		x = (int) (Camera.getWidth() * 0.025);
@@ -32,35 +31,38 @@ public class QuestLog { // rename to QuestManager?
 		questBox = SpriteStore.get().getSprite("ui/quest.png");
 	} // QuestLog
 	
-	public void setDialogue(DialogueManager d) { // must be called in Game after initialising, else nullpointerexceptions...
+	public void setDialogue(DialogueManager d) { 
 		dialogue = d;
-	}
+	} // setDialogue
 	
 	// adds a quest to the questStore
 	public void add(String id, Quest quest) {
 		questStore.put(id, quest);
 	} // add
 	
+	// returns questStore
 	public Quest get(String id) {
 		return questStore.get(id);
-	}
+	} // get
 
+	// unlocks the quest passed in
 	public void unlock(String questID) {
 		questStore.get(questID).unlock();
 		currentQuests.add(questID);
-		System.out.println("added to current Quests");
-	}
+	} // unlock
 	
 	// completes the quest if possible
 	public void complete(String questID) {
 		if (!canComplete(questID)) { return; }
+		
+		// mark quest as complete
 		questStore.get(questID).complete();
+		
+		// take objectives from and store rewards in inventory
 		removeQuestItemsFromInventory(questID);
-		
 		storeRewardInInventory(questID);
-		currentQuests.remove(questID);
 		
-		System.out.println("completed quest!: " + questStore.get(questID).getIsCompleted());
+		currentQuests.remove(questID);
 	} // complete
 	
 	// returns whether the objectives of the quest have been met
@@ -68,46 +70,45 @@ public class QuestLog { // rename to QuestManager?
 		HashMap<String, Integer> objectives = questStore.get(questID).getObjectives();
 		Set<String> keySet = objectives.keySet();
 		
-		
-		
+		// check each objective
 		for (String key : keySet) {
-			
-			
-			// if quest objectives are items, return if items are not in inventory
+
+			// if quest objectives are items, return whether items are not in inventory
 			if (questStore.get(questID).getHasItemObjective() && !inv.contains(key, objectives.get(key))) {
 				System.out.println("canComplete: " + questID + ", false, : " + objectives.get(key) + " " + key);
 				return false;
 			} // if
 			
-			System.out.println("quest: " + questID + ", " + (!questStore.get(questID).getHasItemObjective()) + ", key: "  + key + ", " +  objectives.get(key) + ", current: " + Character.getKills(key));
-			
-			// if quest objective is number of kills, return if not if reached
+			// if quest objective is number of kills, return false if objective not reached
 			if (!questStore.get(questID).getHasItemObjective() && Character.getKills(key) < objectives.get(key)) {
 				System.out.println("canComplete: " + questID + ", false, : " + objectives.get(key) + " " + key);
 				return false;
 			} // if
 		} // if
 		
-		
-		System.out.println("canComplete: " + questID + ", true ");
 		return true;
 	} // canComplete
 	
+	// remove quest objective items from inventory
 	private void removeQuestItemsFromInventory(String questID) {
 		HashMap<String, Integer> objectives = questStore.get(questID).getObjectives();
 		Set<String> objSet = objectives.keySet();
 		
+		// remove each item in objectives from inventory
 		for (String obj : objSet) {
 			inv.removeItem(obj, objectives.get(obj));
 		} // if
 	} // removeQuestItemsFromInventory
 	
+	// add rewards to inventory
+	// if inventory is full, set quest status to pending
 	private void storeRewardInInventory(String questID) {
 		
 		// check if quest is already completed or has no rewards
 		if (!questStore.get(questID).getIsCompleted()) { return; }
 		if (questStore.get(questID).getRewards() == null) { return; }
 		
+		// get quest rewards
 		HashMap<String, Integer> rewards = questStore.get(questID).getRewards();
 		Set<String> rewardSet = questStore.get(questID).getRewards().keySet();
 		
@@ -124,17 +125,19 @@ public class QuestLog { // rename to QuestManager?
 			
 		} // if
 		
+		// check if all rewards were collected
 		if (rewardsCollected < rewardSet.size()) {
-			System.out.println("inv full, not finished collecting rewards");
-			// notify dialogue system that rewards are uncollected
+			
+			// notify dialogue system that some rewards are uncollected
 			dialogue.rewardsUncollected();
 		} // if
 		
 	} // storeRewardInInventory
 	
+	// draw quest log to screen
 	public void draw(Graphics g) {
 		
-		// draw text (current quests)
+		// draw text (current quest)
 		for (int i = 0; i < currentQuests.size(); i++) {
 			String displayText = questStore.get(currentQuests.get(i)).getName();
 			
@@ -145,10 +148,8 @@ public class QuestLog { // rename to QuestManager?
 			g.setColor(Game.getTextColor());
 			g.setFont(Game.getMedievalSharp().deriveFont(32f));
 			g.drawString(displayText, x + (width - g.getFontMetrics().stringWidth(displayText)) / 2, y + 30 + (height - g.getFontMetrics().getHeight()) / 2);
-			
 		} // for
 		
 	} // draw
 
-	
 } // QuestLog
