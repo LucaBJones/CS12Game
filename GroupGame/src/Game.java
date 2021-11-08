@@ -423,6 +423,14 @@ public class Game extends Canvas {
 			} // for
 		} // for
 		
+		// create characters
+		player = new Character("animations/player/idle_w1.png", 25 * 60, 90 * 60, 0, 0, -1);
+		entities.add(player.getHp());
+		entities.add(player.getMana());
+		entities.add(player.getStamina());
+		characters.add(player);
+		Camera.center(player);
+		
 		// create enemies
 		characters.add(new Character("animations/enemy/walk_w1.png", 18 * 60, 40 * 60, 0, 0, 0));
 		characters.add(new Character("animations/enemy/walk_w1.png", 16 * 60, 72 * 60, 0, 0, 0));
