@@ -374,30 +374,30 @@ public class Game extends Canvas {
 		icon = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("ui/icon.png"));
 		
 		// load didact Gothic font
-        File f = new File(Game.class.getResource("fonts/didactGothic.ttf").getFile());
-        FileInputStream in = null;
-        
-        try {
-        	if (f.exists()) {
-        		in = new FileInputStream(f);
-        		didactGothic = Font.createFont(Font.TRUETYPE_FONT, in);
-        	}
-        } catch (Exception e) {
-            e.printStackTrace();
-        } // catch
-        
-        
-        // load medieval sharp font
-        f = new File(Game.class.getResource("fonts/medievalSharp.ttf").getFile());
-        
-        try {
-        	if (f.exists()) {
-        		in = new FileInputStream(f);
-                medievalSharp = Font.createFont(Font.TRUETYPE_FONT, in);
-        	}
-        } catch (Exception e) {
-            e.printStackTrace();
-        } // catch
+		File f = null;
+		FileInputStream in = null;
+
+		try {
+			f = new File(Game.class.getResource("fonts/didactGothic.ttf").getFile());
+			if (f.exists()) {
+				in = new FileInputStream(f);
+				didactGothic = Font.createFont(Font.TRUETYPE_FONT, in);
+			}
+		} catch (Exception e) {
+		    e.printStackTrace();
+		} // catch
+
+
+		// load medieval sharp font
+		try {
+			f = new File(Game.class.getResource("fonts/mdievalSharp.ttf").getFile());
+			if (f.exists()) {
+				in = new FileInputStream(f);
+			medievalSharp = Font.createFont(Font.TRUETYPE_FONT, in);
+			}
+		} catch (Exception e) {
+		    e.printStackTrace();
+		} // catch
 
 		// start the game
 		initEntities();
@@ -1360,14 +1360,6 @@ public class Game extends Canvas {
 		return true;
 	}
 	
-	public static Font getDidactGothic() { // add: if null, return a default font
-		return didactGothic;
-	}
-
-	public static Font getMedievalSharp() {  // add: if null, return a default font
-		return medievalSharp;
-	}
-	
 	public static Color getTextColor() {
 		return textColor;
 	}
@@ -1420,6 +1412,22 @@ public class Game extends Canvas {
 		} // for
 		
 	} // sortEntities
+	
+		public static Font getDidactGothic() {
+		if (didactGothic != null) {
+			return didactGothic;
+		} // if
+		
+		return new Font(Font.SANS_SERIF, Font.PLAIN, 24);
+	} // getDidactGothic
+
+	public static Font getMedievalSharp() {
+		if (medievalSharp != null) {
+			return medievalSharp;
+		} // if
+		
+		return new Font(Font.SANS_SERIF, Font.PLAIN, 24);
+	} // getMedievalSharp
 	
 	public static void spawnExplosion(int xPos, int yPos) {
 		Explosion exp = new Explosion(xPos, yPos, 300);
