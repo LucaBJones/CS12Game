@@ -1,6 +1,3 @@
-import java.awt.Graphics;
-import java.awt.Rectangle;
-
 public class PickupItem extends Entity {
 
 	private String itemID;
@@ -12,13 +9,14 @@ public class PickupItem extends Entity {
 		num = numOfItem;
 	} // PickupItem
 	
+	// returns the item id
 	public String getItemID() {
 		return itemID;
 	} // getItemID
 	
+	// returns the number of items in this pickup
 	public int getNum() {
 		return num;
-	}
-
+	} // getNum
 	
 } // PickupItem
