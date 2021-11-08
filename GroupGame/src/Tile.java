@@ -4,9 +4,8 @@ import java.awt.Point;
 public class Tile extends Entity { 
 	
 	private boolean isPassable;
-	private Sprite obstacle;
+	private Sprite obstacle; // obstacle sprite on top of Tile
 	
-	// constructor
 	public Tile(String floorTile, String obstacleRef, int xTile, int yTile, boolean isPassable) {
 		super(floorTile, xTile, yTile);
 		this.isPassable = isPassable;
@@ -14,7 +13,6 @@ public class Tile extends Entity {
 		if (obstacleRef != null) {
 			obstacle = SpriteStore.get().getSprite(obstacleRef);
 		} // if
-		
 	} // Tile
 	
 	// return true if the tile can be passed over
@@ -36,6 +34,7 @@ public class Tile extends Entity {
 		isPassable = true;
 	} // removeObstacle
 	
+	// draws the obstacle on top of the Tile
 	@Override
 	public void draw(Graphics g) {
 		super.draw(g);
