@@ -1,14 +1,12 @@
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
-// stores the item currently being dragged
 public class DragItem extends Entity{
 
 	private InventorySlot previousSlot;
 	private String itemID;
 	private int num;
 	
-	// constructor
 	public DragItem() {	
 		previousSlot = null;
 		itemID = null;
@@ -68,7 +66,7 @@ public class DragItem extends Entity{
 	
 	public int getNumber() {
 		return num;
-	}
+	} // getNumber
 	
 	// return the slot the item came from
 	public InventorySlot getSlot() {
