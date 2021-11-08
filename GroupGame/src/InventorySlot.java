@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Graphics;
 
 // stores InventoryItems
@@ -11,9 +10,8 @@ public class InventorySlot extends Entity {
 	private Sprite sprite; // sprite of the item
 	private Sprite frameSprite;
 
-	private int length; // temp? slot side length
+	private int length;
 
-	// constructor
 	public InventorySlot(int x, int y, int i) {
 		index = i;
 		itemID = "";
@@ -23,7 +21,7 @@ public class InventorySlot extends Entity {
 		length = (int) (Camera.getWidth() * 0.07);
 
 		// set screen position of slot
-		this.x = x + (Inventory.getWidth() - length) / 2; // 200 = inv x & 10 is important regardless of positioning
+		this.x = x + (Inventory.getWidth() - length) / 2;
 		this.y = y + (length * i) + Inventory.getPadding() * (i + 1);
 
 		frameSprite = SpriteStore.get().getSprite("ui/invSlot.png");
@@ -60,7 +58,7 @@ public class InventorySlot extends Entity {
 		if (numberOfItems <= 0) {
 			numberOfItems = 0;
 			itemID = "";
-		}
+		} // if
 
 		updateSprite();
 	} // removeItem
@@ -112,10 +110,10 @@ public class InventorySlot extends Entity {
 
 	public int getNumber() {
 		return numberOfItems;
-	}
+	} // getNumber
 
-	// returns slot index
 	public int getIndex() {
 		return index;
 	} // getIndex
+	
 } // InventorySlot
