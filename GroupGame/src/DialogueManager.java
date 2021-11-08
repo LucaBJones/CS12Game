@@ -105,7 +105,7 @@ public class DialogueManager {
 		textIsAnimating = true;
 		currentDialogueID = id;
 		displayText = "";
-		index = 0; // important
+		index = 0; 
 		
 		timer.start();
 	} // start
@@ -186,14 +186,14 @@ public class DialogueManager {
 		
 		for (int i = 0; i < next.length; i++) {
 			next[i] = temp.get(i);
-		}
+		} // for
 		
 		// check if there are any choices left
 		if (next.length == 0) { 
 			isDisplaying = false;
 			game.stopTalking();
 			return; 
-		}
+		} // if
 		
 		// check if current node is trying to complete a quest
 		if (dialogueStore.get(next[0]) instanceof CompleteQuestNode) { // assumes DialogueQuestNode is not a choice
@@ -333,7 +333,7 @@ public class DialogueManager {
 	} // drawChoices
 	
 	// draw multi-line Strings, author: John Evans
-    private void drawString(Graphics g, String text, int x, int y) {
+    	private void drawString(Graphics g, String text, int x, int y) {
 
         // draws each line on a new line
         for (String line : text.split("\n")) {
