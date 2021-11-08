@@ -4,7 +4,7 @@ import java.awt.Point;
 public class NPC extends Entity {
 
 	String dialogueID;
-	int range;
+	int range;			// how far from the npc the player can be to start a conversation
 	
 	Sprite character;
 	
@@ -17,18 +17,22 @@ public class NPC extends Entity {
 		
 		dialogueID = dialogue;
 		range = 30;
-	}
+	} // NPC
 	
+	// returns the root dialogue node
 	public String getDialogue() {
 		return dialogueID;
-	}
+	} // getDialogue
 	
+	// returns whether the player is within range of this npc
 	public boolean withinRange(int playerX, int playerY) {
 		return playerX - x < range && playerY - y < range;
-	}
+	} // withinRange
 	
 	@Override
 	public void draw(Graphics g) {
+		
+		// draw emote above npc's head
 		super.draw(g, (character.getWidth() - sprite.getWidth()) / 2, -character.getHeight() - 10);
 		
 		// calculate position of npc
@@ -38,5 +42,5 @@ public class NPC extends Entity {
 		
 		// draw npc
 		character.draw(g, screenPosX, screenPosY);
-	}
-}
+	} // draw
+} // NPC
