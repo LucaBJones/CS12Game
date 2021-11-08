@@ -885,7 +885,7 @@ public class Game extends Canvas {
 //				screen = 3;
 //			} // if
 			
-//			sortEntities(); // commented out to avoid errors
+			sortEntities();
 			
 			// clear graphics and flip buffer
 			g.dispose();
@@ -1360,13 +1360,21 @@ public class Game extends Canvas {
 		return true;
 	}
 	
-	public static Font getDidactGothic() { // add: if null, return a default font
-		return didactGothic;
-	}
+	public static Font getDidactGothic() {
+		if (didactGothic != null) {
+			return didactGothic;
+		} // if
+		
+		return new Font(Font.SANS_SERIF, Font.PLAIN, 24);
+	} // getDidactGothic
 
-	public static Font getMedievalSharp() {  // add: if null, return a default font
-		return medievalSharp;
-	}
+	public static Font getMedievalSharp() {
+		if (medievalSharp != null) {
+			return medievalSharp;
+		} // if
+		
+		return new Font(Font.SANS_SERIF, Font.PLAIN, 24);
+	} // getMedievalSharp
 	
 	public static Color getTextColor() {
 		return textColor;
@@ -1398,6 +1406,17 @@ public class Game extends Canvas {
 //				} // else if
 //			} // if
 //		} // for
+		
+		for (Character c : characters) {
+			entities.remove(c);
+			for (Entity e : entities) {
+				if (!(e instanceof Tile)) { continue; }
+				if(e.getY() - e.sprite.getHeight() > c.getY()) {
+					entities.add(entities.indexOf(e), c);
+					break;
+				} // if
+			} // for
+		} // for
 		
 		for (Attack c : attacks) {
 			entities.remove(c);
