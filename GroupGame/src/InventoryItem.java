@@ -13,10 +13,9 @@ public class InventoryItem {
 	private String name;
 	private String description;
 	
-	private String use;			// whether the item affects hp, mana, or stamina
+	private String use;		// whether the item affects hp, mana, or stamina
 	private int useAmount;		// amount that hp/mana/stamina is decremented/incremented by
 	
-	// constructor
 	public InventoryItem(String id, String r, String n, String d, String use, int useAmount) {
 		itemID = id;
 		
@@ -46,13 +45,13 @@ public class InventoryItem {
 				player.getHp().increment(useAmount);
 			} else if (use.contains("decrement")) {
 				player.getHp().decrement(useAmount);
-			}
+			} // else if
 		} else if (use.contains("mana")) {
 			if (use.contains("increment")) {
 				player.getMana().increment(useAmount);
 			} else if (use.contains("decrement")) {
 				player.getMana().decrement(useAmount);
-			}
+			} // else if
 		} else if (use.contains("stamina")) {
 			if (use.contains("increment")) {
 				player.getStamina().increment(useAmount);
@@ -81,10 +80,10 @@ public class InventoryItem {
 	
 	public String getName() {
 		return name;
-	}
+	} // getName
 	
 	public String getDescription() {
 		return description;
-	}
+	} // getDescription
 	
 } // InventoryItem
