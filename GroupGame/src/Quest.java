@@ -46,6 +46,10 @@ public class Quest {
 		} // if
 	} // unlock
 	
+	public boolean getIsCompleted() {
+		return status == 1;
+	} // getIsCompleted
+	
 	// returns the quest name
 	public String getName() {
 		return name;
