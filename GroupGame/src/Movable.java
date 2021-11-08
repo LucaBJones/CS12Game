@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -9,16 +8,16 @@ public class Movable extends Entity {
 	// movement
 	protected double dx;
 	protected double dy;
-	protected Rectangle hitBox;
+	protected Direction direction;
 	
-	protected Direction direction; 
+	protected Rectangle hitBox;
 	
 	public Movable() {
 		super();
 		dx = 0;
 		dy = 0;
 		sprite.getWidth();
-	} // default constructor
+	} // Movable
 	
 	public Movable(String r, int xPos, int yPos, int dx, int dy) {
 		super(r, xPos, yPos);
@@ -26,14 +25,10 @@ public class Movable extends Entity {
 		this.dx = dx;
 		this.dy = dy;
 		
-
-		
-		// these should be in their respective classes, but are here rn to look at
-		
 		if (!(this instanceof Character)) {
 			hitBox = new Rectangle(screenPosX, screenPosY, sprite.getWidth(), sprite.getHeight());
-		}
-	} // constructor
+		} // if
+	} // Movable
 	
 	// move the entity
 	public void move(long delta) {
@@ -49,8 +44,7 @@ public class Movable extends Entity {
 			animation.start();
 		} // if
 		
-		// check if the entity will be out of bounds after movement
-		// if so don't move it
+		// don't move entity if it will be out of bounds after movement
 		if (isOutOfBounds(p)) {
 			x -= dx * delta / 1000;
 			y -= dy * delta / 1000;
@@ -69,6 +63,7 @@ public class Movable extends Entity {
 			animation.start();
 		} // if
 		
+		// calculates screen position
 		Point isoPoint = toIso((int) x, (int) y);
 		screenPosX = isoPoint.x - Camera.getX();
 		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
@@ -78,7 +73,7 @@ public class Movable extends Entity {
 	} // move
 	
 	// returns true if any of the points are inside of an obstacle
-	// or they are outside of the map
+	// or are outside of the map
 	public boolean isOutOfBounds(Point[] p) {
 		Tile[][] tiles = Game.getTiles();
 		int boundary = 0;
@@ -104,7 +99,7 @@ public class Movable extends Entity {
 				
 			} catch (ArrayIndexOutOfBoundsException e) {
 				
-				return true;  // also return true if the point is outside the map
+				return true;
 				
 			} // catch
 			
@@ -115,7 +110,7 @@ public class Movable extends Entity {
 			
 			// any given pair is checked only once
 			ArrayList<Character> chars = Game.getCharacters();
-			for (int i = chars.indexOf((Character) this); i < chars.size(); i ++) {//Character c : Game.characters
+			for (int i = chars.indexOf((Character) this); i < chars.size(); i ++) {
 				Character c = chars.get(i);
 				if (hitBox.intersects(c.getHitBox()) && !c.isPlayer() && !c.equals(this)) {
 					return true;
@@ -126,8 +121,6 @@ public class Movable extends Entity {
 		return false;
 		
 	} // isOutOfBounds
-	
-	// set the entity's speed and direction
 	
 	public void setXVelocity(int xSpeed) {
 		dx = xSpeed;
@@ -157,7 +150,6 @@ public class Movable extends Entity {
 	// if not moving in a cardinal direction (N, NE, etc.), round to the nearest one
 	public void updateDirection() {
 		if (!(dx == 0 && dy == 0)) {
-		
 			if (dy / dx <= 0.414 && dy / dx >= -0.414) {
 				if (dx >= 0) {
 					direction = Direction.SE;
@@ -182,7 +174,7 @@ public class Movable extends Entity {
 				} else {
 					direction = Direction.E;
 				} // else
-			} // if
+			} // else if
 		} // if
 	} // direction
 	
