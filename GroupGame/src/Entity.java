@@ -1,7 +1,5 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
 
 public class Entity {
 	
@@ -14,11 +12,9 @@ public class Entity {
 	protected int screenPosX;
 	protected int screenPosY;
 	
-	
-	Sprite sprite; // may change later, should it be private?
+	protected Sprite sprite; 
 	
 	protected Animation animation;
-	
 	
 	public Entity() {
 		x = 0;
@@ -27,19 +23,19 @@ public class Entity {
 		animation = null;
 		screenPosX = 0;
 		screenPosY = 0;
-		
-	} // default constructor
+	} // Entity
 	
 	public Entity(String r, int xTile, int yTile) {
-		x = xTile; // * TILE_LENGTH
-		y = yTile; // " "
+		x = xTile;
+		y = yTile;
+		
+		// calculate screen position
 		Point isoPoint = toIso((int) x, (int) y);
-		
-		
-		sprite = (SpriteStore.get()).getSprite(r);
 		screenPosX = isoPoint.x - Camera.getX();
 		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
-	} // constructor
+		
+		sprite = (SpriteStore.get()).getSprite(r);
+	} // Entity
 	
 	// convert cartesian to isometric
 	public Point toIso(int x, int y) {
@@ -67,8 +63,7 @@ public class Entity {
 		
 		if (sprite != null) { // needed?
 			sprite.draw(g, screenPosX, screenPosY);
-		}
-
+		} // if
 	} // draw
 	
 	// draws the sprite to the screen relative to camera position
@@ -80,25 +75,20 @@ public class Entity {
 			
 			if (sprite != null) { // needed?
 				sprite.draw(g, screenPosX + xOffset, screenPosY + yOffset);
-			}
-
+			} // if
 		} // draw
 	
 	public void setSprite(String r) {
 		sprite = (SpriteStore.get()).getSprite(r);
 	} // setSprite
 	
-//	public void setAnimation(String animID) { // temp
-//		animation = SpriteStore.get().getAnimation(animID);
-//	}
-	
 	public int getScreenPosX() {
 		return screenPosX;
-	}
+	} // getScreenPosX
 	
 	public int getScreenPosY() {
 		return screenPosY;
-	}
+	} // getScrenPosY
 	
 	public double getX() {
 		return x;
