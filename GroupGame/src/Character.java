@@ -83,28 +83,46 @@ public class Character extends Movable {
 			
 			// fix this**** (fix moving of hitbox too)
 			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, 30, 30);
+		} else if (charType == 0 || charType == 1) {
+			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, "ui/frame2.png", "ui/hpBar.png", 100, 10);
+			
+			// setup enemy animations
+			walk_s  = new Animation(this, "animations/" + getName() + "/walk_s", ".png", 1, 8, 130, true); 
+			walk_se = new Animation(this, "animations/" + getName() + "/walk_se", ".png", 1, 8, 130, true); 
+			walk_sw = new Animation(this, "animations/" + getName() + "/walk_sw", ".png", 1, 8, 130, true); 
+			walk_n  = new Animation(this, "animations/" + getName() + "/walk_n", ".png", 1, 8, 130, true);  
+			walk_ne = new Animation(this, "animations/" + getName() + "/walk_ne", ".png", 1, 8, 130, true); 
+			walk_nw = new Animation(this, "animations/" + getName() + "/walk_nw", ".png", 1, 8, 130, true); 
+			walk_e  = new Animation(this, "animations/" + getName() + "/walk_e", ".png", 1, 8, 130, true);  
+			walk_w  = new Animation(this, "animations/" + getName() + "/walk_w", ".png", 1, 8, 130, true);  
+			
+			idle_s = new Animation(this, "animations/" + getName() + "/idle_s", ".png", 0, 0, 130, false);
+			idle_n = new Animation(this, "animations/" + getName() + "/idle_n", ".png", 0, 0, 130, false);
+			idle_e = new Animation(this, "animations/" + getName() + "/idle_e", ".png", 0, 0, 130, false);
+			idle_w = new Animation(this, "animations/" + getName() + "/idle_w", ".png", 0, 0, 130, false);
+			
+			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, sprite.getWidth(), TILE_LENGTH);
 		} else {
 			hp = new Bar((int) x, (int) y - sprite.getHeight() - 20, 100, "ui/frame2.png", "ui/hpBar.png", 100, 10);
 			
-			String name = (charType == 1) ? "boss" : "enemy";
-			
 			// setup enemy animations
-			walk_s  = new Animation(this, "animations/" + name + "/walk_s", ".png", 1, 8, 130, true); 
-			walk_se = new Animation(this, "animations/" + name + "/walk_se", ".png", 1, 8, 130, true); 
-			walk_sw = new Animation(this, "animations/" + name + "/walk_sw", ".png", 1, 8, 130, true); 
-			walk_n  = new Animation(this, "animations/" + name + "/walk_n", ".png", 1, 8, 130, true);  
-			walk_ne = new Animation(this, "animations/" + name + "/walk_ne", ".png", 1, 8, 130, true); 
-			walk_nw = new Animation(this, "animations/" + name + "/walk_nw", ".png", 1, 8, 130, true); 
-			walk_e  = new Animation(this, "animations/" + name + "/walk_e", ".png", 1, 8, 130, true);  
-			walk_w  = new Animation(this, "animations/" + name + "/walk_w", ".png", 1, 8, 130, true);  
+			walk_s  = new Animation(this, "animations/" + getName() + "/walk_s", ".png", 0, 7, 130, true); 
+			walk_se = new Animation(this, "animations/" + getName() + "/walk_se", ".png", 0, 7, 130, true); 
+			walk_sw = new Animation(this, "animations/" + getName() + "/walk_sw", ".png", 0, 7, 130, true); 
+			walk_n  = new Animation(this, "animations/" + getName() + "/walk_n", ".png", 0, 7, 130, true);  
+			walk_ne = new Animation(this, "animations/" + getName() + "/walk_ne", ".png", 0, 7, 130, true); 
+			walk_nw = new Animation(this, "animations/" + getName() + "/walk_nw", ".png", 0, 7, 130, true); 
+			walk_e  = new Animation(this, "animations/" + getName() + "/walk_e", ".png", 0, 7, 130, true);  
+			walk_w  = new Animation(this, "animations/" + getName() + "/walk_w", ".png", 0, 7, 130, true);  
 			
-			idle_s = new Animation(this, "animations/" + name + "/idle_s", ".png", 0, 0, 130, false);
-			idle_n = new Animation(this, "animations/" + name + "/idle_n", ".png", 0, 0, 130, false);
-			idle_e = new Animation(this, "animations/" + name + "/idle_e", ".png", 0, 0, 130, false);
-			idle_w = new Animation(this, "animations/" + name + "/idle_w", ".png", 0, 0, 130, false);
+			idle_s = new Animation(this, "animations/" + getName() + "/walk_s", ".png", 0, 0, 130, false);
+			idle_n = new Animation(this, "animations/" + getName() + "/walk_n", ".png", 0, 0, 130, false);
+			idle_e = new Animation(this, "animations/" + getName() + "/walk_e", ".png", 0, 0, 130, false);
+			idle_w = new Animation(this, "animations/" + getName() + "/walk_w", ".png", 0, 0, 130, false);
 			
-			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight() - TILE_LENGTH, sprite.getWidth(), TILE_LENGTH);
-		} // else
+			hitBox = new Rectangle(screenPosX, screenPosY + sprite.getHeight(), sprite.getWidth() / 2, TILE_LENGTH);
+			
+		}
 		
 		animation = idle_s; // temp
 		direction = Direction.S; // temp
@@ -258,6 +276,9 @@ public class Character extends Movable {
 			case 1: 
 				name = "boss";
 				break;
+			case 2:
+				name = "krampus";
+				break;
 			default:
 				name = "enemy";
 		} // switch
@@ -346,7 +367,6 @@ public class Character extends Movable {
 			die();
 		} // if
 	} //
-
 	
 	public boolean getIsDead() {
 		return isDead;
