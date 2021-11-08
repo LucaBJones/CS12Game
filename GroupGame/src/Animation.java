@@ -4,21 +4,23 @@ public class Animation {
 
 	private ArrayList<Sprite> frames;
 	
+	// stores frame numbers
+	private int min; // first frame number
 	private int currentFrame;
 	private int totalFrames;
 	
-	private int counter;
+	// used for delaying animations
+	private int counter;	 
 	private int delayBetweenFrames;
 	
 	private boolean isPlaying;
 	private boolean loop;
 	
 	private Entity entity;
+	
+	//parts of file name
 	private String prefix;
 	private String suffix;
-	
-	private int min;
-	
 	
 	public Animation(Entity e, String prefix, String suffix, int min, int max, int frameDelay, boolean loop) { // temp
 		this.frames = new ArrayList<Sprite>();
@@ -34,7 +36,6 @@ public class Animation {
 			System.out.println(prefix + i + suffix);
 		} // for
 		
-		
 		totalFrames = this.frames.size();
 		
 		currentFrame = min;
@@ -44,18 +45,12 @@ public class Animation {
 		isPlaying = false;
 		entity = e;
 		
-//		SpriteStore.get().addAnimation(prefix, this);
 	} // Animation
-	
 	
 	public void start() {
 		if (totalFrames < 1) { return; }
 		isPlaying = true;
 	} // start
-	
-	public void stop() { // not implemented
-		
-	}
 	
 	// update animation
 	public void update(long delta) {
