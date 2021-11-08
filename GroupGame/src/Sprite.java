@@ -1,9 +1,11 @@
-/* Sprite.java
- * March 23, 2006
- * Store no state information, this allows the image to be stored only
- * once, but to be used in many different places.  For example, one
- * copy of alien.gif can be used over and over.
- */
+/********************************************************************
+* Name: Sprite.java
+* Author: Mrs. Wear
+* Date: March 23, 2006
+* Purpose:  Store no state information, this allows the image to be 
+* stored only once, but to be used in many different places. 
+* For example, one copy of alien.gif can be used over and over.
+*********************************************************************/
 
 import java.awt.Graphics;
 import java.awt.Image;
