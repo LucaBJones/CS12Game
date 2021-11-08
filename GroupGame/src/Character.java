@@ -259,6 +259,44 @@ public class Character extends Movable {
 			default:
 //				System.out.println("unimplemented animation: " + direction.getDirection());
 		} // switch
+		if (charType >= 0) {
+			switch (direction) {
+			case S: 
+				animation = idle_s;
+				break;
+				
+			case N:
+				animation = idle_n;
+				break;
+				
+			case E:
+				animation = idle_e;
+				break;
+				
+			case W:
+				animation = idle_w; 
+				break;
+			
+			case SW: 
+				animation = idle_s;
+				break;
+				
+			case NE:
+				animation = idle_n;
+				break;
+				
+			case SE:
+				animation = idle_e;
+				break;
+				
+			case NW:
+				animation = idle_w; 
+				break;
+				
+			default:
+//				System.out.println("unimplemented animation: " + direction.getDirection());
+			} // switch
+		} // if
 	} // setIdleAnimation
 	
 	private void setDeathAnimation() {

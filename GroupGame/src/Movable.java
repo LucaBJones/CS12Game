@@ -62,6 +62,14 @@ public class Movable extends Entity {
 				animation.start();
 			}
 		} // if
+		
+		if (dx == 0 && dy == 0) {
+			System.out.println("not moving");
+			updateDirection();
+			((Character) this).setIdleAnimation();
+			animation.start();
+		}
+		
 		Point isoPoint = toIso((int) x, (int) y);
 		screenPosX = isoPoint.x - Camera.getX();
 		screenPosY = isoPoint.y + TILE_LENGTH - sprite.getHeight() - Camera.getY();
@@ -152,30 +160,33 @@ public class Movable extends Entity {
 	// return the direction an entity is moving
 	// if not moving in a cardinal direction (N, NE, etc.), round to the nearest one
 	public void updateDirection() {
-		if (dy / dx <= 0.414 && dy / dx >= -0.414) {
-			if (dx >= 0) {
-				direction = Direction.SE;
+		if (!(dx == 0 && dy == 0)) {
+		
+			if (dy / dx <= 0.414 && dy / dx >= -0.414) {
+				if (dx >= 0) {
+					direction = Direction.SE;
+				} else {
+					direction = Direction.NW;
+				}
+			} else if (dy / dx >= 0.414 && dy / dx <= 2.414) {
+				if (dx >= 0) {
+					direction = Direction.S;
+				} else {
+					direction = Direction.N;
+				}
+			} else if (dy / dx >= 2.414 || dy / dx <= -2.414) {
+				if (dy >= 0) {
+					direction = Direction.SW;
+				} else {
+					direction = Direction.NE;
+				}
 			} else {
-				direction = Direction.NW;
-			}
-		} else if (dy / dx >= 0.414 && dy / dx <= 2.414) {
-			if (dx >= 0) {
-				direction = Direction.S;
-			} else {
-				direction = Direction.N;
-			}
-		} else if (dy / dx >= 2.414 || dy / dx <= -2.414) {
-			if (dy >= 0) {
-				direction = Direction.SW;
-			} else {
-				direction = Direction.NE;
-			}
-		} else {
-			if (dx < 0) {
-				direction = Direction.W;
-			} else {
-				direction = Direction.E;
-			}
+				if (dx < 0) {
+					direction = Direction.W;
+				} else {
+					direction = Direction.E;
+				}
+			} // if
 		} // if
 	} // direction
 	
