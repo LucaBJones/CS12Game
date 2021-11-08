@@ -3,9 +3,9 @@
 * Author: Rosanna Jiang, Sam Li, and Luca Jones
 * Date: November 8, 2021
 * Purpose: This is a fantasy role playing game. The player is a monster hunter 
-* with magic who suffers from amnesia and is tasked with saving the land from the 
-* demon lord. They will have to complete quests, assist villagers, and slay savage 
-* monsters throughout their adventure.
+* 		   with magic who suffers from amnesia and is tasked with saving the land 
+* 		   from the demon lord. They will have to complete quests, assist villagers, 
+* 		   and slay savage monsters throughout their adventure.
 ***************************************************************************************/
 
 import java.awt.Canvas;
@@ -24,13 +24,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.imageio.ImageIO;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -40,8 +38,6 @@ import javax.swing.Timer;
 public class Game extends Canvas {
 	
 	private BufferStrategy strategy;
-
-	private boolean gameIsRunning = false;
 	
 	private static int[][] map = {
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
@@ -273,21 +269,23 @@ public class Game extends Canvas {
 	private static ArrayList<Attack> attacks = new ArrayList<Attack>();
 	private static ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 	private static ArrayList<Character> characters = new ArrayList<Character>();
-	private static ArrayList<NPC> npcs = new ArrayList<NPC>(); // temp?
+	private static ArrayList<NPC> npcs = new ArrayList<NPC>();
 	private static ArrayList<PickupItem> items = new ArrayList<PickupItem>();
 	
 	private boolean fading = false;
 	private int fadeDirection = 0;
 	
 	private Character player;
-	private Inventory inv;
-	private boolean inventoryVisible = false; 
 	
 	private static Tooltip tooltip;
+	
+	private QuestLog questLog;
+	
 	private DialogueManager dialogue;
 	private boolean isTalking = false;
 	
-	private QuestLog questLog;
+	private Inventory inv;
+	private boolean inventoryVisible = false; 
 	
 	// for character movement and attacks
 	private boolean upPressed = false;
@@ -295,34 +293,40 @@ public class Game extends Canvas {
 	private boolean downPressed = false;
 	private boolean rightPressed = false;
 	private boolean shotFired = false;
-	private boolean melee = false;
 	private boolean isRunning = false;
 	
 	private int walkSpeed = 150;
 	private int runSpeed = 400;
 	private int currentSpeed = walkSpeed;
 	
-	private static int screen = 0; // 0 for menu, 1 for instructions, 2 for credits, 3 for win, 4 for game over, 5 for start game
+	private static int screen = 0; 				// 0 for menu
+												// 1 for instructions
+												// 2 for credits
+												// 3 for win
+												// 4 for game over
+												// 5 for start game
 	
-	private Image menu;			// use sprites?
+	// menu screen background images
+	private Image menu;	
 	private Image credits;
 	private Image instructions;
 	private Image gameOver;
 	private Image win;
 	private Image icon;
 	
+	// fonts
 	private static Font medievalSharp;
 	private static Font didactGothic;
 	
-	private int horizontalDirection = 0; 	// stores direction for projectiles // we could use the direction enum for this
-	private int verticalDirection = 1;		// values: -1, 0, 1 
-	private int projectileSpeed = 1000; 	// may want to change this later in the game as power up or something
+	private int horizontalDirection = 0; 		// stores direction for projectiles
+	private int verticalDirection = 1;			// values: -1, 0, 1 
+	private int projectileSpeed = 1000; 		
 	
-	private long lastFire = 0; // time last shot fired
-    private long firingInterval = 300; // interval between shots (ms)
+	private long lastFire = 0; 					// time last shot fired
+    private long firingInterval = 300; 			// interval between shots (ms)
     
-    private long lastStaminaRegen = 0; // time stamina was last regenerated
-    private long staminaRegenInterval = 2000; // interval between stamina regen
+    private long lastStaminaRegen = 0; 			// time stamina was last regenerated
+    private long staminaRegenInterval = 2000; 	// interval between stamina regen
     private long lastManaRegen = 0;
     private long manaRegenInterval = 3000;
     
@@ -341,10 +345,8 @@ public class Game extends Canvas {
 	// set up the window and show the menu
 	public Game() {
 		// draw the window
-		JFrame frame = new JFrame("Game");
+		JFrame frame = new JFrame("Monster Hunter");
 		JPanel panel = new JPanel();
-		
-//		setBounds(0, 0, Camera.getWidth(), Camera.getHeight());
 		
 		panel.setPreferredSize(new Dimension(Camera.getWidth(), Camera.getHeight()));
 		panel.setLayout(null);
@@ -354,9 +356,9 @@ public class Game extends Canvas {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(panel);
 		frame.pack();
-		frame.setResizable(false); // can change
+		frame.setResizable(false);
 		frame.setVisible(true);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 	
 		setBounds((frame.getWidth() - Camera.getWidth()) / 2, (frame.getHeight() - Camera.getHeight()) / 2, Camera.getWidth(), Camera.getHeight());
 		
@@ -378,52 +380,56 @@ public class Game extends Canvas {
 		addMouseListener(mouseMotion);
 		
 		// Create Image Object
-        	Toolkit tk = Toolkit.getDefaultToolkit();
+        Toolkit tk = Toolkit.getDefaultToolkit();
 		
-		// init screen backgrounds
+		// load screen backgrounds
 		menu = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/menu.png"));
 		credits = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/credits.png"));
 		instructions = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/instructions.png"));
 		gameOver = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/gameover.png"));
 		win = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("screens/win.png"));
 		
-		// init icon image
+		// load icon image
 		icon = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("ui/icon.png"));
 		
-		// load didact Gothic font
+		// load fonts
 		File f = null;
 		FileInputStream in = null;
 
+		// load didact gothic font
 		try {
 			f = new File(Game.class.getResource("fonts/didactGothic.ttf").getFile());
+			
+			// check if file exists and create font
 			if (f.exists()) {
 				in = new FileInputStream(f);
 				didactGothic = Font.createFont(Font.TRUETYPE_FONT, in);
-			}
+			} // if
 		} catch (Exception e) {
 		    e.printStackTrace();
 		} // catch
 
-
 		// load medieval sharp font
 		try {
 			f = new File(Game.class.getResource("fonts/medievalSharp.ttf").getFile());
+			
+			// check if file exists and create font
 			if (f.exists()) {
 				in = new FileInputStream(f);
-			medievalSharp = Font.createFont(Font.TRUETYPE_FONT, in);
-			}
+				medievalSharp = Font.createFont(Font.TRUETYPE_FONT, in);
+			} // if
 		} catch (Exception e) {
 		    e.printStackTrace();
 		} // catch
 
 		// start the game
-		initEntities();
+		initGame();
 		gameLoop();
 		
 	} // Game
 	
-	// initialize entities
-	private void initEntities() {
+	// initialize game
+	private void initGame() {
 		
 		// initialize tiles
 		for (int i = 0; i < map.length; i++) {
@@ -440,52 +446,52 @@ public class Game extends Canvas {
 			} // for
 		} // for
 		
-		// create player
+		// initialize player
 		player = new Character("animations/player/idle_w1.png", 25 * 60, 90 * 60, 0, 0, -1);
 		entities.add(player.getHp());
 		entities.add(player.getMana());
 		entities.add(player.getStamina());
 		characters.add(player);
 		
-		// create enemies
+		// initialize enemies
 		characters.add(new Character("animations/enemy/walk_w1.png", 18 * 60, 40 * 60, 0, 0, 0));
 		characters.add(new Character("animations/enemy/walk_w1.png", 16 * 60, 72 * 60, 0, 0, 0));
 		characters.add(new Character("animations/krampus/walk_w0.png", 38 * 60, 43 * 60, 0, 0, 2));
 		characters.add(new Character("animations/krampus/walk_w0.png", 18 * 60, 60 * 60, 0, 0, 2));
 		
-		// create boss
+		// initialize boss
 		characters.add(new Character("animations/boss/walk_sw1.png", 32 * 60, 20 * 60, 0, 0, 1));
 		
-		// create npcs
+		// initialize npcs
 		npcs.add(new NPC("npc1", "images/npc/npc_sw.png", 25 * 60, 89 * 60));
 		npcs.add(new NPC("npc2", "images/npc/npc_s.png", 38 * 60, 58 * 60));
-		//npcs.add(new NPC("boss", "images/npc/npc_s.png", 32 * 60, 20 * 60));
 
 		// add all characters and npcs to entities
 		entities.addAll(characters);
 		entities.addAll(npcs);
 		
 		
-		// create inventory and tooltip
-		inv = new Inventory(4); // size of inventory
+		// initialize inventory, tooltip, and questLog
+		inv = new Inventory(4);
 		tooltip = new Tooltip();
-
 		questLog = new QuestLog(inv);
+		
+		// initialize items, quests, and dialogue
 		initItems();
 		initQuests();
 		initDialogue();
-		questLog.setDialogue(dialogue); // important... and probably not good
+		questLog.setDialogue(dialogue);
 		
 	} // initEntities
 
+	// initialize items
 	private void initItems() {
 		
-		// items
+		// create items
 		new InventoryItem("apple", "images/items/apple.png", "Apple", "A juicy red apple. \nLooks tasty. \nEat to replenish health.", "increment_hp", 20);
-		new InventoryItem("axe", "images/items/axe.png", "Axe", "Key to the demon's lair.", "", 0);
+		new InventoryItem("axe", "images/items/axe.png", "Axe", "An axe.\nUseful for chopping wood.", "", 0);
 		
-		
-		// pickup items (with position in world)
+		// create pickup items (with position in world)
 		items.add(new PickupItem("images/items/apple.png", "apple", 1, 45 * 60, 90 * 60));
 		items.add(new PickupItem("images/items/apple.png", "apple", 1, 44 * 60, 88 * 60));
 		items.add(new PickupItem("images/items/apple.png", "apple", 1, 46 * 60, 85 * 60));
@@ -495,6 +501,7 @@ public class Game extends Canvas {
 		entities.addAll(items);
 	} // initItems
 	
+	// initialize dialogue
 	private void initDialogue() {
 		// temp, example dialogue
 		dialogue = new DialogueManager(questLog, this);
@@ -567,7 +574,7 @@ public class Game extends Canvas {
 		new DialogueNode("q2Complete", "Chief", "So you can fight.", new String[] {"q2Complete2"}, dialogue);
 		new DialogueNode("q2Complete2", "Chief", "Good. I suppose you've truly proven yourself.", new String[] {"q2Complete3"}, dialogue);
 		new DialogueNode("q2Complete3", "Chief", "The bridge was just fixed. Take the road north until you reach the next village.", new String[] {"q2Complete4"}, dialogue);
-		new DialogueNode("q2Complete4", "Chief", "The chief there will help you", new String[] {"q2Complete5"}, dialogue);
+		new DialogueNode("q2Complete4", "Chief", "The chief there will help you—", new String[] {"q2Complete5"}, dialogue);
 		new DialogueNode("q2Complete5", "Chief", "if he's alive, that is.", null, dialogue);
 		
 		// quest 2 after completion
@@ -642,6 +649,7 @@ public class Game extends Canvas {
 		
 	}
 	
+	// initialize quests
 	private void initQuests() {
 		
 		// Quest 1: Collect Food
@@ -685,7 +693,9 @@ public class Game extends Canvas {
 					questLog);
 		
 	} // initQuests
-		
+	
+	// main game loop that runs throughout gameplay
+	// updates animations, moves characters, renders entities to screen
 	private void gameLoop() {
 		int alpha = 0;
 		long lastLoopTime = System.currentTimeMillis();
@@ -701,36 +711,32 @@ public class Game extends Canvas {
 			g.setColor(Color.gray);
 			g.fillRect(0, 0, Camera.getWidth(), Camera.getHeight());
 			
+			// if not playing game
 			if (screen != 5) {
 				
 				// show the menu
 				if (screen == 0) {
 					g.drawImage(menu, 0, 0, null);
-//					g.drawImage(menu, 0, 0, Camera.getWidth(), Camera.getHeight(), 0, 0, menu.getWidth(null), menu.getHeight(null), null);
 				} // if
 				
 				// show instructions
 				if (screen == 1) {
 					g.drawImage(instructions, 0, 0, null);
-//					g.drawImage(instructions, 0, 0, Camera.getWidth(), Camera.getHeight(), 0, 0, instructions.getWidth(null), instructions.getHeight(null), null);
 				} // if
 				
 				// show credits
 				else if (screen == 2) {
 					g.drawImage(credits, 0, 0, null);
-//					g.drawImage(credits, 0, 0, Camera.getWidth(), Camera.getHeight(), 0, 0, credits.getWidth(null), credits.getHeight(null), null);
 				} // else if
 				
 				// show win screen
 				else if (screen == 3) {
 					g.drawImage(win, 0, 0, null);
-//					g.drawImage(win, 0, 0, Camera.getWidth(), Camera.getHeight(), 0, 0, win.getWidth(null), win.getHeight(null), null);
 				} // else if
 				
 				// show game over screen
 				else if (screen == 4) {
 					g.drawImage(gameOver, 0, 0, null);
-//					g.drawImage(gameOver, 0, 0, Camera.getWidth(), Camera.getHeight(), 0, 0, gameOver.getWidth(null), gameOver.getHeight(null), null);
 				} // else if
 				
 				g.dispose();
@@ -738,39 +744,24 @@ public class Game extends Canvas {
 				continue;
 			} // if
 			
+			ArrayList<Entity> tempEntities = (ArrayList<Entity>) entities.clone();
+			ArrayList<Attack> tempAttacks = (ArrayList<Attack>) attacks.clone();
+			ArrayList<PickupItem> tempItems = (ArrayList<PickupItem>) items.clone();
+			ArrayList<Explosion> tempExp = (ArrayList<Explosion>) explosions.clone();
+			
+			// make sure player is always at the center of the screen
 			Camera.center(player);
 			
-			// run the game
-			
-			// not necessary right now
-			ArrayList<Entity> tempEntities = (ArrayList<Entity>) entities.clone();
-			//ArrayList<Character> tempChars = (ArrayList<Character>) characters.clone();
-			
-			// for removing attacks
-			ArrayList<Attack> tempAttacks = (ArrayList<Attack>) attacks.clone();
-			
-			// for removing items
-			ArrayList<PickupItem> tempItems = (ArrayList<PickupItem>) items.clone();
-			
-//			long lastSort = 0;
-//			
-//			if ((System.currentTimeMillis() - lastSort) > 500) {
-//				sortEntities();
-//				lastSort = System.currentTimeMillis();
-//			} // if
-			
-			// draw the entities
+			// draw all entities
 			for (Entity e : tempEntities) {
 				e.draw(g);
 			} // for
 			
+			// handle enemy movement
 			for (Character c : characters) {
-				if (c.isPlayer()) {
-					c.drawHitbox(g);
-				} else {
+				if (!c.isPlayer()) {
 					handleEnemyMovement(delta, c, player);
-				}
-				c.drawHitbox(g);
+				} // else
 			} // for
 			
 			// draw the inventory
@@ -784,40 +775,41 @@ public class Game extends Canvas {
 			// draw the quest log
 			if (!isTalking) {
 				questLog.draw(g);
-			}
+			} // if
 			
 			// draw player icon
 			g.drawImage(icon, 0, 0, null);
 			
-			// temp
+			// update character animation
 			for (Character c : characters) {
 				if (c.animation != null) {
 					c.animation.update(delta);
 				} // if
 			} // for
 			
+			// update npc animation
 			for (NPC n : npcs) {
 				if (n.animation != null) {
 					n.animation.update(delta);
 				} // if
 			} // for
 			
-			ArrayList<Explosion> tempExp = (ArrayList<Explosion>) explosions.clone();
-			
+			// update explosion animation
 			for (Explosion e : tempExp) {
 				if (e.animation != null) {
 					e.animation.update(delta);
 				} // if
 			} // for
 			
+			// check if player is colliding with an item, and pick it up
 			for (PickupItem i : tempItems) {
 				if (player.onItem(i)) {
-					removeEntity(i); // also remove it from items array?
+					removeEntity(i);
 					inv.addItem(i.getItemID(), i.getNum());
 				} // if
 			} // for
 			
-			// moves projectiles 
+			// moves projectile
 			for (Attack a : tempAttacks) {
 				a.move(delta);
 			} // for
@@ -825,23 +817,24 @@ public class Game extends Canvas {
 			// move the player
 			handlePlayerMovement(delta);
 			
+			
+			// check if player is colliding with enemy, and take damage every damageInterval
 			if ((System.currentTimeMillis() - lastDamage) > damageInterval) {
 				player.playerCollision(characters);
 				lastDamage = System.currentTimeMillis();
 			} // if
 			
-			// long range attack
-			if (shotFired && !melee && player.getMana().getValue() > 0) {
+			// spawn long range attack
+			if (shotFired && player.getMana().getValue() > 0) {
 				Attack p = startAttack(1000, player);
 				if (p != null) {
 					attacks.add(p);
 					entities.add(p);
 					player.getMana().decrement(10);
 				} // if
-				//System.out.println("shot");
 			} // if
 			
-			// check for attacks hitting characters
+			// check for attacks hitting characters and remove attacks
 			for (Attack a : tempAttacks) {
 				if(a.collidesWith(characters, g)) {
 					removeEntity(a);
@@ -862,10 +855,15 @@ public class Game extends Canvas {
 			
 			// consume stamina if running
 			if (isRunning && (leftPressed || upPressed || downPressed || rightPressed)) {
+				
+				// if no more stamina left, set to walking speed
 				if (player.getStamina().getValue() <= 0) {
 					isRunning = false;
 					currentSpeed = walkSpeed;
-				} else if ((System.currentTimeMillis() - lastStaminaConsumption) > staminaConsumeInterval) {
+				} // if
+				
+				// consume stamina
+				else if ((System.currentTimeMillis() - lastStaminaConsumption) > staminaConsumeInterval) {
 					player.getStamina().decrement(10);
 					lastStaminaConsumption = System.currentTimeMillis();
 				} // if
@@ -873,20 +871,10 @@ public class Game extends Canvas {
 			} // if
 			
 			
-//			if (player.getHp().getValue() <= 0) {
-//				entities.clear();
-//				gameIsRunning = false;
-//				screen = 4;
-//			} // if
+			// sort entities for rendering
+			sortEntities();
 			
-//			if (noEnemies()) {
-//				entities.clear();
-//				gameIsRunning = false;
-//				screen = 3;
-//			} // if
-			
-			sortEntities(); // commented out to avoid errors
-			
+			// fade in/out
 			if (fading) {
 				alpha = fade(g, alpha);
 			} // if
@@ -899,6 +887,7 @@ public class Game extends Canvas {
 		
 	} // gameLoop
 
+	// move player based on user input (key presses)
 	private void handlePlayerMovement(long delta) {
 		if (player.getIsDead()) { return; }
 		if (isTalking) { return; } // what if enemy followed over?
@@ -910,19 +899,26 @@ public class Game extends Canvas {
 		// check for user input
 		if (upPressed && !downPressed) {
 			
+			// move up left
 			if (leftPressed && !rightPressed) {
 				player.setXVelocity( -1 * currentSpeed);
 				horizontalDirection = -1;
 				verticalDirection = 0;
 			
 				player.setDirection(Direction.NW);
-			} else if (rightPressed && !leftPressed) {
+			} // if
+			
+			// move up right
+			else if (rightPressed && !leftPressed) {
 				player.setYVelocity(-1 * currentSpeed);
 				horizontalDirection = 0;
 				verticalDirection = -1;
 				
 				player.setDirection(Direction.NE);
-			} else {
+			} // else if 
+			
+			// move up
+			else {
 				player.setXVelocity(-1 * currentSpeed);
 				player.setYVelocity(-1 * currentSpeed);
 				horizontalDirection = -1;
@@ -933,13 +929,17 @@ public class Game extends Canvas {
 			
 		} else if (leftPressed && !rightPressed) {
 			
+			// move down left
 			if (downPressed && !upPressed) {
 				player.setYVelocity(currentSpeed);
 				horizontalDirection = 0;
 				verticalDirection = 1;
 				
 				player.setDirection(Direction.SW);
-			} else {
+			} // if
+			
+			// move left
+			else {
 				player.setXVelocity((int)(-1 * currentSpeed * 0.7));
 				player.setYVelocity((int)(currentSpeed * 0.7));
 				horizontalDirection = -1;
@@ -949,13 +949,18 @@ public class Game extends Canvas {
 			} // else
 			
 		} else if (downPressed && !upPressed) {
+			
+			// move down right
 			if (rightPressed && !leftPressed) {
 				player.setXVelocity(currentSpeed);
 				horizontalDirection = 1;
 				verticalDirection = 0;
 				
 				player.setDirection(Direction.SE);
-			} else {
+			} 
+			
+			// move down
+			else {
 				player.setXVelocity(currentSpeed);
 				player.setYVelocity(currentSpeed);
 				horizontalDirection = 1;
@@ -964,7 +969,10 @@ public class Game extends Canvas {
 				player.setDirection(Direction.S);
 			} // else
 			
-		} else if (rightPressed && !leftPressed) {
+		} // else if
+		
+		// move right
+		else if (rightPressed && !leftPressed) {
 			player.setXVelocity((int)(currentSpeed * 0.7));
 			player.setYVelocity((int)(-1 * currentSpeed * 0.7));
 			horizontalDirection = 1;
@@ -973,65 +981,53 @@ public class Game extends Canvas {
 			player.setDirection(Direction.E);
 		} // else if
 		
-		// animation
+		// set player animation
 		if (currentSpeed == walkSpeed) {
 			player.setWalkAnimation();
 		} else if (currentSpeed == runSpeed) {
 			player.setRunAnimation();
-		}
+		} // else if
 		
 		player.animation.start();
 		player.move(delta);
 		
 	} // handlePlayerMovement
 	
+	// move enemy towards player
 	private void handleEnemyMovement(long delta, Character enemy, Character player) {
-		
 		if (enemy.getIsDead() || player.getIsDead()) { return; }
 		
 		// reset speed
 		enemy.setXVelocity(0);
 		enemy.setYVelocity(0);
 		
-		// if on screen 
-		// do we want off screen characters to move?
+		// check if enemy is on screen
 		if(enemy.getScreenPosX() > 0 - 100 && enemy.getScreenPosX() < Camera.getWidth() + 100 && enemy.getScreenPosY() > 0 - 100 && enemy.getScreenPosY() < Camera.getHeight() + 100) {
-			
-			
 			int XDirection = (int) (player.getX() - enemy.getX());
 			int YDirection = (int) (player.getY() - enemy.getY());
 			
-			// probably some enemy direction
-			// decide the direction
+			// set enemy direction
 			enemy.setXVelocity(XDirection);
 			enemy.setYVelocity(YDirection);
 			
 		} // if
-		
-		// animation
-//		enemy.updateDirection();
-//		enemy.setWalkAnimation();
-//		enemy.animation.start();
 			
-		// move
+		// move enemy
 		enemy.move(delta);
 	} // handleEnemyMovement
 	
+	// check if an npc is in range and start dialogue
+	// returns whether dialogue was started successfully
 	private boolean tryToStartDialogue() {
 		if (isTalking) { return false; }
 		
-		// check if is in range with any npc
+		// check if is in range of any npc
 		for (NPC n : npcs) {
 			if (n.withinRange((int) player.x, (int) player.y)) {
 
 				// start dialogue
 				dialogue.start(n.getDialogue());
 				isTalking = true;
-				
-				// close inventory
-//				inventoryVisible = false;
-//				inv.stopDrag();
-				
 				return true;
 			} // if
 		} // for
@@ -1039,10 +1035,12 @@ public class Game extends Canvas {
 		return false;
 	} // tryToStartDialogue
 	
+	// sets isTalking to false
 	public void stopTalking() {
 		isTalking = false;
-	}
+	} // stopTalking
 	
+	// check if click was within bounds of a button and switch to next screen
 	private void handleMenuClick(MouseEvent e) {
 		int x = 700;
 		int y = 150;
@@ -1107,15 +1105,15 @@ public class Game extends Canvas {
 		
 	} // handleMenuClick
 	
-	private void resetGame() { //?
+	// clear and reset variables and arraylists
+	private void resetGame() {
 		
 		// reset variables
 		upPressed = false;    
 		leftPressed = false;  
 		downPressed = false;  
 		rightPressed = false; 
-		shotFired = false;    
-		melee = false;       
+		shotFired = false;
 		
 		currentSpeed = walkSpeed;
 		isRunning = false;    
@@ -1129,36 +1127,35 @@ public class Game extends Canvas {
 		
 		inventoryVisible = false; 
 		
-		// clear quests?
-		// clear inv?
-		
 		entities.clear();
 		attacks.clear();
 		characters.clear();
 		npcs.clear();
 		items.clear();
 		
-		initEntities();
-	}
+		initGame();
+	} // resetGame
 	
-	// move?
-	// create an attack
-	private Attack startAttack(int range, Character shooter) { // do we still need shooter?
-		int xSpawn = 0;				// just to make things
-		int ySpawn = 0;				// nice and not messy
+	// spawn an attack
+	private Attack startAttack(int range, Character shooter) {
+		int xSpawn = 0;				
+		int ySpawn = 0;				
 		double diagonal = 0;		// used to make diagonal shots come from the same place
-		final int INIT_DIST = 30;	// distance from player at spawn
+		int initDist = 30;			// distance from player at spawn
 		
 		// check that we've waited long enough to fire
         if ((System.currentTimeMillis() - lastFire) < firingInterval){
           return null;
         } // if
+        
         lastFire = System.currentTimeMillis();
 		
+        // calculate spawn position based on player position and direction
 		diagonal = Math.pow(Math.pow(horizontalDirection, 2) + Math.pow(verticalDirection, 2), -0.5);
-		xSpawn = (int) (player.getX() + INIT_DIST * horizontalDirection *  diagonal);
-		ySpawn = (int) (player.getY() - Entity.TILE_LENGTH + INIT_DIST * verticalDirection * diagonal);		
+		xSpawn = (int) (player.getX() + initDist * horizontalDirection *  diagonal);
+		ySpawn = (int) (player.getY() - Entity.TILE_LENGTH + initDist * verticalDirection * diagonal);		
 		
+		// create attack
 		return new Attack("images/projectiles/shot_" + shooter.getDirection().getDirection() + ".png", xSpawn * 60, ySpawn * 60, horizontalDirection * projectileSpeed, verticalDirection * projectileSpeed, range, shooter);
 
 	} // spawnProjectile
@@ -1178,10 +1175,11 @@ public class Game extends Canvas {
 	
 	// handles keyboard input from the user
 	private class KeyInputHandler extends KeyAdapter {
-
+		
+		@Override
 		public void keyPressed(KeyEvent e) {
 
-			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { // should we have this?
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				System.exit(0);
 			} // if
 			
@@ -1210,10 +1208,6 @@ public class Game extends Canvas {
 					shotFired = true;
 				} // if
 				
-//				if (e.getKeyCode() == KeyEvent.VK_R) { // for testing
-//					removeObstacles();
-//				} // if
-				
 				if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
 					if (player.getStamina().getValue() <= 0) { return; }
 					isRunning = true;
@@ -1223,6 +1217,7 @@ public class Game extends Canvas {
 
 		} // keyPressed
 
+		@Override
 		public void keyReleased(KeyEvent e) {
 			
 			if (screen == 5) {
@@ -1262,10 +1257,6 @@ public class Game extends Canvas {
 					shotFired = false;
 				} // if
 				
-				if (e.getKeyCode() == KeyEvent.VK_Z) {
-					melee = false;
-				} // if
-				
 				if (e.getKeyCode() == KeyEvent.VK_I) {
 					inventoryVisible = !inventoryVisible;
 					
@@ -1273,10 +1264,9 @@ public class Game extends Canvas {
 						inv.stopDrag();
 					} // if
 					
-					System.out.println("inventoryVisible: " + inventoryVisible);
 				} // if
 				
-				if (e.getKeyCode() == KeyEvent.VK_SHIFT) { // should we have this?
+				if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
 					isRunning = false;
 					currentSpeed = walkSpeed;
 				} // if
@@ -1286,29 +1276,21 @@ public class Game extends Canvas {
 
 	} // class KeyInputHandler
 	
+	// handles mouse events
 	private class MouseMotion implements MouseMotionListener, MouseListener {
-
-		// may not need all of these...
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			//System.out.println("MOUSE_DRAGGED: " + " (" + e.getX() + "," + e.getY() + ")" + " detected on " + e.getComponent().getClass().getName());
-
 			if (!inventoryVisible) { return; }
 			if (SwingUtilities.isLeftMouseButton(e)) {
-				//System.out.println("left button");
 				inv.handleDrag(e);
-			}
-		}
+			} // if
+		} // mouseDragged
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			//System.out.println("MOUSE_MOVED: " + " (" + e.getX() + "," + e.getY() + ")" + " detected on "
-					//+ e.getComponent().getClass().getName());
-			
 			if (!inventoryVisible) { return; }
 			inv.handleHover(e);
-		
 		} // mouseMoved
 
 		@Override
@@ -1320,77 +1302,54 @@ public class Game extends Canvas {
 			} else if (inventoryVisible) {
 				inv.handleClick(e, player);
 			} // else if
-			
-			
 		} // mouseClicked
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			//System.out.println("enter");
-		}
+			
+		} // mouseEntered
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			//System.out.println("exit");
-		}
+			
+		} // mouseExited
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			//System.out.println("pressed");
-		}
+			
+		} // mousePressed
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			//System.out.println("released");
 			if (!inventoryVisible) { return; }
 			inv.stopDrag(e);
-		}
+		} // mouseReleased
 	} // MouseMotion
 	
+	// returns tileMap
 	public static Tile[][] getTiles() {
 		return tileMap;
-	}
+	} // getTiles
 	
+	// returns tooltip
 	public static Tooltip getTooltip() {
 		return tooltip;
-	}
+	} // getTooltip
 	
-	
+	// returns character arraylist
 	public static ArrayList<Character> getCharacters() {
 		return characters;
-	}
+	} // getCharacters
 	
+	// returns text color
 	public static Color getTextColor() {
 		return textColor;
-	}
+	} // getTextColor
 	
-	// sorts the characters to create illusion of depth
+	// sorts the characters for rendering to create illusion of depth
 	private static void sortEntities() {
-//		for (Character c : characters) {
-//			entities.remove(c);
-//			for (Entity e : entities) {
-//				if(e instanceof Bar) {
-//					// places Bars at the end of the list, bars may not even be in this list (we call draw from Player for them)
-//					entities.remove(e);
-//					entities.add(e);
-//				} else if (e instanceof Tile) {
-////					if (((Tile) e).getObs() != null) {
-////						if (			e.getY() + 60 - ((Tile) e).getObs().getHeight() > c.getY() - c.sprite.getHeight()) {//- c.sprite.getHeight()
-////							entities.add(entities.indexOf(e), c);
-////							break;*/
-////						} // if
-////					} else {*/
-//						if(e.getY() - ((Y()e) e).sprite.getHeight() > c.getY()) {
-//							e/*else if (e.getX() > c.getX() + 120 && e.getY() - ((Tile) e).sprite.getHeight() == c.getY() ) {
-//							entities.add(entities.indexOf(e), c);
-//							break;
-//						/es.add(entities.indexOf(e), + c.sprite.getWidth()//							break;
-//						} // if
-////			} //<else
-//				} // else if
-//			} // if
-//		} // for
 		
+		// compare position of characters with tiles and reorders entities
 		for (Character c : characters) {
 			entities.remove(c);
 			for (Entity e : entities) {
@@ -1409,6 +1368,7 @@ public class Game extends Canvas {
 			} // for
 		} // for
 		
+		// reorders the position of attacks in entities based on their in-game position
 		for (Attack c : attacks) {
 			entities.remove(c);
 			for (Entity e : entities) {
@@ -1419,6 +1379,7 @@ public class Game extends Canvas {
 			} // if
 		} // for
 		
+		// reorders the position of explosions in entities based on their in-game position
 		for (Explosion c : explosions) {
 			entities.remove(c);
 			for (Entity e : entities) {
@@ -1431,6 +1392,8 @@ public class Game extends Canvas {
 		
 	} // sortEntities
 	
+	// returns didactGothic if was imported
+	// otherwise returns a default sans serif font
 	public static Font getDidactGothic() {
 		if (didactGothic != null) {
 			return didactGothic;
@@ -1439,6 +1402,8 @@ public class Game extends Canvas {
 		return new Font(Font.SANS_SERIF, Font.PLAIN, 24);
 	} // getDidactGothic
 
+	// returns medievalSharp if was imported
+	// otherwise returns a default sans serif font
 	public static Font getMedievalSharp() {
 		if (medievalSharp != null) {
 			return medievalSharp;
@@ -1447,25 +1412,28 @@ public class Game extends Canvas {
 		return new Font(Font.SANS_SERIF, Font.PLAIN, 24);
 	} // getMedievalSharp
 	
+	// spawns an explosion at the location passed in
 	public static void spawnExplosion(int xPos, int yPos) {
 		Explosion exp = new Explosion(xPos, yPos, 300);
 		explosions.add(exp);
 		entities.add(exp);
-		System.out.println("spawned exp");
-	}
+	} // spawnExplosion
 
+	// removes the trees blocking off village 2 from the final boss
 	public void removeObstacles() {
 		tileMap[48][30].removeObstacle();
 		tileMap[48][31].removeObstacle();
 		tileMap[48][32].removeObstacle();
 		tileMap[48][33].removeObstacle();
-	}
+	} // removeObstacles
 	
+	// adds a bridge to connect village 1 with village 2
 	public void addBridge() {
 		tileMap[73][32].addObstacle("images/tiles/obs45.png");
 		tileMap[73][33].addObstacle("images/tiles/obs46.png");
-	}
+	} // addBridge
 	
+	// fades in and out by drawing a black box with varying alphas
 	private int fade(Graphics g, int alpha) {
 		
 		// draw box over entire screen
@@ -1478,10 +1446,11 @@ public class Game extends Canvas {
 		// fade out
 		alpha += fadeDirection;
 		
+		// check if finished fading out
 		if (alpha > 255) {
 			alpha = 255;
 			
-			 // stop fading
+			// stop fading
 			fadeDirection = 0;
 			
 			Timer timer = new Timer(500, new ActionListener() {
@@ -1499,7 +1468,10 @@ public class Game extends Canvas {
 			
 		} // if
 		
+		// check if finished fading in
 		if (alpha < 0) {
+			
+			// stop fading
 			alpha = 0;
 			fadeDirection = 0;
 			fading = false;
@@ -1508,17 +1480,20 @@ public class Game extends Canvas {
 		return alpha;
 	} // fade
 	
+	// start fading (out and then back in)
 	public void startFade() {
 		fadeDirection = 3;
 		fading = true;
 	} // startFade
 	
+	// sets the current screen to the game over screen
 	public static void gameOver() {
 		screen = 4;
-	}
+	} // gameOver
 	
+	// sets the current screen to the "you won" screen
 	public static void gameWon() {
 		screen = 3;
-	}
+	} // gameWon
 	
 } // Game
