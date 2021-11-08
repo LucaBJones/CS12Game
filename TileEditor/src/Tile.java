@@ -32,6 +32,7 @@ public class Tile {
 		layer0Num = layer0;
 		layer1Num = layer1;
 		setSprite(layer0Num, 0);
+		setSprite(layer1Num, 1);
 	}
 
 	public void updatePosition(int xTile, int yTile) {
@@ -96,12 +97,14 @@ public class Tile {
 
 	public void setSprite(int n, int currentLayer) {
 		if (currentLayer == 0) {
+			layer0Num = n;
 			sprites[currentLayer] = (SpriteStore.get()).getSprite("images/tile" + n + ".png");
 		} else if (currentLayer == 1) {
+			layer1Num = n;
 			sprites[currentLayer] = (SpriteStore.get()).getSprite("images/obs" + n + ".png");
 		}
 		
-		layer0Num = n;
+		
 	}
 
 	public int getSpriteNum(int layer) {
