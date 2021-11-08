@@ -1,9 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
-
-// displays a title and a description
-// (currently used in inventory but can be used for other stuff too)
 public class Tooltip {
 	
 	private int x;
@@ -17,7 +14,7 @@ public class Tooltip {
 	
 	private Sprite box;
 	
-	public Tooltip() { // needed?
+	public Tooltip() {
 		x = 0;
 		y = 0;
 		
@@ -31,41 +28,33 @@ public class Tooltip {
 		box = SpriteStore.get().getSprite("ui/tooltip.png");
 	} // Tooltip
 	
-	public Tooltip(String t, String d, int xPos, int yPos) { // needed?
-		title = t;
-		description = d;
-		background = Color.LIGHT_GRAY;
-		
-		width = 150; // temp
-		height = 80; // temp
-		
-	} // Tooltip
-	
 	// draw the tooltip to the screen
 	public void draw(Graphics g) {
+		
 		// draw background
-		g.setColor(background);
-		g.fillRect(x, y, width, height); // change to calc width/height of background 
-											//depending on length of text
 		box.draw(g, x, y, width, height);
 		
-		// draw text
+		// draw title
 		g.setColor(Game.getTextColor());
 		g.setFont(Game.getMedievalSharp().deriveFont(32f));
 		g.drawString(title, x + (width - g.getFontMetrics().stringWidth(title)) / 2, y + 65);
 		
+		// draw description
 		g.setFont(Game.getMedievalSharp().deriveFont(22f));
 		drawString(g, description, x + 10, y + 95);
 	} // draw
 	
 	// position the tooltip relative to the values passed in
 	public void position(int xPos, int yPos, int w, int h) {
-		boolean below = yPos > Camera.getHeight() / 2; 	// determine section of screen the tooltip will be drawn at
+		
+		// determine section of screen the tooltip will be drawn at
+		boolean below = yPos > Camera.getHeight() / 2; 
 		boolean left = xPos < Camera.getWidth() / 2;
 		
 		int xToMatch = 0;
 		int yToMatch = 0;
 		
+		// position the tooltip
 		if (below) {
 			if (left) {
 				// at bottom left of screen
@@ -91,7 +80,6 @@ public class Tooltip {
 			x = xToMatch;
 			y = yToMatch;
 			
-			
 		} else {
 			
 			// at top right of screen
@@ -107,10 +95,11 @@ public class Tooltip {
 		
 	} // position
 	
+	// sets the title and description
 	public void setText(String title, String description) {
 		this.title = title;
 		this.description = description;
-	}
+	} // setText
 	
 	// draw multi-line Strings, author: John Evans
     private void drawString(Graphics g, String text, int x, int y) {
