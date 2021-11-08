@@ -1,3 +1,13 @@
+/*************************************************************************************
+* Name: Monster Hunter
+* Author: Rosanna Jiang, Sam Li, and Luca Jones
+* Date: November 8, 2021
+* Purpose: This is a fantasy role playing game. The player is a monster hunter 
+* with magic who suffers from amnesia and is tasked with saving the land from the 
+* demon lord. They will have to complete quests, assist villagers, and slay savage 
+* monsters throughout their adventure.
+***************************************************************************************/
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,7 +30,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -558,7 +567,7 @@ public class Game extends Canvas {
 		new DialogueNode("q2Complete", "Chief", "So you can fight.", new String[] {"q2Complete2"}, dialogue);
 		new DialogueNode("q2Complete2", "Chief", "Good. I suppose you've truly proven yourself.", new String[] {"q2Complete3"}, dialogue);
 		new DialogueNode("q2Complete3", "Chief", "The bridge was just fixed. Take the road north until you reach the next village.", new String[] {"q2Complete4"}, dialogue);
-		new DialogueNode("q2Complete4", "Chief", "The chief there will help you—", new String[] {"q2Complete5"}, dialogue);
+		new DialogueNode("q2Complete4", "Chief", "The chief there will help youÂ—", new String[] {"q2Complete5"}, dialogue);
 		new DialogueNode("q2Complete5", "Chief", "if he's alive, that is.", null, dialogue);
 		
 		// quest 2 after completion
