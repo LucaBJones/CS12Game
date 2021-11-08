@@ -1,7 +1,8 @@
-/* SpriteStore.java
- * Manages the sprites in the game.  
- * Caches them for future use.
- */
+/***********************************************************************
+* Name: SpriteStore.java
+* Author: Mrs. Wear
+* Purpose:  Manages the sprites in the game. Caches them for future use.
+************************************************************************/
 
 import java.awt.*;
 import java.io.IOException;
@@ -18,24 +19,10 @@ public class SpriteStore {
 	private HashMap<String, Animation> animations = new HashMap<String, Animation>(); // stores sprites
 	
 
-// returns the riteStore instance
+	// returns the riteStore instance
 	public static SpriteStore get() {
 		return spriteStore;
 	} // get
-	
-//	public Animation getAnimation(String prefix) {
-//		
-//		// return animation if already stored
-//		if (animations.get(prefix) != null) {
-//			return animations.get(prefix);
-//		} // if
-//		
-//		// create new animation and return
-//		Animation anim = new Animation();
-//		animations.put(prefix, anim);
-//		return anim;
-//		
-//	}
 
 	// returns the sprite associated with the String passed in
 	public Sprite getSprite(String ref) {
@@ -46,6 +33,7 @@ public class SpriteStore {
 		} // if
 
 		System.out.println("ref: " + ref);
+		
 		// else, load the image into the HashMap
 		BufferedImage sourceImage = null;
 
@@ -56,22 +44,27 @@ public class SpriteStore {
 			if (url == null) {
 				System.out.println("Failed to load: " + ref);
 				System.exit(0); // exit program if file not found
-			}
+			} // if
 			sourceImage = ImageIO.read(url); // get image
+			
 		} catch (IOException e) {
+			
 			System.out.println("Failed to load: " + ref);
-			System.exit(0); // exit program if file not loaded
+			
+			// exit program if file not loaded
+			System.exit(0); 
+			
 		} // catch
 
-		// create an accelerated image (correct size) to store our sprite in
+		// create an accelerated image (correct size) to store the sprite in
 		GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 				.getDefaultConfiguration();
 		Image image = gc.createCompatibleImage(sourceImage.getWidth(), sourceImage.getHeight(), Transparency.BITMASK);
 
-		// draw our source image into the accelerated image
+		// draw the source image into the accelerated image
 		image.getGraphics().drawImage(sourceImage, 0, 0, null);
 
-		// create a sprite, add it to the cache and return it
+		// create a sprite, add it to the cache, and return it
 		Sprite sprite = new Sprite(image);
 		sprites.put(ref, sprite);
 
