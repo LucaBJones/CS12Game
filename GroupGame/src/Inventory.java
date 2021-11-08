@@ -1,27 +1,25 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
 // stores all the player's current items
 public class Inventory extends Entity {
 
-	private static int padding = (int) (Camera.getHeight() * 0.029); 		// temp for placing inv on screen
+	private static int padding = (int) (Camera.getHeight() * 0.029);
 	
-	private DragItem dragItem; 						// stores item being dragged
-	private boolean isDragging = false; 			// whether player is dragging an item
-	private static int hoveringSlotIndex = -1; 		// index of the slot the player is hovering over
+	private DragItem dragItem; 			// stores item being dragged
+	private boolean isDragging = false; 		// whether player is dragging an item
+	private static int hoveringSlotIndex = -1; 	// index of the slot the player is hovering over
 														// -1 if not hovering over a slot
 														// rename?
 	
-	private int size;								// size of inventory
-	private InventorySlot[] slots;					// slots in the inventory
+	private int size;		// size of inventory
+	private InventorySlot[] slots;	// slots in the inventory
 	
 	private static int invWidth;
 	private static int invHeight;
 	
 	private Sprite sprite;
-	
-	// constructor
+
 	public Inventory(int n) {
 		size = n;
 		slots = new InventorySlot[size];
@@ -60,6 +58,7 @@ public class Inventory extends Entity {
 		
 		for (InventorySlot slot : slots) {
 			if (slot.getNumber() <= 0 || slot.getItem().isEmpty()) { continue; }
+			
 			if (slot.getItem().equals(id)) {
 				count -= slot.getNumber();
 				System.out.println("slot num: " + slot.getNumber());
@@ -78,7 +77,6 @@ public class Inventory extends Entity {
 					System.out.println("removed " + (0 - count) + ", n: " + n + ", count: " + count);
 					return;
 				} // if
-				
 			} // if
 		} // for
 	} // removeItem
@@ -152,7 +150,7 @@ public class Inventory extends Entity {
 	} // handleDrag
 
 	// returns the index of the slot the mouse event occurred at
-	private int checkIfMouseOverSlot(MouseEvent e) { // rename!!
+	private int checkIfMouseOverSlot(MouseEvent e) {
 		
 		// go through slots and check if mouse event occurred inside bounds of slot
 		for (int i = 0; i < slots.length; i++) {
@@ -192,7 +190,7 @@ public class Inventory extends Entity {
 		
 		if (dragItem.getItem() != null) {
 			dragItem.backToPrevious();
-		}
+		} // if
 	}
 	
 	public void handleHover(MouseEvent e) {
@@ -227,11 +225,11 @@ public class Inventory extends Entity {
 	
 	public static int getWidth() {
 		return invWidth;
-	}
+	} // getWidth
 	
 	public static int getPadding() {
 		return padding;
-	}
+	} // getPadding
 
 	public void handleClick(MouseEvent e, Character player) {
 		int slotID = checkIfMouseOverSlot(e);
@@ -248,8 +246,6 @@ public class Inventory extends Entity {
 			// remove the item from inventory if item was successfully used
 			slots[slotID].removeItem(1);
 		} // if
-		
-		
 	} // handleClick
-	
+
 } // Inventory
