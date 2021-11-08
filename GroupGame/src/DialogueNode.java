@@ -58,15 +58,15 @@ public class DialogueNode {
 
 	public String getQuestToUnlock() {
 		return questToUnlock;
-	}
+	} // getQuestToUnlock
 
 	public String getPrerequisiteQuest() {
 		return prerequisiteQuest;
-	}
+	} // getPrerequisiteQuest
 	
 	public int getPrerequisiteStatus() {
 		return prerequisiteStatus;
-	}
+	} // getPrerequisiteStatus
 
 	public void setText(String text) {
 		this.text = text;
@@ -88,6 +88,6 @@ public class DialogueNode {
 	
 	public boolean getIsChoice() {
 		return isChoice;
-	}
+	} // getIsChoice
 	
 } // DialogueNode
