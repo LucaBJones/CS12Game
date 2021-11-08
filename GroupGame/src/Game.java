@@ -374,10 +374,11 @@ public class Game extends Canvas {
 		icon = Toolkit.getDefaultToolkit().getImage(Game.class.getResource("ui/icon.png"));
 		
 		// load didact Gothic font
-        File f = new File(Game.class.getResource("fonts/didactGothic.ttf").getFile());
+        File f = null;
         FileInputStream in = null;
         
         try {
+        	f = new File(Game.class.getResource("fonts/didactGothic.ttf").getFile());
         	if (f.exists()) {
         		in = new FileInputStream(f);
         		didactGothic = Font.createFont(Font.TRUETYPE_FONT, in);
@@ -388,9 +389,8 @@ public class Game extends Canvas {
         
         
         // load medieval sharp font
-        f = new File(Game.class.getResource("fonts/medievalSharp.ttf").getFile());
-        
         try {
+        	f = new File(Game.class.getResource("fonts/mdievalSharp.ttf").getFile());
         	if (f.exists()) {
         		in = new FileInputStream(f);
                 medievalSharp = Font.createFont(Font.TRUETYPE_FONT, in);
